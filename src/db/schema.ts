@@ -21,6 +21,7 @@ import {
   index,
   integer,
   jsonb,
+  numeric,
   pgEnum,
   pgTable,
   text,
@@ -72,6 +73,44 @@ export const relationTypeEnum = pgEnum("relation_type", [
   "ACCESSORY",
   "ALTERNATIVE",
   "SPARE_PART",
+]);
+
+/* ----------------------- مشخصات فنی نوع‌دار (فاز ۳) ----------------------- */
+
+/** نوع داده یک مشخصه — تعیین می‌کند کدام ستون مقدار پر می‌شود */
+export const specDataTypeEnum = pgEnum("spec_data_type", [
+  "NUMBER", // یک عدد: value_num
+  "RANGE", // بازه عددی: value_num تا value_num_max (هر طرف می‌تواند باز باشد)
+  "TEXT", // متن آزاد یا گزینه‌ای: value_text
+  "BOOLEAN", // بله/خیر: value_bool
+]);
+
+/** شکل نمایش فیلتر در ستون کناری — مدیر آن را انتخاب می‌کند */
+export const specFilterUiEnum = pgEnum("spec_filter_ui", [
+  "RANGE", // دو ورودی کمینه/بیشینه
+  "CHECKBOX", // چند انتخابی از مقادیر موجود
+  "BOOLEAN", // فقط دارد/ندارد
+  "NONE", // فیلتر نشود
+]);
+
+/**
+ * بُعد فیزیکی یک واحد.
+ *
+ * فیلتر عددی فقط داخل یک بُعد معنا دارد؛ واحدهای هم‌بُعد با ضریب به واحد
+ * پایه همان بُعد تبدیل می‌شوند تا مقایسه ممکن شود.
+ */
+export const unitDimensionEnum = pgEnum("unit_dimension", [
+  "POWER",
+  "LENGTH",
+  "FLOW",
+  "PRESSURE",
+  "VOLUME",
+  "TEMPERATURE",
+  "VOLTAGE",
+  "MASS",
+  "ROTATION",
+  "COUNT",
+  "OTHER",
 ]);
 
 export const customerTypeEnum = pgEnum("customer_type", ["INDIVIDUAL", "COMPANY"]);
@@ -307,6 +346,124 @@ export const productImages = pgTable(
 );
 
 /** مشخصات فنی، گروه‌بندی‌شده برای رندر «برگه مشخصات» */
+/* -------------------------------------------------------------------------- */
+/*  مشخصات فنی نوع‌دار                                                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * واحدهای اندازه‌گیری.
+ *
+ * هر واحد به یک بُعد فیزیکی تعلق دارد و با `toBaseFactor` به واحد پایه همان
+ * بُعد تبدیل می‌شود. بدون این تبدیل، فیلتر عددی روی «توان» بی‌معنا می‌شد؛
+ * چون در کاتالوگ همین حالا اسب بخار، کیلووات و وات کنار هم استفاده شده‌اند.
+ *
+ * مقدار پایه هنگام ذخیره محاسبه و در `product_specs.value_base` نگهداری
+ * می‌شود تا کوئری بازه‌ای بتواند از ایندکس استفاده کند.
+ */
+export const units = pgTable(
+  "units",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** شناسه ماشینی، مثل "kw" یا "hp" */
+    code: varchar("code", { length: 32 }).notNull(),
+    /** برچسب فارسی که به کاربر نشان داده می‌شود، مثل «کیلووات» */
+    label: varchar("label", { length: 64 }).notNull(),
+    /** نماد کوتاه اختیاری، مثل kW */
+    symbol: varchar("symbol", { length: 16 }),
+    dimension: unitDimensionEnum("dimension").notNull().default("OTHER"),
+    /** ضریب تبدیل به واحد پایهٔ همین بُعد */
+    toBaseFactor: numeric("to_base_factor", { precision: 20, scale: 10 }).notNull().default("1"),
+    /** واحد پایهٔ بُعد — در هر بُعد باید دقیقاً یکی true باشد */
+    isBase: boolean("is_base").notNull().default(false),
+    isActive: boolean("is_active").notNull().default(true),
+    position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("units_code_key").on(t.code),
+    index("units_dimension_idx").on(t.dimension, t.position),
+  ],
+);
+
+/**
+ * تعریف یک مشخصه فنی — منبع حقیقت برای برچسب، نوع داده، واحد و فیلترپذیری.
+ *
+ * این جدول همان چیزی است که پنل مدیریت آینده ویرایش می‌کند: مدیر یک مشخصه
+ * تازه می‌سازد، نوع داده و واحد پیش‌فرضش را انتخاب می‌کند و تعیین می‌کند
+ * فیلترپذیر باشد یا نه. فرانت‌اند بدون تغییر کد آن را نمایش می‌دهد.
+ */
+export const specDefinitions = pgTable(
+  "spec_definitions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** شناسه ماشینی پایدار — در URL فیلترها استفاده می‌شود، مثل "head" */
+    key: varchar("key", { length: 64 }).notNull(),
+    label: varchar("label", { length: 160 }).notNull(),
+    description: text("description"),
+    dataType: specDataTypeEnum("data_type").notNull().default("TEXT"),
+    /** برای مشخصه‌های عددی: بُعد فیزیکی که واحدهای مجاز را محدود می‌کند */
+    dimension: unitDimensionEnum("dimension"),
+    defaultUnitId: uuid("default_unit_id").references(() => units.id, { onDelete: "set null" }),
+    /** گروه نمایشی در جدول مشخصات صفحه محصول */
+    groupName: varchar("group_name", { length: 120 }).notNull().default("مشخصات عمومی"),
+    isFilterable: boolean("is_filterable").notNull().default(false),
+    filterUi: specFilterUiEnum("filter_ui").notNull().default("NONE"),
+    isActive: boolean("is_active").notNull().default(true),
+    position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("spec_definitions_key_key").on(t.key),
+    index("spec_definitions_active_idx").on(t.isActive, t.position),
+    index("spec_definitions_filterable_idx").on(t.isFilterable, t.isActive),
+  ],
+);
+
+/**
+ * کدام مشخصه به کدام دسته‌بندی تعلق دارد.
+ *
+ * همین جدول است که باعث می‌شود «پمپ» فیلتر هد و دبی نشان دهد و «مخزن»
+ * فیلتر حجم و جنس. مدیر می‌تواند یک مشخصه را به چند دسته وصل کند و برای هر
+ * دسته جداگانه تصمیم بگیرد فیلترپذیر باشد یا در کارت محصول دیده شود.
+ */
+export const categorySpecs = pgTable(
+  "category_specs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    categoryId: uuid("category_id")
+      .notNull()
+      .references(() => categories.id, { onDelete: "cascade" }),
+    definitionId: uuid("definition_id")
+      .notNull()
+      .references(() => specDefinitions.id, { onDelete: "cascade" }),
+    /** null یعنی از تعریف مشخصه ارث‌بری کن */
+    isFilterable: boolean("is_filterable"),
+    /** در کارت محصول این دسته نمایش داده شود */
+    isKey: boolean("is_key").notNull().default(false),
+    position: integer("position").notNull().default(0),
+  },
+  (t) => [
+    uniqueIndex("category_specs_key").on(t.categoryId, t.definitionId),
+    index("category_specs_category_idx").on(t.categoryId, t.position),
+    index("category_specs_definition_idx").on(t.definitionId),
+  ],
+);
+
+/**
+ * مقدار یک مشخصه برای یک محصول.
+ *
+ * ستون‌های قدیمی (label/value/unit) عمداً حفظ شده‌اند:
+ *   • هیچ داده‌ای در مهاجرت از دست نمی‌رود
+ *   • ردیفی که قابل تبدیل به مقدار نوع‌دار نبوده، همچنان درست نمایش داده
+ *     می‌شود و فقط با `isUnparsed` علامت می‌خورد تا مدیر بعداً اصلاحش کند
+ *   • `label` نقش «بازنویسی برچسب» برای همان محصول را پیدا می‌کند؛ اگر خالی
+ *     بماند برچسب از تعریف مشخصه خوانده می‌شود
+ *
+ * فیلتر عددی همیشه روی `valueBase` اجرا می‌شود، نه `valueNum` — چون فقط
+ * مقدار پایه بین واحدهای مختلف قابل مقایسه است.
+ */
 export const productSpecs = pgTable(
   "product_specs",
   {
@@ -314,15 +471,43 @@ export const productSpecs = pgTable(
     productId: uuid("product_id")
       .notNull()
       .references(() => products.id, { onDelete: "cascade" }),
+
+    /** null یعنی این ردیف هنوز به هیچ تعریفی نگاشت نشده (میراث) */
+    definitionId: uuid("definition_id").references(() => specDefinitions.id, {
+      onDelete: "set null",
+    }),
+
     groupName: varchar("group_name", { length: 120 }).notNull().default("مشخصات عمومی"),
     label: varchar("label", { length: 160 }).notNull(),
+    /** متن اصلی همان‌طور که وارد شده — همیشه حفظ می‌شود */
     value: varchar("value", { length: 260 }).notNull(),
     unit: varchar("unit", { length: 32 }),
+
+    /* --- مقادیر نوع‌دار --- */
+    valueText: varchar("value_text", { length: 260 }),
+    valueNum: numeric("value_num", { precision: 20, scale: 6 }),
+    /** کران بالای بازه؛ برای مقدار تکی null است */
+    valueNumMax: numeric("value_num_max", { precision: 20, scale: 6 }),
+    valueBool: boolean("value_bool"),
+    unitId: uuid("unit_id").references(() => units.id, { onDelete: "set null" }),
+    /** valueNum تبدیل‌شده به واحد پایه — ستونی که فیلتر روی آن اجرا می‌شود */
+    valueBase: numeric("value_base", { precision: 20, scale: 6 }),
+    valueBaseMax: numeric("value_base_max", { precision: 20, scale: 6 }),
+    /** مقدار قابل تبدیل به نوع تعریف‌شده نبود و خام نگه داشته شد */
+    isUnparsed: boolean("is_unparsed").notNull().default(false),
+
     position: integer("position").notNull().default(0),
     /** در کارت محصول و جدول مقایسه هم دیده می‌شود */
     isKey: boolean("is_key").notNull().default(false),
   },
-  (t) => [index("product_specs_product_idx").on(t.productId, t.position)],
+  (t) => [
+    index("product_specs_product_idx").on(t.productId, t.position),
+    /** ایندکس اصلی فیلتر بازه‌ای عددی */
+    index("product_specs_numeric_filter_idx").on(t.definitionId, t.valueBase),
+    /** ایندکس فیلتر مقادیر متنی/گزینه‌ای */
+    index("product_specs_text_filter_idx").on(t.definitionId, t.valueText),
+    index("product_specs_definition_idx").on(t.definitionId),
+  ],
 );
 
 export const productDocuments = pgTable(
@@ -730,6 +915,30 @@ export const productImagesRelations = relations(productImages, ({ one }) => ({
 
 export const productSpecsRelations = relations(productSpecs, ({ one }) => ({
   product: one(products, { fields: [productSpecs.productId], references: [products.id] }),
+  definition: one(specDefinitions, {
+    fields: [productSpecs.definitionId],
+    references: [specDefinitions.id],
+  }),
+  unitRef: one(units, { fields: [productSpecs.unitId], references: [units.id] }),
+}));
+
+export const unitsRelations = relations(units, ({ many }) => ({
+  definitions: many(specDefinitions),
+  specs: many(productSpecs),
+}));
+
+export const specDefinitionsRelations = relations(specDefinitions, ({ one, many }) => ({
+  defaultUnit: one(units, { fields: [specDefinitions.defaultUnitId], references: [units.id] }),
+  categoryLinks: many(categorySpecs),
+  values: many(productSpecs),
+}));
+
+export const categorySpecsRelations = relations(categorySpecs, ({ one }) => ({
+  category: one(categories, { fields: [categorySpecs.categoryId], references: [categories.id] }),
+  definition: one(specDefinitions, {
+    fields: [categorySpecs.definitionId],
+    references: [specDefinitions.id],
+  }),
 }));
 
 export const productDocumentsRelations = relations(productDocuments, ({ one }) => ({
@@ -787,6 +996,12 @@ export type Brand = typeof brands.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type ProductImage = typeof productImages.$inferSelect;
 export type ProductSpec = typeof productSpecs.$inferSelect;
+export type Unit = typeof units.$inferSelect;
+export type NewUnit = typeof units.$inferInsert;
+export type SpecDefinition = typeof specDefinitions.$inferSelect;
+export type NewSpecDefinition = typeof specDefinitions.$inferInsert;
+export type CategorySpec = typeof categorySpecs.$inferSelect;
+export type NewCategorySpec = typeof categorySpecs.$inferInsert;
 export type ProductDocument = typeof productDocuments.$inferSelect;
 export type Customer = typeof customers.$inferSelect;
 export type Order = typeof orders.$inferSelect;
@@ -811,3 +1026,6 @@ export type OrderSource = (typeof orderSourceEnum.enumValues)[number];
 export type PaymentStatus = (typeof paymentStatusEnum.enumValues)[number];
 export type PostStatus = (typeof postStatusEnum.enumValues)[number];
 export type MessageStatus = (typeof messageStatusEnum.enumValues)[number];
+export type SpecDataType = (typeof specDataTypeEnum.enumValues)[number];
+export type SpecFilterUi = (typeof specFilterUiEnum.enumValues)[number];
+export type UnitDimension = (typeof unitDimensionEnum.enumValues)[number];

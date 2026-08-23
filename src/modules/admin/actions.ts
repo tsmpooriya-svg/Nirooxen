@@ -34,6 +34,7 @@ import {
   type OrderStatus,
   type UserRole,
 } from "@/db/schema";
+import { buildSpecRows } from "@/modules/catalog/spec-writer";
 import { logActivity } from "@/lib/activity";
 import { AuthError, destroyAllSessions, hashPassword, requirePermission } from "@/lib/auth";
 import { ORDER_STATUS } from "@/lib/constants";
@@ -402,17 +403,10 @@ export async function saveProduct(
 
     await db.delete(productSpecs).where(eq(productSpecs.productId, id!));
     if (specs.length > 0) {
-      await db.insert(productSpecs).values(
-        specs.map((spec, index) => ({
-          productId: id!,
-          groupName: spec.groupName || "مشخصات عمومی",
-          label: spec.label,
-          value: spec.value,
-          unit: spec.unit || null,
-          position: index,
-          isKey: Boolean(spec.isKey),
-        })),
-      );
+      // از buildSpecRows عبور می‌کند تا مقادیر نوع‌دار و مقدار پایه ساخته
+      // شوند؛ درج مستقیم، محصول را بی‌صدا از فیلترها حذف می‌کرد.
+      const rows = await buildSpecRows(id!, specs);
+      await db.insert(productSpecs).values(rows);
     }
 
     await logActivity({

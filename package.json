@@ -13,7 +13,10 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx src/db/seed.ts",
-    "placeholders": "node scripts/generate-placeholders.mjs"
+    "placeholders": "node scripts/generate-placeholders.mjs",
+    "db:specs": "tsx scripts/backfill-specs.mjs",
+    "db:specs:dry": "tsx scripts/backfill-specs.mjs --dry-run",
+    "db:apply": "node scripts/apply-migration.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

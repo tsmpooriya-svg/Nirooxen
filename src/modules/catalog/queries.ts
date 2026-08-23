@@ -16,13 +16,18 @@ import { db } from "@/db";
 import {
   brands,
   categories,
+  categorySpecs,
   productImages,
   productSpecs,
   products,
+  specDefinitions,
+  units,
   type Brand,
   type Category,
   type PriceMode,
   type Product,
+  type SpecDataType,
+  type SpecFilterUi,
   type StockStatus,
 } from "@/db/schema";
 import { PAGE_SIZE, type SortOption } from "@/lib/constants";
@@ -142,6 +147,20 @@ export const getBrandBySlug = cache(async (slug: string) => {
 /*  محصولات                                                                     */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * فیلتر یک مشخصه فنی.
+ *
+ * برای مشخصه عددی `min`/`max` (بر حسب **واحد پایه**) و برای مشخصه متنی
+ * `values` پر می‌شود. ساختار عمداً عمومی است تا افزودن مشخصه تازه از پنل
+ * مدیریت، بدون تغییر کد فرانت‌اند کار کند.
+ */
+export type SpecFilterInput = {
+  definitionKey: string;
+  min?: number;
+  max?: number;
+  values?: string[];
+};
+
 export type ProductFilters = {
   q?: string;
   category?: string;
@@ -154,6 +173,8 @@ export type ProductFilters = {
   sort?: SortOption;
   page?: number;
   pageSize?: number;
+  /** فیلترهای مشخصات فنی — از تعریف‌های همان دسته‌بندی ساخته می‌شوند */
+  specs?: SpecFilterInput[];
 };
 
 /** انتخاب ستون‌های کارت محصول — از تکرار در چند کوئری جلوگیری می‌کند */
@@ -219,6 +240,7 @@ export async function listProducts(filters: ProductFilters = {}) {
     sort = "newest",
     page = 1,
     pageSize = PAGE_SIZE.products,
+    specs,
   } = filters;
 
   const conditions = [eq(products.status, "PUBLISHED")];
@@ -257,6 +279,73 @@ export async function listProducts(filters: ProductFilters = {}) {
   if (stock) conditions.push(eq(products.stockStatus, stock));
   if (onlyPriced) conditions.push(eq(products.priceMode, "PUBLIC"));
   if (featured) conditions.push(eq(products.isFeatured, true));
+
+  /*
+   * فیلتر مشخصات فنی.
+   *
+   * هر مشخصه یک EXISTS جداگانه می‌سازد، پس چند فیلتر هم‌زمان با AND ترکیب
+   * می‌شوند (محصول باید همه شرط‌ها را داشته باشد). ایندکس
+   * product_specs_numeric_filter_idx روی (definition_id, value_base) این
+   * زیرکوئری‌ها را برای کاتالوگ بزرگ هم سریع نگه می‌دارد.
+   *
+   * مقایسه عددی روی `value_base` انجام می‌شود نه `value_num`، چون فقط
+   * مقدار پایه بین واحدهای مختلف (اسب بخار / کیلووات / وات) قابل مقایسه است.
+   * برای مقادیر بازه‌ای، منطق «هم‌پوشانی» به‌کار می‌رود: محصولی که هد آن
+   * «تا ۱۶۰» است، در بازه ۵۰ تا ۱۰۰ هم پاسخ می‌دهد.
+   */
+  for (const spec of specs ?? []) {
+    const hasRange = typeof spec.min === "number" || typeof spec.max === "number";
+    const hasValues = Array.isArray(spec.values) && spec.values.length > 0;
+    if (!hasRange && !hasValues) continue;
+
+    const clauses = [
+      sql`sd.key = ${spec.definitionKey}`,
+      sql`ps.product_id = ${products.id}`,
+    ];
+
+    if (typeof spec.min === "number") {
+      clauses.push(sql`coalesce(ps.value_base_max, ps.value_base) >= ${spec.min}`);
+    }
+    if (typeof spec.max === "number") {
+      clauses.push(sql`coalesce(ps.value_base, ps.value_base_max) <= ${spec.max}`);
+    }
+    if (hasValues) {
+      /*
+       * مقدار انتخابی می‌تواند متنی («چدن») یا عددی گسسته («۳۸۰» به‌صورت
+       * مقدار پایه) باشد. چون نوع مشخصه اینجا در دسترس نیست، هر دو ستون
+       * بررسی می‌شوند؛ ستون‌ها ایندکس دارند و مقادیر بین دو نوع تداخل
+       * معنایی ندارند.
+       */
+      const numeric = spec.values!.filter((v) => v.trim() !== "" && Number.isFinite(Number(v)));
+      const textual = spec.values!;
+
+      const valueClauses = [
+        sql`ps.value_text in (${sql.join(
+          textual.map((v) => sql`${v}`),
+          sql`, `,
+        )})`,
+      ];
+
+      if (numeric.length > 0) {
+        valueClauses.push(
+          sql`ps.value_base in (${sql.join(
+            numeric.map((v) => sql`${Number(v)}`),
+            sql`, `,
+          )})`,
+        );
+      }
+
+      clauses.push(sql`(${sql.join(valueClauses, sql` or `)})`);
+    }
+
+    conditions.push(
+      sql`exists (
+        select 1 from product_specs ps
+        join spec_definitions sd on sd.id = ps.definition_id
+        where ${sql.join(clauses, sql` and `)}
+      )`,
+    );
+  }
 
   const where = and(...conditions);
 
@@ -312,6 +401,181 @@ export const getFeaturedProducts = cache(async (limit = 8): Promise<ProductCardD
 
   return attachKeySpecs(rows as Omit<ProductCardData, "keySpecs">[]);
 });
+
+/* -------------------------------------------------------------------------- */
+/*  فیلترهای مشخصات فنی — کاملاً داده‌محور                                      */
+/* -------------------------------------------------------------------------- */
+
+export type SpecFacet = {
+  key: string;
+  label: string;
+  dataType: SpecDataType;
+  filterUi: SpecFilterUi;
+  groupName: string;
+  /** برچسب واحد پایه، برای نمایش کنار ورودی‌های عددی */
+  unitLabel: string | null;
+  unitSymbol: string | null;
+  /** برای filterUi=RANGE — کمینه/بیشینه واقعی موجود در همین دسته */
+  min: number | null;
+  max: number | null;
+  /**
+   * برای filterUi=CHECKBOX — مقادیر موجود با تعداد محصول.
+   *
+   * `value` چیزی است که در URL می‌رود و کوئری روی آن اجرا می‌شود (برای
+   * مشخصه عددی، مقدار پایه)، و `label` چیزی است که به کاربر نشان داده
+   * می‌شود (مقدار اصلی با ارقام فارسی).
+   */
+  options: { value: string; label: string; count: number }[];
+};
+
+/**
+ * فیلترهای قابل نمایش برای یک دسته‌بندی.
+ *
+ * هیچ چیز اینجا hard-code نشده: فهرست مشخصه‌ها از `category_specs` می‌آید،
+ * فیلترپذیری از `spec_definitions.is_filterable` (با امکان override در
+ * سطح دسته)، و بازه/گزینه‌ها از داده واقعی محصولات همان دسته محاسبه می‌شود.
+ *
+ * یعنی وقتی مدیر در پنل آینده یک مشخصه تازه بسازد و آن را به دسته‌ای وصل
+ * کند، فیلترش بدون هیچ تغییر کدی روی سایت ظاهر می‌شود. مشخصه‌ای که در آن
+ * دسته هیچ مقداری ندارد، نمایش داده نمی‌شود تا فیلتر بی‌فایده ساخته نشود.
+ */
+export const getCategorySpecFacets = cache(
+  async (categorySlug: string | null | undefined): Promise<SpecFacet[]> => {
+    if (!categorySlug) return [];
+
+    const categoryRow = await getCategoryBySlug(categorySlug);
+    if (!categoryRow) return [];
+
+    // دسته و همه زیرشاخه‌هایش — محصولات زیرشاخه هم باید در فیلتر بیایند
+    const categoryIds = await collectCategoryIds(categoryRow.id);
+
+    // تعریف‌های وصل‌شده به این دسته یا والدش
+    const scopeIds = categoryRow.parentId
+      ? [categoryRow.id, categoryRow.parentId]
+      : categoryIds;
+
+    const defs = await db
+      .select({
+        id: specDefinitions.id,
+        key: specDefinitions.key,
+        label: specDefinitions.label,
+        dataType: specDefinitions.dataType,
+        filterUi: specDefinitions.filterUi,
+        groupName: specDefinitions.groupName,
+        defIsFilterable: specDefinitions.isFilterable,
+        overrideFilterable: categorySpecs.isFilterable,
+        position: categorySpecs.position,
+        unitLabel: units.label,
+        unitSymbol: units.symbol,
+      })
+      .from(categorySpecs)
+      .innerJoin(specDefinitions, eq(categorySpecs.definitionId, specDefinitions.id))
+      .leftJoin(units, eq(specDefinitions.defaultUnitId, units.id))
+      .where(and(inArray(categorySpecs.categoryId, scopeIds), eq(specDefinitions.isActive, true)))
+      .orderBy(asc(categorySpecs.position), asc(specDefinitions.position));
+
+    // حذف تکراری‌ها (وقتی هم دسته و هم والد به یک تعریف وصل‌اند)
+    const unique = new Map<string, (typeof defs)[number]>();
+    for (const d of defs) if (!unique.has(d.key)) unique.set(d.key, d);
+
+    const facets: SpecFacet[] = [];
+
+    for (const def of unique.values()) {
+      const filterable = def.overrideFilterable ?? def.defIsFilterable;
+      if (!filterable || def.filterUi === "NONE") continue;
+
+      if (def.filterUi === "RANGE") {
+        const [bounds] = await db
+          .select({
+            min: sql<string | null>`min(least(${productSpecs.valueBase}, coalesce(${productSpecs.valueBaseMax}, ${productSpecs.valueBase})))`,
+            max: sql<string | null>`max(greatest(coalesce(${productSpecs.valueBaseMax}, ${productSpecs.valueBase}), ${productSpecs.valueBase}))`,
+          })
+          .from(productSpecs)
+          .innerJoin(products, eq(productSpecs.productId, products.id))
+          .where(
+            and(
+              eq(productSpecs.definitionId, def.id),
+              eq(products.status, "PUBLISHED"),
+              inArray(products.categoryId, categoryIds),
+            ),
+          );
+
+        const min = bounds?.min === null || bounds?.min === undefined ? null : Number(bounds.min);
+        const max = bounds?.max === null || bounds?.max === undefined ? null : Number(bounds.max);
+        // بدون داده یا با تک‌مقدار، فیلتر بازه‌ای معنا ندارد
+        if (min === null || max === null || min === max) continue;
+
+        facets.push({
+          key: def.key,
+          label: def.label,
+          dataType: def.dataType,
+          filterUi: def.filterUi,
+          groupName: def.groupName,
+          unitLabel: def.unitLabel,
+          unitSymbol: def.unitSymbol,
+          min,
+          max,
+          options: [],
+        });
+      } else {
+        /*
+         * فهرست گزینه‌ها.
+         *
+         * مشخصه متنی از `value_text` خوانده می‌شود و مشخصه عددیِ گسسته
+         * (مثل ولتاژ ۲۲۰/۳۸۰ یا تعداد طبقات) از `value_base`. بدون شاخه
+         * دوم، یک مشخصه NUMBER با نمایش CHECKBOX بی‌صدا ناپدید می‌شد،
+         * چون value_text آن خالی است.
+         */
+        const isNumericFacet = def.dataType === "NUMBER" || def.dataType === "RANGE";
+        const valueColumn = isNumericFacet ? productSpecs.valueBase : productSpecs.valueText;
+
+        const rows = await db
+          .select({
+            value: sql<string | null>`${valueColumn}::text`,
+            display: sql<string | null>`min(${productSpecs.value})`,
+            count: sql<number>`count(distinct ${products.id})::int`,
+          })
+          .from(productSpecs)
+          .innerJoin(products, eq(productSpecs.productId, products.id))
+          .where(
+            and(
+              eq(productSpecs.definitionId, def.id),
+              isNotNull(valueColumn),
+              eq(products.status, "PUBLISHED"),
+              inArray(products.categoryId, categoryIds),
+            ),
+          )
+          .groupBy(valueColumn)
+          .orderBy(desc(sql`count(distinct ${products.id})`), asc(valueColumn));
+
+        const options = rows
+          .filter((r) => r.value !== null)
+          .map((r) => ({
+            value: isNumericFacet ? String(Number(r.value)) : r.value!,
+            label: r.display ?? r.value!,
+            count: r.count,
+          }));
+
+        if (options.length === 0) continue;
+
+        facets.push({
+          key: def.key,
+          label: def.label,
+          dataType: def.dataType,
+          filterUi: def.filterUi,
+          groupName: def.groupName,
+          unitLabel: def.unitLabel,
+          unitSymbol: def.unitSymbol,
+          min: null,
+          max: null,
+          options,
+        });
+      }
+    }
+
+    return facets;
+  },
+);
 
 /**
  * محصولات یک راهکار — بر اساس برچسب.

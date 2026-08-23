@@ -10,11 +10,13 @@ import { ProductCardSkeleton } from "@/components/ui/skeleton";
 import type { StockStatus } from "@/db/schema";
 import type { SortOption } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
+import { SPEC_PARAM_PREFIX, parseSpecParams } from "@/lib/spec-filter-params";
 import { buildQuery } from "@/lib/utils";
 import {
   getBrandBySlug,
   getBrands,
   getCategoryBySlug,
+  getCategorySpecFacets,
   getCategoryTree,
   getPriceRange,
   listProducts,
@@ -76,14 +78,25 @@ export async function generateMetadata({
 export default async function ProductsPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
 
+  const categorySlug = first(params.category);
+
+  /*
+   * فیلترهای فنی قابل نمایش، از دسته‌بندی فعال خوانده می‌شوند. کلیدهای
+   * مجاز هم از همین‌جا می‌آید تا پارامتر دست‌کاری‌شده در URL نتواند روی
+   * مشخصه‌ای فیلتر بزند که به این دسته تعلق ندارد.
+   */
+  const specFacets = await getCategorySpecFacets(categorySlug);
+  const specs = parseSpecParams(params, specFacets.map((f) => f.key));
+
   const filters = {
     q: first(params.q),
-    category: first(params.category),
+    category: categorySlug,
     brand: first(params.brand),
     stock: first(params.stock) as StockStatus | undefined,
     onlyPriced: first(params.priced) === "1",
     sort: (first(params.sort) ?? "newest") as SortOption,
     page: Math.max(1, Number(first(params.page) ?? 1) || 1),
+    specs,
   };
 
   const [{ items, total, page, pageCount }, categories, brands, priceRange, category, brand] =
@@ -103,10 +116,23 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
     "تمام تجهیزات آبرسانی و صنعتی در یک فهرست، همراه با مشخصات فنی و امکان استعلام قیمت آنلاین.";
 
   const filtersPanel = (
-    <ProductFilters categories={categories} brands={brands} priceRange={priceRange} />
+    <ProductFilters
+      categories={categories}
+      brands={brands}
+      priceRange={priceRange}
+      specFacets={specFacets}
+    />
   );
 
   function hrefForPage(nextPage: number) {
+    // پارامترهای مشخصات فنی هنگام صفحه‌بندی باید حفظ شوند
+    const specParams: Record<string, string> = {};
+    for (const [key, value] of Object.entries(params)) {
+      if (!key.startsWith(SPEC_PARAM_PREFIX)) continue;
+      const v = first(value);
+      if (v) specParams[key] = v;
+    }
+
     return `/products${buildQuery({
       q: filters.q,
       category: filters.category,
@@ -114,6 +140,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
       stock: filters.stock,
       priced: filters.onlyPriced ? "1" : undefined,
       sort: filters.sort === "newest" ? undefined : filters.sort,
+      ...specParams,
       page: nextPage === 1 ? undefined : nextPage,
     })}`;
   }
@@ -147,6 +174,11 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
               <EmptyResults query={filters.q} />
             ) : (
               <>
+                {/*
+                  کارت‌های محصول تیتر h3 دارند و مستقیم زیر h1 صفحه می‌نشستند؛
+                  این h2 پنهان، پرش سطح تیتر را برای صفحه‌خوان‌ها می‌بندد.
+                */}
+                <h2 className="sr-only">فهرست محصولات</h2>
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {items.map((product, index) => (
                     <Reveal key={product.id} delay={Math.min(index, 6) * 60}>

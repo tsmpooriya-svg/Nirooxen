@@ -6,8 +6,9 @@ import * as React from "react";
 
 import { DomainIcon } from "@/components/ui/icons";
 import { SORT_OPTIONS, STOCK_STATUS } from "@/lib/constants";
+import { SPEC_PARAM_PREFIX, specParamName } from "@/lib/spec-filter-params";
 import { cn, formatPrice, toFaDigits } from "@/lib/utils";
-import type { CategoryNode } from "@/modules/catalog/queries";
+import type { CategoryNode, SpecFacet } from "@/modules/catalog/queries";
 
 type Brand = { id: string; name: string; slug: string; productCount: number };
 
@@ -21,12 +22,15 @@ export function ProductFilters({
   categories,
   brands,
   priceRange,
+  specFacets = [],
   className,
   onNavigate,
 }: {
   categories: CategoryNode[];
   brands: Brand[];
   priceRange: { min: number; max: number };
+  /** فیلترهای مشخصات فنی — از دسته‌بندی فعال ساخته می‌شوند، نه hard-code */
+  specFacets?: SpecFacet[];
   className?: string;
   onNavigate?: () => void;
 }) {
@@ -61,7 +65,41 @@ export function ProductFilters({
     onNavigate?.();
   }
 
-  const hasFilters = Boolean(activeCategory || activeBrand || activeStock || onlyPriced || params.get("q"));
+  /** مقادیر متنی انتخاب‌شده برای یک مشخصه */
+  function selectedSpecValues(key: string): string[] {
+    const raw = params.get(specParamName(key));
+    return raw ? raw.split(",").map((v) => v.trim()).filter(Boolean) : [];
+  }
+
+  function toggleSpecValue(key: string, value: string) {
+    const current = selectedSpecValues(key);
+    const next = current.includes(value)
+      ? current.filter((v) => v !== value)
+      : [...current, value];
+    const search = new URLSearchParams(params.toString());
+    if (next.length === 0) search.delete(specParamName(key));
+    else search.set(specParamName(key), next.join(","));
+    search.delete("page");
+    router.push(`${pathname}?${search.toString()}`, { scroll: false });
+    onNavigate?.();
+  }
+
+  function applySpecRange(key: string, min: string, max: string) {
+    const search = new URLSearchParams(params.toString());
+    for (const [bound, value] of [["min", min], ["max", max]] as const) {
+      const name = specParamName(key, bound);
+      if (value.trim() === "") search.delete(name);
+      else search.set(name, value.trim());
+    }
+    search.delete("page");
+    router.push(`${pathname}?${search.toString()}`, { scroll: false });
+    onNavigate?.();
+  }
+
+  const hasSpecFilters = [...params.keys()].some((k) => k.startsWith(SPEC_PARAM_PREFIX));
+  const hasFilters = Boolean(
+    activeCategory || activeBrand || activeStock || onlyPriced || params.get("q") || hasSpecFilters,
+  );
 
   return (
     <div className={cn("space-y-6", className)}>
@@ -253,6 +291,25 @@ export function ProductFilters({
         )}
       </FilterGroup>
 
+      {/*
+        فیلترهای فنی — کاملاً داده‌محور.
+        فهرست، برچسب، واحد و نوع ورودی از spec_definitions/category_specs
+        می‌آید. افزودن مشخصه تازه از پنل مدیریت، بدون تغییر این کامپوننت
+        فیلترش را اینجا ظاهر می‌کند.
+      */}
+      {specFacets.map((facet) =>
+        facet.filterUi === "RANGE" ? (
+          <SpecRangeFilter key={facet.key} facet={facet} params={params} onApply={applySpecRange} />
+        ) : (
+          <SpecOptionsFilter
+            key={facet.key}
+            facet={facet}
+            selected={selectedSpecValues(facet.key)}
+            onToggle={toggleSpecValue}
+          />
+        ),
+      )}
+
       <div className="rounded-lg border border-[var(--border-brand)] bg-[var(--brand-soft)] p-4">
         <p className="text-xs leading-7 text-[var(--fg-secondary)]">
           محصول موردنظرتان در فهرست نیست؟ درخواست تأمین ثبت کنید؛ کارشناسان ما آن را پیدا می‌کنند.
@@ -266,6 +323,145 @@ export function ProductFilters({
       </div>
     </div>
   );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  فیلترهای مشخصات فنی                                                         */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * فیلتر بازه عددی.
+ *
+ * مقدارها بر حسب **واحد پایه** تبادل می‌شوند تا مقایسه بین واحدهای مختلف
+ * (اسب بخار / کیلووات) درست بماند؛ برچسب واحد پایه کنار ورودی نشان داده
+ * می‌شود تا کاربر بداند عدد را در چه واحدی وارد می‌کند.
+ *
+ * ورودی‌ها تا زمان فشردن «اعمال» مقدار محلی دارند؛ این کار از یک درخواست
+ * شبکه به ازای هر کلید فشرده‌شده جلوگیری می‌کند.
+ */
+function SpecRangeFilter({
+  facet,
+  params,
+  onApply,
+}: {
+  facet: SpecFacet;
+  params: URLSearchParams;
+  onApply: (key: string, min: string, max: string) => void;
+}) {
+  const urlMin = params.get(specParamName(facet.key, "min")) ?? "";
+  const urlMax = params.get(specParamName(facet.key, "max")) ?? "";
+  const [min, setMin] = React.useState(urlMin);
+  const [max, setMax] = React.useState(urlMax);
+
+  // وقتی URL از بیرون عوض شد (پاک‌کردن فیلترها، دکمه Back) ورودی‌ها همگام شوند
+  const [lastUrl, setLastUrl] = React.useState({ urlMin, urlMax });
+  if (lastUrl.urlMin !== urlMin || lastUrl.urlMax !== urlMax) {
+    setLastUrl({ urlMin, urlMax });
+    setMin(urlMin);
+    setMax(urlMax);
+  }
+
+  const dirty = min !== urlMin || max !== urlMax;
+  const unit = facet.unitSymbol ?? facet.unitLabel;
+  const hint =
+    facet.min !== null && facet.max !== null
+      ? `موجود: ${toFaDigits(round(facet.min))} تا ${toFaDigits(round(facet.max))}`
+      : null;
+
+  return (
+    <FilterGroup title={unit ? `${facet.label} (${unit})` : facet.label}>
+      <div className="flex items-center gap-2">
+        <label className="flex-1">
+          <span className="sr-only">{`کمینه ${facet.label}`}</span>
+          <input
+            type="number"
+            inputMode="decimal"
+            value={min}
+            onChange={(e) => setMin(e.target.value)}
+            placeholder={facet.min !== null ? String(round(facet.min)) : "از"}
+            dir="ltr"
+            className="h-9 w-full rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-2.5 text-center font-mono text-xs outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
+          />
+        </label>
+        <span className="text-xs text-[var(--fg-subtle)]" aria-hidden>
+          تا
+        </span>
+        <label className="flex-1">
+          <span className="sr-only">{`بیشینه ${facet.label}`}</span>
+          <input
+            type="number"
+            inputMode="decimal"
+            value={max}
+            onChange={(e) => setMax(e.target.value)}
+            placeholder={facet.max !== null ? String(round(facet.max)) : "تا"}
+            dir="ltr"
+            className="h-9 w-full rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-2.5 text-center font-mono text-xs outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
+          />
+        </label>
+      </div>
+
+      {hint && <p className="mt-2 font-mono text-[0.625rem] text-[var(--fg-subtle)]">{hint}</p>}
+
+      {dirty && (
+        <button
+          type="button"
+          onClick={() => onApply(facet.key, min, max)}
+          className="mt-3 h-8 w-full rounded-md bg-[var(--brand)] text-xs font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
+        >
+          اعمال
+        </button>
+      )}
+    </FilterGroup>
+  );
+}
+
+/** فیلتر چندانتخابی برای مشخصه‌های متنی */
+function SpecOptionsFilter({
+  facet,
+  selected,
+  onToggle,
+}: {
+  facet: SpecFacet;
+  selected: string[];
+  onToggle: (key: string, value: string) => void;
+}) {
+  return (
+    <FilterGroup title={facet.label}>
+      <ul className="space-y-0.5">
+        {facet.options.map((option) => {
+          const checked = selected.includes(option.value);
+          return (
+            <li key={option.value}>
+              <label
+                className={cn(
+                  "flex cursor-pointer items-center gap-2.5 rounded-sm px-2 py-2 text-[0.8125rem] transition-colors",
+                  checked
+                    ? "bg-[var(--brand-soft)] font-medium text-[var(--brand)]"
+                    : "text-[var(--fg-secondary)] hover:bg-[var(--bg-elev-3)]",
+                )}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() => onToggle(facet.key, option.value)}
+                  className="size-4 shrink-0 accent-[var(--brand)]"
+                />
+                <span className="min-w-0 flex-1 truncate">{option.label}</span>
+                <span className="shrink-0 font-mono text-[0.625rem] text-[var(--fg-subtle)]">
+                  {toFaDigits(option.count)}
+                </span>
+              </label>
+            </li>
+          );
+        })}
+      </ul>
+    </FilterGroup>
+  );
+}
+
+/** اعداد پایه ممکن است اعشار طولانی داشته باشند (۰٫۵ اسب = ۰٫۳۷۲۸۵ کیلووات) */
+function round(value: number): number {
+  return Math.round(value * 100) / 100;
 }
 
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
