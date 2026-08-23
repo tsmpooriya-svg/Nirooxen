@@ -173,6 +173,58 @@ export const postFormSchema = z.object({
   metaDescription: z.string().trim().max(320).optional(),
 });
 
+/* --------------------------- مشخصات فنی و واحدها --------------------------- */
+
+/** شناسه ماشینی: فقط حروف کوچک لاتین، رقم و زیرخط */
+const machineKey = z
+  .string()
+  .trim()
+  .min(2, "شناسه خیلی کوتاه است")
+  .max(64)
+  .regex(/^[a-z][a-z0-9_]*$/, "فقط حروف کوچک انگلیسی، رقم و زیرخط — با حرف شروع شود");
+
+export const unitFormSchema = z.object({
+  code: machineKey.max(32),
+  label: z.string().trim().min(1, "برچسب الزامی است").max(64),
+  symbol: z.string().trim().max(16).optional(),
+  dimension: z.enum([
+    "POWER", "LENGTH", "FLOW", "PRESSURE", "VOLUME",
+    "TEMPERATURE", "VOLTAGE", "MASS", "ROTATION", "COUNT", "OTHER",
+  ]),
+  toBaseFactor: z.coerce
+    .number()
+    .refine((n) => Number.isFinite(n) && n > 0, "ضریب تبدیل باید عددی بزرگ‌تر از صفر باشد"),
+  isBase: checkbox.default(false),
+  isActive: checkbox.default(true),
+  position: z.coerce.number().int().min(0).max(9999).default(0),
+});
+
+export const specDefinitionFormSchema = z.object({
+  key: machineKey,
+  label: z.string().trim().min(1, "برچسب الزامی است").max(160),
+  description: z.string().trim().max(600).optional(),
+  dataType: z.enum(["NUMBER", "RANGE", "TEXT", "BOOLEAN"]),
+  dimension: z
+    .enum([
+      "POWER", "LENGTH", "FLOW", "PRESSURE", "VOLUME",
+      "TEMPERATURE", "VOLTAGE", "MASS", "ROTATION", "COUNT", "OTHER",
+    ])
+    .optional(),
+  defaultUnitId: z.string().trim().optional(),
+  groupName: z.string().trim().max(120).default("مشخصات عمومی"),
+  isFilterable: checkbox.default(false),
+  filterUi: z.enum(["RANGE", "CHECKBOX", "BOOLEAN", "NONE"]).default("NONE"),
+  isActive: checkbox.default(true),
+  position: z.coerce.number().int().min(0).max(9999).default(0),
+});
+
+export const categorySpecFormSchema = z.object({
+  categoryId: z.string().trim().min(1, "دسته‌بندی الزامی است"),
+  definitionId: z.string().trim().min(1, "مشخصه الزامی است"),
+  isKey: checkbox.default(false),
+  position: z.coerce.number().int().min(0).max(9999).default(0),
+});
+
 /* -------------------------------- پروژه‌ها -------------------------------- */
 
 export const projectFormSchema = z.object({

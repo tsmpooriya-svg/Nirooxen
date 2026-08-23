@@ -4,6 +4,7 @@ import * as React from "react";
 import { useActionState } from "react";
 
 import { Checkbox, Field, Input, Select } from "@/components/ui/field";
+import { DialogTrigger, type TriggerConfig } from "@/components/admin/dialog-trigger";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { USER_ROLE } from "@/lib/constants";
@@ -25,7 +26,7 @@ export function UserDialog({
   trigger,
 }: {
   values: UserValues;
-  trigger: (open: () => void) => React.ReactNode;
+  trigger: TriggerConfig;
 }) {
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -51,7 +52,7 @@ export function UserDialog({
 
   return (
     <>
-      {trigger(() => setOpen(true))}
+      <DialogTrigger config={trigger} onOpen={() => setOpen(true)} />
 
       <Modal open={open} onClose={() => setOpen(false)} title={values.id ? `ویرایش «${values.name}»` : "کاربر جدید"} size="sm">
         <form action={formAction} className="space-y-5">

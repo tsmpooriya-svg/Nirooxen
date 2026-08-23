@@ -18,6 +18,7 @@ import { db } from "@/db";
 import {
   brands,
   categories,
+  categorySpecs,
   contactMessages,
   customers,
   orderEvents,
@@ -29,6 +30,8 @@ import {
   products,
   projects,
   settings,
+  specDefinitions,
+  units,
   users,
   type MessageStatus,
   type OrderPriority,
@@ -44,9 +47,12 @@ import {
   brandFormSchema,
   categoryFormSchema,
   customerFormSchema,
+  categorySpecFormSchema,
   postFormSchema,
   productFormSchema,
   projectFormSchema,
+  specDefinitionFormSchema,
+  unitFormSchema,
   toFieldErrors,
   userFormSchema,
   type FieldErrors,
@@ -795,6 +801,235 @@ export async function deletePost(postId: string): Promise<ActionState> {
     revalidatePath("/admin/posts");
     revalidatePath("/news");
     return { status: "success", message: "مطلب حذف شد." };
+  });
+}
+
+/* ========================================================================== */
+/*  مشخصات فنی — واحد، تعریف، اتصال به دسته                                    */
+/* ========================================================================== */
+/*
+ *  این سه اکشن همان چیزی هستند که «مدیریت کاتالوگ بدون کدنویسی» را ممکن
+ *  می‌کنند: مدیر می‌تواند واحد تازه بسازد، مشخصه تعریف کند، فیلترپذیرش کند و
+ *  به دسته‌بندی وصلش کند. فرانت‌اند بدون تغییر کد آن را نشان می‌دهد، چون
+ *  getCategorySpecFacets فیلترها را از همین جدول‌ها می‌سازد.
+ */
+
+export async function saveUnit(
+  unitId: string | null,
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  return guard(async () => {
+    const user = await requirePermission("products");
+
+    const parsed = unitFormSchema.safeParse({
+      code: formData.get("code"),
+      label: formData.get("label"),
+      symbol: formData.get("symbol") || undefined,
+      dimension: formData.get("dimension"),
+      toBaseFactor: formData.get("toBaseFactor"),
+      isBase: formData.get("isBase"),
+      isActive: formData.get("isActive"),
+      position: formData.get("position") || 0,
+    });
+
+    if (!parsed.success) {
+      return { status: "error", message: "لطفاً خطاهای فرم را برطرف کنید.", errors: toFieldErrors(parsed.error) };
+    }
+
+    const input = parsed.data;
+
+    const values = {
+      code: input.code,
+      label: input.label,
+      symbol: input.symbol ?? null,
+      dimension: input.dimension,
+      toBaseFactor: String(input.toBaseFactor),
+      isBase: input.isBase,
+      isActive: input.isActive,
+      position: input.position,
+      updatedAt: new Date(),
+    };
+
+    if (unitId) await db.update(units).set(values).where(eq(units.id, unitId));
+    else await db.insert(units).values(values);
+
+    /*
+     * در هر بُعد باید دقیقاً یک واحد پایه باشد. اگر این واحد پایه اعلام شد،
+     * بقیه واحدهای همان بُعد از حالت پایه خارج می‌شوند — وگرنه تبدیل واحد
+     * بی‌معنا می‌شد و فیلتر عددی نتیجه اشتباه می‌داد.
+     */
+    if (input.isBase) {
+      await db
+        .update(units)
+        .set({ isBase: false })
+        .where(and(eq(units.dimension, input.dimension), sql`${units.code} <> ${input.code}`));
+    }
+
+    await logActivity({
+      userId: user.id,
+      action: unitId ? "update" : "create",
+      entity: "product",
+      entityId: unitId ?? undefined,
+      summary: `${unitId ? "ویرایش" : "ایجاد"} واحد «${input.label}»`,
+    });
+
+    revalidatePath("/admin/specs");
+    revalidatePath("/products");
+    return { status: "success", message: "واحد ذخیره شد." };
+  });
+}
+
+export async function saveSpecDefinition(
+  definitionId: string | null,
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  return guard(async () => {
+    const user = await requirePermission("products");
+
+    const parsed = specDefinitionFormSchema.safeParse({
+      key: formData.get("key"),
+      label: formData.get("label"),
+      description: formData.get("description") || undefined,
+      dataType: formData.get("dataType"),
+      dimension: formData.get("dimension") || undefined,
+      defaultUnitId: formData.get("defaultUnitId") || undefined,
+      groupName: formData.get("groupName") || "مشخصات عمومی",
+      isFilterable: formData.get("isFilterable"),
+      filterUi: formData.get("filterUi") || "NONE",
+      isActive: formData.get("isActive"),
+      position: formData.get("position") || 0,
+    });
+
+    if (!parsed.success) {
+      return { status: "error", message: "لطفاً خطاهای فرم را برطرف کنید.", errors: toFieldErrors(parsed.error) };
+    }
+
+    const input = parsed.data;
+
+    // فیلتر بازه‌ای فقط روی مقدار عددی معنا دارد
+    if (input.filterUi === "RANGE" && (input.dataType === "TEXT" || input.dataType === "BOOLEAN")) {
+      return { status: "error", message: "فیلتر بازه‌ای فقط برای مشخصه عددی معنا دارد." };
+    }
+
+    const values = {
+      key: input.key,
+      label: input.label,
+      description: input.description ?? null,
+      dataType: input.dataType,
+      dimension: input.dimension ?? null,
+      defaultUnitId: input.defaultUnitId || null,
+      groupName: input.groupName,
+      isFilterable: input.isFilterable,
+      filterUi: input.filterUi,
+      isActive: input.isActive,
+      position: input.position,
+      updatedAt: new Date(),
+    };
+
+    if (definitionId) await db.update(specDefinitions).set(values).where(eq(specDefinitions.id, definitionId));
+    else await db.insert(specDefinitions).values(values);
+
+    await logActivity({
+      userId: user.id,
+      action: definitionId ? "update" : "create",
+      entity: "product",
+      entityId: definitionId ?? undefined,
+      summary: `${definitionId ? "ویرایش" : "ایجاد"} مشخصه «${input.label}»`,
+    });
+
+    revalidatePath("/admin/specs");
+    revalidatePath("/products");
+    return { status: "success", message: "مشخصه ذخیره شد." };
+  });
+}
+
+export async function deleteSpecDefinition(definitionId: string): Promise<ActionState> {
+  return guard(async () => {
+    const user = await requirePermission("products");
+
+    /*
+     * حذف تعریف، definition_id ردیف‌های مقدار را null می‌کند (ON DELETE SET
+     * NULL) و آن مقادیر بی‌صدا از فیلترها بیرون می‌افتند. پس به‌جای حذف
+     * خاموش، تعداد وابستگی را گزارش و غیرفعال‌کردن را پیشنهاد می‌کنیم.
+     */
+    const [row] = await db
+      .select({ n: sql<number>`count(*)::int` })
+      .from(productSpecs)
+      .where(eq(productSpecs.definitionId, definitionId));
+
+    const used = row?.n ?? 0;
+    if (used > 0) {
+      return {
+        status: "error",
+        message: `این مشخصه روی ${used} مقدار محصول استفاده شده است. به‌جای حذف، آن را غیرفعال کنید.`,
+      };
+    }
+
+    await db.delete(specDefinitions).where(eq(specDefinitions.id, definitionId));
+    await logActivity({
+      userId: user.id, action: "delete", entity: "product", entityId: definitionId, summary: "حذف مشخصه فنی",
+    });
+
+    revalidatePath("/admin/specs");
+    revalidatePath("/products");
+    return { status: "success", message: "مشخصه حذف شد." };
+  });
+}
+
+export async function saveCategorySpec(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  return guard(async () => {
+    const user = await requirePermission("categories");
+
+    const parsed = categorySpecFormSchema.safeParse({
+      categoryId: formData.get("categoryId"),
+      definitionId: formData.get("definitionId"),
+      isKey: formData.get("isKey"),
+      position: formData.get("position") || 0,
+    });
+
+    if (!parsed.success) {
+      return { status: "error", message: "لطفاً خطاهای فرم را برطرف کنید.", errors: toFieldErrors(parsed.error) };
+    }
+
+    const input = parsed.data;
+
+    await db
+      .insert(categorySpecs)
+      .values({
+        categoryId: input.categoryId,
+        definitionId: input.definitionId,
+        isKey: input.isKey,
+        position: input.position,
+      })
+      .onConflictDoUpdate({
+        target: [categorySpecs.categoryId, categorySpecs.definitionId],
+        set: { isKey: input.isKey, position: input.position },
+      });
+
+    await logActivity({
+      userId: user.id, action: "update", entity: "category", entityId: input.categoryId,
+      summary: "اتصال مشخصه فنی به دسته‌بندی",
+    });
+
+    revalidatePath("/admin/specs");
+    revalidatePath("/products");
+    return { status: "success", message: "اتصال ذخیره شد." };
+  });
+}
+
+export async function deleteCategorySpec(linkId: string): Promise<ActionState> {
+  return guard(async () => {
+    const user = await requirePermission("categories");
+    await db.delete(categorySpecs).where(eq(categorySpecs.id, linkId));
+    await logActivity({
+      userId: user.id, action: "delete", entity: "category", entityId: linkId,
+      summary: "حذف اتصال مشخصه از دسته‌بندی",
+    });
+    revalidatePath("/admin/specs");
+    revalidatePath("/products");
+    return { status: "success", message: "اتصال حذف شد." };
   });
 }
 

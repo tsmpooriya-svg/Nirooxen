@@ -12,6 +12,7 @@ import {
   activityLogs,
   brands,
   categories,
+  categorySpecs,
   contactMessages,
   customers,
   orderEvents,
@@ -23,6 +24,8 @@ import {
   products,
   projects,
   settings,
+  specDefinitions,
+  units,
   users,
   type MessageStatus,
   type OrderStatus,
@@ -363,6 +366,63 @@ export async function getAdminProduct(id: string) {
   ]);
 
   return { product, images, specs };
+}
+
+/* -------------------------------------------------------------------------- */
+/*  مشخصات فنی (فاز ۳) — رابط مدیریت                                           */
+/* -------------------------------------------------------------------------- */
+
+/** واحدها با تعداد استفاده — برای جلوگیری از حذف واحد در حال استفاده */
+export async function getAdminUnits() {
+  return db
+    .select({
+      unit: units,
+      usageCount: sql<number>`(
+        select count(*)::int from product_specs ps where ps.unit_id = units.id
+      )`,
+      definitionCount: sql<number>`(
+        select count(*)::int from spec_definitions sd where sd.default_unit_id = units.id
+      )`,
+    })
+    .from(units)
+    .orderBy(asc(units.dimension), asc(units.position), asc(units.code));
+}
+
+/** تعریف مشخصات با تعداد مقدار ثبت‌شده و تعداد دسته‌بندی متصل */
+export async function getAdminSpecDefinitions() {
+  return db
+    .select({
+      definition: specDefinitions,
+      unitLabel: units.label,
+      unitSymbol: units.symbol,
+      valueCount: sql<number>`(
+        select count(*)::int from product_specs ps where ps.definition_id = spec_definitions.id
+      )`,
+      categoryCount: sql<number>`(
+        select count(*)::int from category_specs cs where cs.definition_id = spec_definitions.id
+      )`,
+    })
+    .from(specDefinitions)
+    .leftJoin(units, eq(specDefinitions.defaultUnitId, units.id))
+    .orderBy(asc(specDefinitions.position), asc(specDefinitions.label));
+}
+
+/** اتصال‌های دسته↔مشخصه، گروه‌بندی‌شده بر اساس دسته */
+export async function getAdminCategorySpecs() {
+  return db
+    .select({
+      link: categorySpecs,
+      categoryName: categories.name,
+      categorySlug: categories.slug,
+      definitionKey: specDefinitions.key,
+      definitionLabel: specDefinitions.label,
+      definitionFilterable: specDefinitions.isFilterable,
+      filterUi: specDefinitions.filterUi,
+    })
+    .from(categorySpecs)
+    .innerJoin(categories, eq(categorySpecs.categoryId, categories.id))
+    .innerJoin(specDefinitions, eq(categorySpecs.definitionId, specDefinitions.id))
+    .orderBy(asc(categories.position), asc(categories.name), asc(categorySpecs.position));
 }
 
 /* -------------------------------------------------------------------------- */

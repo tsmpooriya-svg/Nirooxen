@@ -22,16 +22,8 @@ export default async function AdminProjectsPage() {
         actions={
           <ProjectDialog
             values={empty}
-            trigger={(open) => (
-              <button
-                type="button"
-                onClick={open}
-                className="flex h-10 items-center gap-2 rounded-md bg-[var(--brand)] px-4 text-sm font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
-              >
-                پروژه جدید
-              </button>
-            )}
-          />
+            trigger={{ kind: "primary", label: "پروژه جدید" }}
+            />
         }
       />
 
@@ -80,19 +72,8 @@ export default async function AdminProjectsPage() {
                       isActive: project.isActive,
                       isFeatured: project.isFeatured,
                     }}
-                    trigger={(open) => (
-                      <button
-                        type="button"
-                        onClick={open}
-                        aria-label={`ویرایش ${project.title}`}
-                        className="grid size-8 place-items-center rounded-md text-[var(--fg-subtle)] transition-colors hover:text-[var(--brand)]"
-                      >
-                        <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6">
-                          <path d="M11 2.5 13.5 5 6 12.5 3 13l.5-3z" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
-                    )}
-                  />
+                    trigger={{ kind: "icon", label: `ویرایش ${project.title}` }}
+                    />
                   <DeleteProjectButton id={project.id} title={project.title} />
                 </div>
               </Td>

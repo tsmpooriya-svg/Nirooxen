@@ -21,16 +21,8 @@ export default async function AdminBrandsPage() {
         actions={
           <BrandDialog
             values={empty}
-            trigger={(open) => (
-              <button
-                type="button"
-                onClick={open}
-                className="flex h-10 items-center gap-2 rounded-md bg-[var(--brand)] px-4 text-sm font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
-              >
-                برند جدید
-              </button>
-            )}
-          />
+            trigger={{ kind: "primary", label: "برند جدید" }}
+            />
         }
       />
 
@@ -60,19 +52,8 @@ export default async function AdminBrandsPage() {
                       description: "", website: "", logoUrl: "", position: String(brand.position),
                       isActive: brand.isActive, isFeatured: brand.isFeatured,
                     }}
-                    trigger={(open) => (
-                      <button
-                        type="button"
-                        onClick={open}
-                        aria-label={`ویرایش ${brand.name}`}
-                        className="grid size-8 place-items-center rounded-md text-[var(--fg-subtle)] transition-colors hover:text-[var(--brand)]"
-                      >
-                        <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6">
-                          <path d="M11 2.5 13.5 5 6 12.5 3 13l.5-3z" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
-                    )}
-                  />
+                    trigger={{ kind: "icon", label: `ویرایش ${brand.name}` }}
+                    />
                   <DeleteTaxonomyButton kind="brand" id={brand.id} name={brand.name} />
                 </div>
               </Td>

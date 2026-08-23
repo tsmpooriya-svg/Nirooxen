@@ -17,16 +17,8 @@ export default async function AdminUsersPage() {
         actions={
           <UserDialog
             values={{ name: "", email: "", phone: "", role: "SALES", isActive: true }}
-            trigger={(open) => (
-              <button
-                type="button"
-                onClick={open}
-                className="flex h-10 items-center rounded-md bg-[var(--brand)] px-4 text-sm font-medium text-[var(--fg-on-brand)] hover:bg-[var(--brand-hover)]"
-              >
-                کاربر جدید
-              </button>
-            )}
-          />
+            trigger={{ kind: "primary", label: "کاربر جدید" }}
+            />
         }
       />
 
@@ -64,19 +56,8 @@ export default async function AdminUsersPage() {
                     id: user.id, name: user.name, email: user.email,
                     phone: user.phone ?? "", role: user.role, isActive: user.isActive,
                   }}
-                  trigger={(open) => (
-                    <button
-                      type="button"
-                      onClick={open}
-                      aria-label={`ویرایش ${user.name}`}
-                      className="grid size-8 place-items-center rounded-md text-[var(--fg-subtle)] transition-colors hover:text-[var(--brand)]"
-                    >
-                      <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6">
-                        <path d="M11 2.5 13.5 5 6 12.5 3 13l.5-3z" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-                  )}
-                />
+                  trigger={{ kind: "icon", label: `ویرایش ${user.name}` }}
+                    />
               </Td>
             </Tr>
           ))}

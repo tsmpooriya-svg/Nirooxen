@@ -4,6 +4,7 @@ import * as React from "react";
 import { useActionState, useTransition } from "react";
 
 import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
+import { DialogTrigger, type TriggerConfig } from "@/components/admin/dialog-trigger";
 import { ConfirmDialog, Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { domainIcons } from "@/components/ui/icons";
@@ -36,7 +37,7 @@ export function CategoryDialog({
 }: {
   values: CategoryValues;
   parents: { id: string; name: string }[];
-  trigger: (open: () => void) => React.ReactNode;
+  trigger: TriggerConfig;
 }) {
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -62,7 +63,7 @@ export function CategoryDialog({
 
   return (
     <>
-      {trigger(() => setOpen(true))}
+      <DialogTrigger config={trigger} onOpen={() => setOpen(true)} />
 
       <Modal
         open={open}
@@ -177,7 +178,7 @@ export function BrandDialog({
   trigger,
 }: {
   values: BrandValues;
-  trigger: (open: () => void) => React.ReactNode;
+  trigger: TriggerConfig;
 }) {
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -203,7 +204,7 @@ export function BrandDialog({
 
   return (
     <>
-      {trigger(() => setOpen(true))}
+      <DialogTrigger config={trigger} onOpen={() => setOpen(true)} />
 
       <Modal open={open} onClose={() => setOpen(false)} title={values.id ? `ویرایش «${values.name}»` : "برند جدید"} size="md">
         <form action={formAction} className="space-y-5">

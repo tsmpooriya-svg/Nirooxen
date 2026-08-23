@@ -75,6 +75,12 @@ const navGroups: { label: string; items: NavItem[] }[] = [
         icon: icon("M3 4.5h5v5H3zM12 4.5h5v5h-5zM3 10.5h5v5H3zM12 10.5h5v5h-5z"),
       },
       {
+        href: "/admin/specs",
+        title: "مشخصات فنی",
+        permission: "products",
+        icon: icon("M3 5h14M3 10h14M3 15h9M15.5 13.5v4M13.5 15.5h4"),
+      },
+      {
         href: "/admin/brands",
         title: "برندها",
         permission: "brands",

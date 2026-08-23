@@ -5,6 +5,7 @@ import { useActionState, useTransition } from "react";
 
 import { Checkbox, Field, Input, Textarea } from "@/components/ui/field";
 import { ConfirmDialog, Modal } from "@/components/ui/modal";
+import { DialogTrigger, type TriggerConfig } from "@/components/admin/dialog-trigger";
 import { useToast } from "@/components/ui/toast";
 import { deleteProject, saveProject, type ActionState } from "@/modules/admin/actions";
 
@@ -42,7 +43,7 @@ export function ProjectDialog({
   trigger,
 }: {
   values: ProjectValues;
-  trigger: (open: () => void) => React.ReactNode;
+  trigger: TriggerConfig;
 }) {
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -67,7 +68,7 @@ export function ProjectDialog({
 
   return (
     <>
-      {trigger(() => setOpen(true))}
+      <DialogTrigger config={trigger} onOpen={() => setOpen(true)} />
 
       <Modal
         open={open}
