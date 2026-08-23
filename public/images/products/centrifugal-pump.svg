@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-label="CENTRIFUGAL PUMP">
+  <defs>
+    <linearGradient id="bg-g0" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#050910"/>
+    </linearGradient>
+    <radialGradient id="glow-g0" cx="50%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#22bcd6" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#22bcd6" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid-g0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0v24" fill="none" stroke="#ffffff" stroke-opacity=".045" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="480" height="360" fill="url(#bg-g0)"/>
+  <rect width="480" height="360" fill="url(#grid-g0)"/>
+  <rect width="480" height="360" fill="url(#glow-g0)"/>
+  <g fill="none" stroke="#4fd3e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".92">
+    <circle cx="200" cy="190" r="82" />
+    <circle cx="200" cy="190" r="58" opacity=".55" />
+    <circle cx="200" cy="190" r="10" fill="currentColor" stroke="none" />
+    <path d="M200 190 258 148M200 190l62 30M200 190l-24 78M200 190l-72-26M200 190l34-72" opacity=".7" />
+    <path d="M200 108V70h64" />
+    <path d="M282 190h76v52" />
+    <rect x="118" y="252" width="164" height="30" rx="4" />
+    <path d="M140 282v18M260 282v18" />
+    <path d="M330 132h52M356 106v52" opacity=".45" />
+  </g>
+  <g fill="none" stroke="#22bcd6" stroke-width="1" opacity=".5">
+    <path d="M18 18h26M18 18v26M462 18h-26M462 18v26M18 342h26M18 342v-26M462 342h-26M462 342v-26"/>
+  </g>
+  <text x="24" y="348" fill="#4fd3e8" fill-opacity=".55" font-family="ui-monospace, monospace" font-size="11" letter-spacing="2">CENTRIFUGAL PUMP</text>
+</svg>

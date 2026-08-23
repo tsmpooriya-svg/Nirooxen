@@ -1,0 +1,718 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   ARIA — Design System
+   «هیدرو-بلوپرینت» / Hydro Blueprint
+   Dark-first engineering console aesthetic for industrial water equipment.
+   Every visual decision in the product traces back to a token declared here.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. FONT FACES — self-hosted, variable, no external requests
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Estedad";
+  src: url("/fonts/Estedad-Var-Arabic.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F;
+}
+@font-face {
+  font-family: "Estedad";
+  src: url("/fonts/Estedad-Var-Latin.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/fonts/Vazirmatn-Var-Arabic.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F;
+}
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/fonts/Vazirmatn-Var-Latin.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Var-Latin.woff2") format("woff2-variations");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+2000-206F, U+2122;
+}
+
+/* --------------------------------------------------------------------------
+   2. PRIMITIVE TOKENS — raw palette (never used directly in components)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Hydro — the water/flow brand ramp */
+  --hydro-50: #e6fbff;
+  --hydro-100: #c2f3fb;
+  --hydro-200: #8fe6f4;
+  --hydro-300: #4fd3e8;
+  --hydro-400: #22bcd6;
+  --hydro-500: #00a6c0;
+  --hydro-600: #0086a0;
+  --hydro-700: #076a80;
+  --hydro-800: #0b5265;
+  --hydro-900: #0d3f4e;
+
+  /* Signal — industrial amber, used sparingly for machinery/attention */
+  --signal-300: #ffd591;
+  --signal-400: #f7bb56;
+  --signal-500: #f0a028;
+  --signal-600: #d1811a;
+  --signal-700: #a05f10;
+
+  /* Graphite — the structural navy-black ramp */
+  --graphite-950: #050910;
+  --graphite-900: #080d17;
+  --graphite-850: #0b1220;
+  --graphite-800: #101a2b;
+  --graphite-750: #152238;
+  --graphite-700: #1b2b45;
+  --graphite-600: #24395a;
+  --graphite-500: #33507a;
+  --graphite-400: #3f5f8f;
+
+  /* Neutral text ramp */
+  --slate-050: #f5f8fc;
+  --slate-100: #e8eef7;
+  --slate-200: #cbd8ea;
+  --slate-300: #a6b8d1;
+  --slate-400: #7f93b1;
+  --slate-500: #62779a;
+  --slate-600: #4a5d7d;
+  --slate-700: #35455f;
+  --slate-800: #223047;
+  --slate-900: #131d2e;
+
+  /* Status */
+  --ok-500: #2fbf71;
+  --ok-600: #239a5a;
+  --warn-500: #f5a524;
+  --danger-500: #e5484d;
+  --danger-600: #c93338;
+  --info-500: #4a8ff0;
+}
+
+/* --------------------------------------------------------------------------
+   3. SEMANTIC TOKENS — DARK (default theme)
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-base: var(--graphite-950);
+  --bg-sunken: #03060c;
+  --bg-elev-1: var(--graphite-900);
+  --bg-elev-2: var(--graphite-850);
+  --bg-elev-3: var(--graphite-800);
+  --bg-inset: #060b14;
+  --bg-glass: rgb(11 18 32 / 0.72);
+  --bg-glass-strong: rgb(8 13 23 / 0.9);
+  --bg-scrim: rgb(3 6 12 / 0.72);
+
+  --fg-primary: var(--slate-100);
+  --fg-secondary: var(--slate-300);
+  --fg-muted: var(--slate-400);
+  --fg-subtle: var(--slate-500);
+  --fg-inverse: var(--graphite-950);
+  --fg-on-brand: #00252e;
+
+  --border-hairline: rgb(255 255 255 / 0.06);
+  --border-subtle: rgb(255 255 255 / 0.09);
+  --border-default: rgb(255 255 255 / 0.14);
+  --border-strong: rgb(255 255 255 / 0.24);
+  --border-brand: rgb(34 188 214 / 0.42);
+
+  --brand: var(--hydro-400);
+  --brand-hover: var(--hydro-300);
+  --brand-pressed: var(--hydro-500);
+  --brand-soft: rgb(34 188 214 / 0.12);
+  --brand-soft-hover: rgb(34 188 214 / 0.2);
+  --brand-ring: rgb(34 188 214 / 0.55);
+
+  --signal: var(--signal-400);
+  --signal-soft: rgb(247 187 86 / 0.14);
+
+  --ok: #45d68b;
+  --ok-soft: rgb(69 214 139 / 0.14);
+  --warn: var(--warn-500);
+  --warn-soft: rgb(245 165 36 / 0.14);
+  --danger: #ff6b6f;
+  --danger-soft: rgb(255 107 111 / 0.14);
+  --info: #6aa5ff;
+  --info-soft: rgb(106 165 255 / 0.14);
+
+  --grid-line: rgb(255 255 255 / 0.028);
+  --grid-line-strong: rgb(34 188 214 / 0.07);
+  --noise-opacity: 0.035;
+  --glow-brand: rgb(0 166 192 / 0.28);
+  --glow-signal: rgb(240 160 40 / 0.18);
+
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.45);
+  --shadow-sm: 0 2px 6px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 8px 24px -6px rgb(0 0 0 / 0.55), 0 2px 6px rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 24px 60px -14px rgb(0 0 0 / 0.7), 0 6px 16px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 40px 96px -24px rgb(0 0 0 / 0.78);
+  --shadow-brand: 0 12px 40px -12px rgb(0 166 192 / 0.5);
+  --shadow-inset-top: inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   4. SEMANTIC TOKENS — LIGHT
+   -------------------------------------------------------------------------- */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg-base: #f2f6fa;
+  --bg-sunken: #e7edf4;
+  --bg-elev-1: #ffffff;
+  --bg-elev-2: #ffffff;
+  --bg-elev-3: #f7fafd;
+  --bg-inset: #eef3f8;
+  --bg-glass: rgb(255 255 255 / 0.82);
+  --bg-glass-strong: rgb(255 255 255 / 0.95);
+  --bg-scrim: rgb(10 20 35 / 0.45);
+
+  --fg-primary: #0a1424;
+  --fg-secondary: #2c3e57;
+  --fg-muted: #55677e;
+  --fg-subtle: #7d8ea5;
+  --fg-inverse: #ffffff;
+  --fg-on-brand: #ffffff;
+
+  --border-hairline: rgb(10 20 36 / 0.07);
+  --border-subtle: rgb(10 20 36 / 0.1);
+  --border-default: rgb(10 20 36 / 0.16);
+  --border-strong: rgb(10 20 36 / 0.28);
+  --border-brand: rgb(0 134 160 / 0.4);
+
+  --brand: var(--hydro-600);
+  --brand-hover: var(--hydro-700);
+  --brand-pressed: var(--hydro-800);
+  --brand-soft: rgb(0 134 160 / 0.09);
+  --brand-soft-hover: rgb(0 134 160 / 0.16);
+  --brand-ring: rgb(0 134 160 / 0.45);
+
+  --signal: var(--signal-600);
+  --signal-soft: rgb(209 129 26 / 0.12);
+
+  --ok: var(--ok-600);
+  --ok-soft: rgb(35 154 90 / 0.12);
+  --warn: #b97a09;
+  --warn-soft: rgb(185 122 9 / 0.12);
+  --danger: var(--danger-600);
+  --danger-soft: rgb(201 51 56 / 0.1);
+  --info: #2a6fd0;
+  --info-soft: rgb(42 111 208 / 0.1);
+
+  --grid-line: rgb(10 30 60 / 0.045);
+  --grid-line-strong: rgb(0 134 160 / 0.08);
+  --noise-opacity: 0.02;
+  --glow-brand: rgb(0 134 160 / 0.14);
+  --glow-signal: rgb(209 129 26 / 0.1);
+
+  --shadow-xs: 0 1px 2px rgb(16 32 56 / 0.06);
+  --shadow-sm: 0 2px 6px rgb(16 32 56 / 0.07), 0 1px 2px rgb(16 32 56 / 0.05);
+  --shadow-md: 0 10px 26px -8px rgb(16 32 56 / 0.16), 0 2px 6px rgb(16 32 56 / 0.06);
+  --shadow-lg: 0 26px 60px -18px rgb(16 32 56 / 0.22), 0 6px 16px rgb(16 32 56 / 0.08);
+  --shadow-xl: 0 44px 100px -30px rgb(16 32 56 / 0.28);
+  --shadow-brand: 0 14px 40px -14px rgb(0 134 160 / 0.42);
+  --shadow-inset-top: inset 0 1px 0 rgb(255 255 255 / 0.9);
+}
+
+/* --------------------------------------------------------------------------
+   5. TAILWIND THEME BRIDGE
+   -------------------------------------------------------------------------- */
+@theme inline {
+  --color-base: var(--bg-base);
+  --color-sunken: var(--bg-sunken);
+  --color-elev-1: var(--bg-elev-1);
+  --color-elev-2: var(--bg-elev-2);
+  --color-elev-3: var(--bg-elev-3);
+  --color-inset: var(--bg-inset);
+  --color-glass: var(--bg-glass);
+  --color-scrim: var(--bg-scrim);
+
+  --color-fg: var(--fg-primary);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-fg-inverse: var(--fg-inverse);
+  --color-on-brand: var(--fg-on-brand);
+
+  --color-hairline: var(--border-hairline);
+  --color-line: var(--border-subtle);
+  --color-line-default: var(--border-default);
+  --color-line-strong: var(--border-strong);
+  --color-line-brand: var(--border-brand);
+
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-pressed: var(--brand-pressed);
+  --color-brand-soft: var(--brand-soft);
+  --color-signal: var(--signal);
+  --color-signal-soft: var(--signal-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+
+  --font-display: "Estedad", "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Vazirmatn", "Estedad", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-brand: var(--shadow-brand);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  --breakpoint-xs: 26rem;
+  --breakpoint-3xl: 100rem;
+}
+
+/* --------------------------------------------------------------------------
+   6. MOTION + SPACING SCALE (non-Tailwind consumers)
+   -------------------------------------------------------------------------- */
+:root {
+  --dur-instant: 90ms;
+  --dur-fast: 160ms;
+  --dur-base: 240ms;
+  --dur-slow: 340ms;
+  --dur-slower: 520ms;
+  --dur-reveal: 700ms;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  --header-h: 4.5rem;
+  --shell-max: 82.5rem;
+  --gutter: 1.25rem;
+}
+@media (min-width: 48rem) {
+  :root {
+    --header-h: 5rem;
+    --gutter: 2rem;
+  }
+}
+@media (min-width: 80rem) {
+  :root {
+    --gutter: 3rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   7. BASE LAYER
+   -------------------------------------------------------------------------- */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--border-hairline);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1.5rem);
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--fg-primary);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.75;
+    font-feature-settings: "ss01", "kern";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.28;
+    letter-spacing: -0.015em;
+    color: var(--fg-primary);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--brand);
+    color: var(--fg-on-brand);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  label[for],
+  summary {
+    cursor: pointer;
+  }
+
+  input, textarea, select, button {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Latin numerals inside Persian copy read best in the technical mono */
+  .num,
+  time,
+  [data-numeric] {
+    font-family: var(--font-mono);
+    font-feature-settings: "tnum";
+    letter-spacing: 0;
+    direction: ltr;
+    unicode-bidi: isolate;
+    display: inline-block;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-sunken);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-default);
+    border-radius: 999px;
+    border: 2px solid var(--bg-sunken);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--border-strong);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. UTILITY LAYER — the house patterns
+   -------------------------------------------------------------------------- */
+@layer utilities {
+  .shell {
+    width: 100%;
+    max-width: var(--shell-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .shell-wide {
+    width: 100%;
+    max-width: 108rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Blueprint grid — the signature background of the whole product */
+  .blueprint {
+    position: relative;
+    isolation: isolate;
+  }
+  .blueprint::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(to left, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 82%);
+  }
+
+  .blueprint-dense::before {
+    background-size: 28px 28px;
+  }
+
+  /* Fine grain — kills the flat plastic look on large dark surfaces */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: var(--noise-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+
+  .glow-brand {
+    box-shadow: 0 0 0 1px var(--border-brand), 0 0 40px -8px var(--glow-brand);
+  }
+
+  /* Hairline gradient border used on premium cards */
+  .edge-lit {
+    position: relative;
+  }
+  .edge-lit::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(160deg, var(--border-default), transparent 42%, transparent 58%, var(--border-brand));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.85;
+    transition: opacity var(--dur-base) var(--ease-out-expo);
+  }
+  .edge-lit:hover::before {
+    opacity: 1;
+  }
+
+  /* Technical drawing corner brackets */
+  .brackets {
+    position: relative;
+  }
+  .brackets::before,
+  .brackets::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--border-brand);
+    pointer-events: none;
+    transition: all var(--dur-base) var(--ease-out-expo);
+  }
+  .brackets::before {
+    inset-block-start: -1px;
+    inset-inline-start: -1px;
+    border-inline-end: 0;
+    border-block-end: 0;
+  }
+  .brackets::after {
+    inset-block-end: -1px;
+    inset-inline-end: -1px;
+    border-inline-start: 0;
+    border-block-start: 0;
+  }
+  .brackets:hover::before,
+  .brackets:hover::after {
+    width: 22px;
+    height: 22px;
+  }
+
+  .text-gradient-brand {
+    background: linear-gradient(105deg, var(--fg-primary) 12%, var(--brand) 58%, var(--hydro-200) 96%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .glass {
+    background: var(--bg-glass);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brand);
+  }
+
+  .stack-divider > * + * {
+    border-block-start: 1px solid var(--border-hairline);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+}
+
+/* --------------------------------------------------------------------------
+   9. MOTION SYSTEM
+   -------------------------------------------------------------------------- */
+@layer utilities {
+  /* Scroll reveal — driven by the useReveal / <Reveal> primitives */
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+    transition:
+      opacity var(--dur-reveal) var(--ease-out-expo),
+      transform var(--dur-reveal) var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  [data-reveal="left"] { transform: translate3d(-26px, 0, 0); }
+  [data-reveal="right"] { transform: translate3d(26px, 0, 0); }
+  [data-reveal="scale"] { transform: scale(0.94); }
+  [data-reveal="blur"] { filter: blur(10px); transform: translate3d(0, 14px, 0); }
+
+  [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  @keyframes aria-fade-up {
+    from { opacity: 0; transform: translate3d(0, 16px, 0); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes aria-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes aria-pop {
+    0% { opacity: 0; transform: scale(0.96) translate3d(0, 8px, 0); }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes aria-drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(2%, -3%, 0) scale(1.06); }
+  }
+  @keyframes aria-sweep {
+    from { transform: translateX(-120%); }
+    to { transform: translateX(220%); }
+  }
+  @keyframes aria-pulse-ring {
+    0% { box-shadow: 0 0 0 0 var(--glow-brand); }
+    70% { box-shadow: 0 0 0 14px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+  @keyframes aria-shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+  @keyframes aria-spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes aria-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(50%); }
+  }
+
+  .anim-fade-up { animation: aria-fade-up var(--dur-slower) var(--ease-out-expo) both; }
+  .anim-fade-in { animation: aria-fade-in var(--dur-slow) var(--ease-out-expo) both; }
+  .anim-pop { animation: aria-pop var(--dur-base) var(--ease-spring) both; }
+  .anim-drift { animation: aria-drift 22s var(--ease-in-out-soft) infinite; }
+  .anim-spin { animation: aria-spin 900ms linear infinite; }
+
+  .skeleton {
+    background: linear-gradient(
+      100deg,
+      var(--bg-elev-2) 30%,
+      var(--bg-elev-3) 50%,
+      var(--bg-elev-2) 70%
+    );
+    background-size: 200% 100%;
+    animation: aria-shimmer 1.6s linear infinite;
+    border-radius: var(--radius-sm);
+  }
+
+  .hover-lift {
+    transition:
+      transform var(--dur-base) var(--ease-out-expo),
+      box-shadow var(--dur-base) var(--ease-out-expo),
+      border-color var(--dur-base) var(--ease-out-expo);
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .press {
+    transition: transform var(--dur-fast) var(--ease-out-quint);
+  }
+  .press:active {
+    transform: scale(0.975);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   10. ACCESSIBILITY — reduced motion is honoured everywhere
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. PRINT — quote requests and spec sheets are printed in the field
+   -------------------------------------------------------------------------- */
+@media print {
+  :root {
+    --bg-base: #fff;
+    --fg-primary: #000;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .no-print,
+  header,
+  footer,
+  nav {
+    display: none !important;
+  }
+}

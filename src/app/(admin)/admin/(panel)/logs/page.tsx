@@ -1,0 +1,81 @@
+import { AdminPageHeader, DataTable, Panel, Td, Tr } from "@/components/admin/ui";
+import { Pagination } from "@/components/ui/pagination";
+import { buildQuery, formatDateTime, formatRelative, toFaDigits } from "@/lib/utils";
+import { listActivityLogs } from "@/modules/admin/queries";
+import Link from "next/link";
+
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+export const dynamic = "force-dynamic";
+const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+
+const ACTION_LABEL: Record<string, string> = {
+  create: "ایجاد", update: "ویرایش", delete: "حذف", status_change: "تغییر وضعیت",
+  login: "ورود", login_failed: "ورود ناموفق", logout: "خروج", export: "خروجی", assign: "ارجاع",
+};
+
+const ENTITIES = ["order", "product", "category", "brand", "customer", "post", "message", "user", "settings"];
+
+export default async function AdminLogsPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams;
+  const entity = first(params.entity);
+  const page = Math.max(1, Number(first(params.page) ?? 1) || 1);
+  const { items, total, pageCount } = await listActivityLogs({ entity, page });
+
+  return (
+    <>
+      <AdminPageHeader
+        title="لاگ فعالیت‌ها"
+        description={`${toFaDigits(total)} رویداد ثبت شده است. این فهرست فقط خواندنی است و قابل ویرایش نیست.`}
+      />
+
+      <div className="mb-4 flex flex-wrap gap-1.5">
+        <Chip href="/admin/logs" active={!entity}>همه</Chip>
+        {ENTITIES.map((item) => (
+          <Chip key={item} href={`/admin/logs?entity=${item}`} active={entity === item}>
+            {item}
+          </Chip>
+        ))}
+      </div>
+
+      <Panel padded={false}>
+        <DataTable head={["عملیات", "شرح", "کاربر", "IP", "زمان"]} empty={items.length === 0}>
+          {items.map((log) => (
+            <Tr key={log.id}>
+              <Td>
+                <span className="rounded-full bg-[var(--bg-elev-3)] px-2.5 py-1 text-[0.625rem] text-[var(--fg-secondary)]">
+                  {ACTION_LABEL[log.action] ?? log.action}
+                </span>
+                <span className="mt-1 block font-mono text-[0.5625rem] text-[var(--fg-subtle)]">{log.entity}</span>
+              </Td>
+              <Td className="text-[0.8125rem]">{log.summary}</Td>
+              <Td className="text-xs">{log.userName ?? "سیستم"}</Td>
+              <Td className="font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">{log.ip ?? "—"}</Td>
+              <Td className="whitespace-nowrap">
+                <span className="block text-[0.6875rem] text-[var(--fg-secondary)]">{formatRelative(log.createdAt)}</span>
+                <span className="mt-0.5 block text-[0.625rem] text-[var(--fg-subtle)]">{formatDateTime(log.createdAt)}</span>
+              </Td>
+            </Tr>
+          ))}
+        </DataTable>
+      </Panel>
+
+      <Pagination page={page} pageCount={pageCount} buildHref={(n) => `/admin/logs${buildQuery({ entity, page: n === 1 ? undefined : n })}`} />
+    </>
+  );
+}
+
+function Chip({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className={
+        "rounded-full border px-3 py-1.5 font-mono text-[0.625rem] transition-all " +
+        (active
+          ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand)]"
+          : "border-[var(--border-subtle)] text-[var(--fg-muted)] hover:border-[var(--border-brand)] hover:text-[var(--brand)]")
+      }
+    >
+      {children}
+    </Link>
+  );
+}
