@@ -10,7 +10,7 @@ import { getBrands } from "@/modules/catalog/queries";
 export const revalidate = 3600;
 
 export const metadata: Metadata = pageMetadata({
-  title: "برندها و نمایندگی‌ها",
+  title: "برندها",
   description:
     "فهرست برندهای معتبر داخلی و اروپایی که تجهیزات آن‌ها را تأمین می‌کنیم؛ از گراندفوس و ابارا تا پمپیران و سمنان انرژی.",
   path: "/brands",
@@ -22,7 +22,7 @@ export default async function BrandsPage() {
   return (
     <>
       <PageHeader
-        title="برندها و نمایندگی‌ها"
+        title="برندها"
         description="تجهیزات را از تولیدکنندگانی تأمین می‌کنیم که سابقه‌شان در پروژه‌های واقعی اثبات شده و شبکه خدمات پس از فروش دارند."
         crumbs={[{ name: "برندها", href: "/brands" }]}
       />

@@ -203,9 +203,15 @@ export function BrandsSection({
   return (
     <Section className="border-y border-[var(--border-hairline)] bg-[var(--bg-elev-1)] py-14">
       <div className="shell mb-8">
+        {/*
+          عنوان قبلی «نمایندگی‌ها / برندهایی که به آن‌ها اعتماد می‌کنیم» بود که
+          به‌طور ضمنی ادعای نمایندگی رسمی این برندها را می‌رساند. تا زمانی که
+          قرارداد نمایندگی واقعی وجود نداشته باشد، عنوان صرفاً واقعیت کاتالوگ را
+          بیان می‌کند.
+        */}
         <SectionHeading
-          eyebrow="نمایندگی‌ها"
-          title="برندهایی که به آن‌ها اعتماد می‌کنیم"
+          eyebrow="برندها"
+          title="برندهای موجود در کاتالوگ"
           className="mb-0"
           action={{ label: "همه برندها", href: "/brands" }}
         />

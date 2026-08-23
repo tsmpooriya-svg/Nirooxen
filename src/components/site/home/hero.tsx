@@ -39,7 +39,9 @@ export function Hero({ categories }: { categories: CategoryNode[] }) {
                   <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--brand)] opacity-70" />
                   <span className="relative inline-flex size-1.5 rounded-full bg-[var(--brand)]" />
                 </span>
-                از {toFaDigits(siteConfig.foundedYear)} در کنار صنعت آب ایران
+                {siteConfig.foundedYear
+                  ? `از ${toFaDigits(siteConfig.foundedYear)} در کنار صنعت آب ایران`
+                  : "تأمین تخصصی تجهیزات آب و آبرسانی"}
               </p>
             </Reveal>
 
@@ -92,24 +94,23 @@ export function Hero({ categories }: { categories: CategoryNode[] }) {
               </div>
             </Reveal>
 
-            {/* آمار */}
-            <Reveal delay={320}>
-              <dl className="mt-12 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-[var(--border-hairline)] pt-8 sm:grid-cols-4">
-                {siteConfig.stats.map((stat) => (
-                  <div key={stat.label}>
-                    <dt className="sr-only">{stat.label}</dt>
-                    <dd>
-                      <span className="block font-display text-[1.75rem] font-extrabold leading-none text-[var(--brand)]">
+            {/* آمار — تنها زمانی رندر می‌شود که داده واقعی در siteConfig.stats باشد */}
+            {siteConfig.stats.length > 0 && (
+              <Reveal delay={320}>
+                <dl className="mt-12 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-[var(--border-hairline)] pt-8 sm:grid-cols-4">
+                  {siteConfig.stats.map((stat) => (
+                    // ترتیب DOM «عنوان → مقدار» است تا screen reader درست بخواند؛
+                    // flex-col-reverse فقط ترتیب بصری را برعکس می‌کند.
+                    <div key={stat.label} className="flex flex-col-reverse">
+                      <dt className="mt-2 text-xs leading-5 text-[var(--fg-muted)]">{stat.label}</dt>
+                      <dd className="font-display text-[1.75rem] font-extrabold leading-none text-[var(--brand)]">
                         <Counter value={stat.value} suffix={stat.suffix} />
-                      </span>
-                      <span className="mt-2 block text-xs leading-5 text-[var(--fg-muted)]">
-                        {stat.label}
-                      </span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </Reveal>
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </Reveal>
+            )}
           </div>
 
           {/* ستون کارت دیتاشیت */}

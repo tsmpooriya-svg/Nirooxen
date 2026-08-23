@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 
 import { Reveal } from "@/components/motion/reveal";
 import { PageHeader } from "@/components/site/breadcrumb";
@@ -27,6 +28,24 @@ export default async function ProjectsPage() {
       />
 
       <div className="shell py-12">
+        {projects.length === 0 ? (
+          <div className="brackets mx-auto max-w-xl rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] px-8 py-16 text-center">
+            <p className="eyebrow mb-4">به‌زودی</p>
+            <h2 className="font-display text-xl font-bold">
+              نمونه‌کارها در حال آماده‌سازی است
+            </h2>
+            <p className="mx-auto mt-4 max-w-md text-sm leading-8 text-[var(--fg-muted)]">
+              در حال جمع‌آوری مستندات و تصاویر پروژه‌های اجراشده هستیم. تا آن زمان، برای دریافت
+              سوابق اجرایی مرتبط با پروژه خودتان می‌توانید مستقیم با کارشناسان ما تماس بگیرید.
+            </p>
+            <Link
+              href="/contact"
+              className="mt-8 inline-flex h-12 items-center rounded-md bg-[var(--brand)] px-7 text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
+            >
+              تماس با کارشناسان
+            </Link>
+          </div>
+        ) : (
         <div className="grid gap-5 md:grid-cols-2">
           {projects.map((project, index) => (
             <Reveal key={project.id} delay={index * 70}>
@@ -73,6 +92,7 @@ export default async function ProjectsPage() {
             </Reveal>
           ))}
         </div>
+        )}
       </div>
     </>
   );

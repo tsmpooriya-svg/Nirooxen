@@ -775,12 +775,25 @@ async function main() {
     },
   ]);
 
-  await db.insert(projects).values([
-    { title: "آبرسانی مجتمع مسکونی ۳۲۰ واحدی", slug: "residential-complex-320-units", client: "شرکت عمران پارس بنا", location: "تهران، منطقه ۲۲", year: "۱۴۰۳", capacity: "۴۵ متر مکعب بر ساعت", summary: "طراحی و اجرای بوستر پمپ دور متغیر سه‌پمپه به همراه مخازن ذخیره و شبکه توزیع.", coverUrl: img("booster-set"), isFeatured: true, position: 1, tags: ["ساختمانی", "بوستر پمپ"] },
-    { title: "ایستگاه پمپاژ آب کشاورزی ۳۰۰ هکتاری", slug: "agricultural-pumping-station", client: "تعاونی کشاورزی دشت مغان", location: "اردبیل", year: "۱۴۰۲", capacity: "۲۱۰ متر مکعب بر ساعت", summary: "تأمین و نصب سه دستگاه پمپ شناور ۶ اینچ به همراه تابلو کنترل و سیستم حفاظت.", coverUrl: img("submersible-pump"), isFeatured: true, position: 2, tags: ["کشاورزی", "پمپ شناور"] },
-    { title: "خط تصفیه آب فرآیندی کارخانه لبنیات", slug: "dairy-water-treatment-line", client: "صنایع غذایی دامون", location: "رشت", year: "۱۴۰۳", capacity: "۱۴ متر مکعب بر ساعت", summary: "اجرای سیستم فیلتراسیون شنی و سختی‌گیر رزینی با پمپ‌های استیل بهداشتی.", coverUrl: img("water-filter"), isFeatured: true, position: 3, tags: ["صنعتی", "تصفیه آب"] },
-    { title: "موتورخانه مرکزی بیمارستان ۲۴۰ تختخوابی", slug: "hospital-central-plant", client: "دانشگاه علوم پزشکی", location: "قم", year: "۱۴۰۱", capacity: "۶ حلقه مدار گرمایشی", summary: "تأمین سیرکولاتورها، منابع انبساط و شیرآلات کنترلی موتورخانه.", coverUrl: img("electro-pump"), position: 4, tags: ["تأسیسات", "موتورخانه"] },
-  ]);
+  /*
+   * پروژه‌ها — عمداً خالی.
+   *
+   * چهار پروژه نمونه قبلی (مجتمع ۳۲۰ واحدی تهران، ایستگاه پمپاژ اردبیل،
+   * کارخانه لبنیات رشت، بیمارستان قم) داده واقعی نبودند و نام کارفرمایان
+   * ساختگی بود. نمایش آن‌ها به‌عنوان «پروژه‌های اجراشده» ادعای نادرست درباره
+   * سابقه شرکت است، بنابراین حذف شدند.
+   *
+   * صفحه /projects و بخش صفحه اصلی هر دو حالت خالی را به‌درستی مدیریت می‌کنند.
+   * برای افزودن پروژه واقعی، از پنل مدیریت استفاده کنید یا ساختار زیر را
+   * با داده واقعی پر کنید:
+   *
+   *   await db.insert(projects).values([
+   *     { title: "...", slug: "...", client: "...", location: "...",
+   *       year: "...", capacity: "...", summary: "...",
+   *       coverUrl: img("booster-set"), isFeatured: true, position: 1,
+   *       tags: ["ساختمانی"] },
+   *   ]);
+   */
 
   await db.insert(contactMessages).values([
     { name: "علی محمدی", phone: "09121110000", subject: "درخواست نمایندگی", message: "سلام، برای اخذ نمایندگی در استان یزد نیاز به راهنمایی دارم. شرایط و حداقل سفارش را اعلام بفرمایید.", status: "NEW" },
@@ -790,7 +803,7 @@ async function main() {
   /* -------------------------------- تنظیمات ----------------------------- */
   console.log("→ تنظیمات…");
   await db.insert(settings).values([
-    { key: "site.name", value: "آریا صنعت", group: "general", label: "نام سایت" },
+    { key: "site.name", value: "نیروژن", group: "general", label: "نام سایت" },
     { key: "site.tagline", value: "تأمین، فروش و نصب تجهیزات صنعتی و آبرسانی", group: "general", label: "شعار سایت" },
     { key: "contact.phone", value: "021-12345678", group: "contact", label: "تلفن اصلی" },
     { key: "contact.mobile", value: "0912-1234567", group: "contact", label: "موبایل پشتیبانی" },
@@ -800,7 +813,7 @@ async function main() {
     { key: "orders.autoAssign", value: false, group: "orders", label: "ارجاع خودکار سفارش‌ها" },
     { key: "features.cart", value: false, group: "features", label: "فعال‌سازی سبد استعلام" },
     { key: "features.onlinePayment", value: false, group: "features", label: "پرداخت آنلاین (فاز بعدی)" },
-    { key: "seo.metaTitle", value: "آریا صنعت | تجهیزات صنعتی و آبرسانی", group: "seo", label: "عنوان پیش‌فرض" },
+    { key: "seo.metaTitle", value: "نیروژن | تجهیزات صنعتی و آبرسانی", group: "seo", label: "عنوان پیش‌فرض" },
     { key: "seo.metaDescription", value: "تأمین‌کننده تخصصی پمپ آب، مخزن تحت فشار، شیرآلات و اتصالات صنعتی.", group: "seo", label: "توضیحات پیش‌فرض" },
   ]);
 

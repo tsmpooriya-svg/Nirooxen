@@ -113,7 +113,8 @@ export function organizationJsonLd() {
     alternateName: siteConfig.name,
     url: siteConfig.url,
     description: siteConfig.description,
-    foundingDate: String(siteConfig.foundedYear),
+    // فقط وقتی سال تأسیس واقعی ثبت شده باشد در داده ساختاریافته منتشر می‌شود
+    ...(siteConfig.foundedYear ? { foundingDate: String(siteConfig.foundedYear) } : {}),
     address: {
       "@type": "PostalAddress",
       streetAddress: siteConfig.contact.address,

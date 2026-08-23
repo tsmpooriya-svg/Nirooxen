@@ -66,7 +66,11 @@ export default function AboutPage() {
     <>
       <PageHeader
         title={`درباره ${siteConfig.name}`}
-        description={`${siteConfig.legalName} از سال ${toFaDigits(siteConfig.foundedYear)} در حوزه تأمین، فروش و نصب تجهیزات صنعتی و آبرسانی فعالیت می‌کند.`}
+        description={
+          siteConfig.foundedYear
+            ? `${siteConfig.legalName} از سال ${toFaDigits(siteConfig.foundedYear)} در حوزه تأمین، فروش و نصب تجهیزات صنعتی و آبرسانی فعالیت می‌کند.`
+            : `${siteConfig.legalName} در حوزه تأمین، فروش و نصب تجهیزات صنعتی و آبرسانی فعالیت می‌کند.`
+        }
         crumbs={[{ name: "درباره ما", href: "/about" }]}
       />
 
@@ -91,19 +95,18 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <dl className="mt-10 grid grid-cols-2 gap-6 border-t border-[var(--border-hairline)] pt-8 sm:grid-cols-4">
-              {siteConfig.stats.map((stat) => (
-                <div key={stat.label}>
-                  <dt className="sr-only">{stat.label}</dt>
-                  <dd>
-                    <span className="block font-display text-[1.75rem] font-extrabold text-[var(--brand)]">
+            {siteConfig.stats.length > 0 && (
+              <dl className="mt-10 grid grid-cols-2 gap-6 border-t border-[var(--border-hairline)] pt-8 sm:grid-cols-4">
+                {siteConfig.stats.map((stat) => (
+                  <div key={stat.label} className="flex flex-col-reverse">
+                    <dt className="mt-2 text-xs leading-5 text-[var(--fg-muted)]">{stat.label}</dt>
+                    <dd className="font-display text-[1.75rem] font-extrabold text-[var(--brand)]">
                       <Counter value={stat.value} suffix={stat.suffix} />
-                    </span>
-                    <span className="mt-2 block text-xs leading-5 text-[var(--fg-muted)]">{stat.label}</span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            )}
           </Reveal>
 
           <Reveal variant="scale" delay={140}>

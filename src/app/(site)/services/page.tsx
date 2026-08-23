@@ -143,8 +143,7 @@ export default function ServicesPage() {
             </a>
           </div>
           <p className="mt-6 text-center text-xs text-[var(--fg-subtle)]">
-            ساعات پاسخ‌گویی: {siteConfig.contact.workingHours} — بیش از{" "}
-            {toFaDigits(siteConfig.stats[1].value)} پروژه تحویل‌شده
+            ساعات پاسخ‌گویی: {siteConfig.contact.workingHours}
           </p>
         </div>
       </Section>
