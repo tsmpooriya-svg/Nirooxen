@@ -313,6 +313,81 @@ export const getFeaturedProducts = cache(async (limit = 8): Promise<ProductCardD
   return attachKeySpecs(rows as Omit<ProductCardData, "keySpecs">[]);
 });
 
+/**
+ * محصولات یک راهکار — بر اساس برچسب.
+ *
+ * انتخاب عمدی: تطبیق فقط با `products.tags` انجام می‌شود، نه با دسته‌بندی.
+ * دلیلش دقت است؛ دسته‌بندی‌های ریشه مثل «پمپ‌های آب» کل زیردرخت را برمی‌گردانند
+ * و راهکارهای متفاوت را شبیه هم می‌کنند. مثلاً «تخلیه فاضلاب» با تطبیق
+ * دسته‌ای، پمپ طبقاتی و خودمکش هم نشان می‌داد — که عملاً ادعای مناسب‌بودن آن
+ * تجهیز برای فاضلاب است.
+ *
+ * برچسب‌ها توسط ویرایشگر محتوا انتخاب می‌شوند، پس فهرست هر راهکار عمدی و
+ * قابل کنترل است. اگر راهکاری برچسبی نداشته باشد یا هیچ کالایی با آن
+ * برچسب‌ها موجود نباشد، آرایه خالی برمی‌گردد و رابط کاربری حالت خالی نشان
+ * می‌دهد — هیچ محصولی حدس زده نمی‌شود.
+ */
+export const getProductsForSolution = cache(
+  async (productTags: readonly string[], limit = 8): Promise<ProductCardData[]> => {
+    if (productTags.length === 0) return [];
+
+    const rows = await db
+      .select(cardSelection)
+      .from(products)
+      .innerJoin(categories, eq(products.categoryId, categories.id))
+      .leftJoin(brands, eq(products.brandId, brands.id))
+      .where(
+        and(
+          eq(products.status, "PUBLISHED"),
+          // `&&` عملگر هم‌پوشانی آرایه در پستگرس است
+          sql`${products.tags} && ARRAY[${sql.join(
+            productTags.map((tag) => sql`${tag}`),
+            sql`, `,
+          )}]::text[]`,
+        ),
+      )
+      .orderBy(desc(products.isFeatured), asc(products.position), desc(products.publishedAt))
+      .limit(limit);
+
+    return attachKeySpecs(rows as Omit<ProductCardData, "keySpecs">[]);
+  },
+);
+
+/**
+ * دسته‌بندی‌ها بر اساس اسلاگ — فقط آن‌هایی که واقعاً در پایگاه داده هستند.
+ *
+ * هم شاخه‌های اصلی و هم زیرشاخه‌ها پیدا می‌شوند، تا تعریف یک راهکار به
+ * اسلاگ‌های سطح ریشه محدود نباشد. اسلاگ ناموجود بی‌صدا نادیده گرفته می‌شود
+ * (مثلاً وقتی دسته‌ای از پنل مدیریت حذف شده)، پس صفحه راهکار هرگز خطا
+ * نمی‌دهد.
+ */
+export const getCategoriesBySlugs = cache(
+  async (slugs: readonly string[]): Promise<CategoryNode[]> => {
+    if (slugs.length === 0) return [];
+    const tree = await getCategoryTree();
+
+    const find = (slug: string): CategoryNode | undefined => {
+      const root = tree.find((node) => node.slug === slug);
+      if (root) return root;
+      // زیرشاخه‌ها در تایپ `Category` اعلام شده‌اند اما در زمان اجرا
+      // productCount خودشان را از getCategoryTree همراه دارند
+      for (const node of tree) {
+        const child = node.children.find((c) => c.slug === slug);
+        if (child) {
+          const count = (child as Category & { productCount?: number }).productCount ?? 0;
+          return { ...child, children: [], productCount: count };
+        }
+      }
+      return undefined;
+    };
+
+    // ترتیب خروجی از ترتیب تعریف‌شده در راهکار پیروی می‌کند، نه از ترتیب جدول
+    return slugs
+      .map(find)
+      .filter((node): node is CategoryNode => Boolean(node));
+  },
+);
+
 export const getNewProducts = cache(async (limit = 6): Promise<ProductCardData[]> => {
   const rows = await db
     .select(cardSelection)

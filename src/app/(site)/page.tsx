@@ -8,29 +8,41 @@ import {
   NewsSection,
   ProcessSection,
   ProjectsSection,
+  SolutionsSection,
 } from "@/components/site/home/sections";
 import { ProductCard } from "@/components/site/product-card";
 import { Section, SectionHeading } from "@/components/site/section";
 import { getBrands, getCategoryTree, getFeaturedProducts } from "@/modules/catalog/queries";
 import { getProjects, getPublishedPosts } from "@/modules/content/queries";
+import { listSolutionSummaries } from "@/modules/solutions/queries";
 
 /** صفحه اصلی هر ساعت به‌صورت ایستا بازتولید می‌شود */
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  const [categories, featured, brands, projects, news] = await Promise.all([
+  const [categories, featured, brands, projects, news, solutionSummaries] = await Promise.all([
     getCategoryTree(),
     getFeaturedProducts(8),
     getBrands(),
     getProjects(3),
     getPublishedPosts({ pageSize: 3 }),
+    listSolutionSummaries(),
   ]);
+
+  // در صفحه اصلی فقط راهکارهای شاخص نمایش داده می‌شوند
+  const featuredSolutions = solutionSummaries.filter((s) => s.solution.isFeatured);
 
   return (
     <>
       <Hero categories={categories} />
 
       <CategoriesSection categories={categories} />
+
+      {/*
+        بلافاصله بعد از دسته‌بندی‌ها می‌نشیند تا دو مسیر ورود کنار هم دیده
+        شوند: یکی بر اساس نام محصول، دیگری بر اساس مسئله کاربر.
+      */}
+      <SolutionsSection summaries={featuredSolutions} />
 
       {featured.length > 0 && (
         <Section className="border-t border-[var(--border-hairline)] bg-[var(--bg-elev-1)]">

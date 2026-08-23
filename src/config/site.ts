@@ -94,6 +94,7 @@ export const siteConfig = {
 export const mainNav = [
   { title: "صفحه اصلی", href: "/" },
   { title: "محصولات", href: "/products", hasMegaMenu: true },
+  { title: "راهکارها", href: "/solutions" },
   { title: "برندها", href: "/brands" },
   { title: "خدمات", href: "/services" },
   { title: "پروژه‌ها", href: "/projects" },
@@ -108,6 +109,7 @@ export const footerNav = [
     title: "دسترسی سریع",
     links: [
       { title: "محصولات", href: "/products" },
+      { title: "راهکارها", href: "/solutions" },
       { title: "برندها", href: "/brands" },
       { title: "خدمات فنی", href: "/services" },
       { title: "پروژه‌های اجراشده", href: "/projects" },

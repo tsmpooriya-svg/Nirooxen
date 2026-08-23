@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { siteConfig } from "@/config/site";
+import { solutions } from "@/config/solutions";
 import { getAllProductSlugs, getBrands, getCategoryTree } from "@/modules/catalog/queries";
 import { getAllPostSlugs, getProjects } from "@/modules/content/queries";
 
@@ -12,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${base}/`, changeFrequency: "daily", priority: 1 },
     { url: `${base}/products`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${base}/solutions`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${base}/brands`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${base}/services`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/projects`, changeFrequency: "monthly", priority: 0.6 },
@@ -30,6 +32,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticRoutes,
+    ...solutions.map((solution) => ({
+      url: `${base}/solutions/${solution.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
     ...categories.flatMap((category) => [
       { url: `${base}/products?category=${category.slug}`, changeFrequency: "weekly" as const, priority: 0.8 },
       ...category.children.map((child) => ({

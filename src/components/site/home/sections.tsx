@@ -4,9 +4,11 @@ import Link from "next/link";
 import { Reveal } from "@/components/motion/reveal";
 import { DomainIcon } from "@/components/ui/icons";
 import { Section, SectionHeading } from "@/components/site/section";
+import { SolutionCard } from "@/components/site/solution-card";
 import { siteConfig } from "@/config/site";
 import { formatDate, toFaDigits, truncate } from "@/lib/utils";
 import type { CategoryNode } from "@/modules/catalog/queries";
+import type { SolutionSummary } from "@/modules/solutions/queries";
 
 /* -------------------------------------------------------------------------- */
 /*  دسته‌بندی‌ها — چیدمان بنتو                                                 */
@@ -76,6 +78,69 @@ export function CategoriesSection({ categories }: { categories: CategoryNode[] }
               </Link>
             </Reveal>
           ))}
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  راهکارها                                                                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * ورود به کاتالوگ از مسیر «مسئله» به‌جای «نام محصول».
+ *
+ * ترکیب عمداً نامتقارن است: یک راهکار شاخص بزرگ در یک ستون و بقیه به‌صورت
+ * فهرست فشرده در ستون کناری. روی موبایل، فهرست زیر کارت شاخص می‌نشیند و
+ * ترتیب خواندن حفظ می‌شود.
+ */
+export function SolutionsSection({ summaries }: { summaries: SolutionSummary[] }) {
+  if (summaries.length === 0) return null;
+
+  const [lead, ...others] = summaries;
+
+  return (
+    <Section id="solutions" className="border-t border-[var(--border-hairline)] bg-[var(--bg-elev-1)]">
+      <div className="shell">
+        <SectionHeading
+          eyebrow="راهکارها"
+          title="نام محصول را نمی‌دانید؟ از مسئله شروع کنید"
+          description="تجهیزات را بر اساس کاربری دسته‌بندی کرده‌ایم تا بدون دانستن نام دقیق کالا، به چیزی که پروژه‌تان لازم دارد برسید."
+          action={{ label: "همه راهکارها", href: "/solutions" }}
+        />
+
+        <div className="grid gap-4 lg:grid-cols-12">
+          {lead && (
+            <Reveal className="lg:col-span-5">
+              <SolutionCard summary={lead} variant="feature" index={0} />
+            </Reveal>
+          )}
+
+          {others.length > 0 && (
+            <div className="grid gap-3 sm:grid-cols-2 lg:col-span-7 lg:content-start">
+              {others.map((summary, index) => (
+                <Reveal key={summary.solution.slug} delay={80 + index * 70}>
+                  <Link
+                    href={`/solutions/${summary.solution.slug}`}
+                    className="group flex h-full items-start gap-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-2)] p-5 transition-all duration-400 [transition-timing-function:var(--ease-out-expo)] hover:-translate-y-0.5 hover:border-[var(--border-brand)] hover:shadow-[var(--shadow-md)]"
+                  >
+                    <span className="grid size-11 shrink-0 place-items-center rounded-md border border-[var(--border-hairline)] bg-[var(--bg-inset)] text-[var(--brand)] transition-all duration-300 group-hover:border-[var(--border-brand)] group-hover:bg-[var(--brand-soft)]">
+                      <DomainIcon name={summary.solution.icon} className="size-5" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold transition-colors group-hover:text-[var(--brand)]">
+                        {summary.solution.name}
+                      </span>
+                      <span className="clamp-2 mt-1.5 block text-[0.75rem] leading-6 text-[var(--fg-muted)]">
+                        {summary.solution.question}
+                      </span>
+                    </span>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </Section>
