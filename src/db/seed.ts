@@ -815,7 +815,7 @@ async function main() {
     { key: "contact.address", value: "تهران، بزرگراه فتح، خیابان صنعت، پلاک ۱۲۸", group: "contact", label: "آدرس" },
     { key: "orders.notifyEmail", value: "sales@example.com", group: "orders", label: "ایمیل دریافت سفارش‌ها" },
     { key: "orders.autoAssign", value: false, group: "orders", label: "ارجاع خودکار سفارش‌ها" },
-    { key: "features.cart", value: false, group: "features", label: "فعال‌سازی سبد استعلام" },
+    { key: "features.cart", value: true, group: "features", label: "فعال‌سازی سبد استعلام" },
     { key: "features.onlinePayment", value: false, group: "features", label: "پرداخت آنلاین (فاز بعدی)" },
     { key: "seo.metaTitle", value: "نیروژن | تجهیزات صنعتی و آبرسانی", group: "seo", label: "عنوان پیش‌فرض" },
     { key: "seo.metaDescription", value: "تأمین‌کننده تخصصی پمپ آب، مخزن تحت فشار، شیرآلات و اتصالات صنعتی.", group: "seo", label: "توضیحات پیش‌فرض" },

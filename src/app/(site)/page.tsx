@@ -14,19 +14,21 @@ import { ProductCard } from "@/components/site/product-card";
 import { Section, SectionHeading } from "@/components/site/section";
 import { getBrands, getCategoryTree, getFeaturedProducts } from "@/modules/catalog/queries";
 import { getProjects, getPublishedPosts } from "@/modules/content/queries";
+import { getSiteSettings } from "@/modules/settings/queries";
 import { listSolutionSummaries } from "@/modules/solutions/queries";
 
 /** صفحه اصلی هر ساعت به‌صورت ایستا بازتولید می‌شود */
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  const [categories, featured, brands, projects, news, solutionSummaries] = await Promise.all([
+  const [categories, featured, brands, projects, news, solutionSummaries, settings] = await Promise.all([
     getCategoryTree(),
     getFeaturedProducts(8),
     getBrands(),
     getProjects(3),
     getPublishedPosts({ pageSize: 3 }),
     listSolutionSummaries(),
+    getSiteSettings(),
   ]);
 
   // در صفحه اصلی فقط راهکارهای شاخص نمایش داده می‌شوند
@@ -34,7 +36,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero categories={categories} />
+      <Hero categories={categories} settings={settings} />
 
       <CategoriesSection categories={categories} />
 
@@ -70,7 +72,7 @@ export default async function HomePage() {
       <BrandsSection brands={brands} />
       <ProjectsSection projects={projects} />
       <NewsSection posts={news.items} />
-      <CtaSection />
+      <CtaSection settings={settings} />
     </>
   );
 }

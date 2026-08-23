@@ -2,11 +2,19 @@ import type { Metadata, Viewport } from "next";
 
 import { ThemeProvider, themeScript } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
-import { baseMetadata } from "@/lib/seo";
+import { buildBaseMetadata } from "@/lib/seo";
+import { getSiteSettings } from "@/modules/settings/queries";
 
 import "./globals.css";
 
-export const metadata: Metadata = baseMetadata;
+/**
+ * متادیتا از تنظیمات پایگاه داده ساخته می‌شود تا مدیر بتواند نام سایت و
+ * عنوان/توضیحات پیش‌فرض SEO را بدون تغییر کد عوض کند.
+ * `saveSettings` با revalidatePath("/", "layout") صفحه‌ها را تازه می‌کند.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildBaseMetadata(await getSiteSettings());
+}
 
 export const viewport: Viewport = {
   width: "device-width",

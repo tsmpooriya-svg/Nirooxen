@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Logomark } from "@/components/ui/icons";
 import { footerNav, siteConfig } from "@/config/site";
 import { currentJalaliYear, toFaDigits } from "@/lib/utils";
+import type { SiteSettings } from "@/modules/settings/queries";
 
 import { NewsletterForm } from "./newsletter-form";
 
@@ -17,7 +18,7 @@ const socialPaths: Record<string, string> = {
     "M4.98 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM3 9.5h4v11H3v-11Zm7 0h3.8v1.5h.06c.53-.95 1.83-1.95 3.76-1.95 4.02 0 4.76 2.5 4.76 5.76v5.69h-4v-5.05c0-1.2-.02-2.75-1.7-2.75-1.7 0-1.96 1.31-1.96 2.66v5.14h-4v-11Z",
 };
 
-export function SiteFooter() {
+export function SiteFooter({ settings }: { settings: SiteSettings }) {
   const year = currentJalaliYear();
 
   return (
@@ -43,7 +44,7 @@ export function SiteFooter() {
           <Link href="/" className="flex items-center gap-2.5">
             <Logomark className="size-10 text-[var(--brand)]" />
             <span className="flex flex-col leading-none">
-              <span className="font-display text-lg font-extrabold">{siteConfig.name}</span>
+              <span className="font-display text-lg font-extrabold">{settings.name}</span>
               <span className="mt-1 font-mono text-[0.5625rem] tracking-[0.22em] text-[var(--fg-subtle)]">
                 {siteConfig.latinName}
               </span>
@@ -51,7 +52,7 @@ export function SiteFooter() {
           </Link>
 
           <p className="mt-5 max-w-sm text-sm leading-7 text-[var(--fg-muted)]">
-            {siteConfig.description}
+            {settings.description}
           </p>
 
           <ul className="mt-6 space-y-3 text-sm">
@@ -59,17 +60,17 @@ export function SiteFooter() {
               <svg viewBox="0 0 20 20" className="mt-1 size-4 shrink-0 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M10 2.5c3 3.3 5 6 5 8.2a5 5 0 0 1-10 0c0-2.2 2-4.9 5-8.2Z" />
               </svg>
-              <span className="leading-7">{siteConfig.contact.address}</span>
+              <span className="leading-7">{settings.contact.address}</span>
             </li>
             <li className="flex gap-3">
               <svg viewBox="0 0 20 20" className="mt-1 size-4 shrink-0 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M3.5 3.5h3l1.2 3.6-2 1.2a10 10 0 0 0 4.5 4.5l1.2-2 3.6 1.2v3a1.2 1.2 0 0 1-1.3 1.2A13.7 13.7 0 0 1 2.3 4.8a1.2 1.2 0 0 1 1.2-1.3Z" />
               </svg>
               <span className="flex flex-col gap-1">
-                {siteConfig.contact.phones.map((phone, i) => (
+                {settings.contact.phones.map((phone, i) => (
                   <a
                     key={phone}
-                    href={`tel:${siteConfig.contact.phonesRaw[i]}`}
+                    href={`tel:${settings.contact.phonesRaw[i]}`}
                     className="num text-[var(--fg-secondary)] transition-colors hover:text-[var(--brand)]"
                   >
                     {phone}
@@ -83,10 +84,10 @@ export function SiteFooter() {
                 <path d="m3 6 7 4.5L17 6" />
               </svg>
               <a
-                href={`mailto:${siteConfig.contact.email}`}
+                href={`mailto:${settings.contact.email}`}
                 className="text-[var(--fg-secondary)] transition-colors hover:text-[var(--brand)]"
               >
-                {siteConfig.contact.email}
+                {settings.contact.email}
               </a>
             </li>
           </ul>

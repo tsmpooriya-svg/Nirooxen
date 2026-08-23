@@ -8,12 +8,20 @@ import { ThemeToggle } from "@/components/theme-provider";
 import { DomainIcon, Logomark } from "@/components/ui/icons";
 import { mainNav, siteConfig } from "@/config/site";
 import type { CategoryNode } from "@/modules/catalog/queries";
+import type { SiteSettings } from "@/modules/settings/queries";
 import { cn, toFaDigits } from "@/lib/utils";
 
 import { CartButton } from "./cart-panel";
 import { SearchDialog } from "./search-dialog";
 
-export function SiteHeader({ categories }: { categories: CategoryNode[] }) {
+export function SiteHeader({
+  categories,
+  settings,
+}: {
+  categories: CategoryNode[];
+  /** از پایگاه داده می‌آید؛ روی پیش‌فرض‌های config می‌نشیند */
+  settings: SiteSettings;
+}) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -61,19 +69,19 @@ export function SiteHeader({ categories }: { categories: CategoryNode[] }) {
           <div className="flex items-center gap-5">
             <span className="flex items-center gap-2">
               <span className="inline-block h-3 w-px bg-[var(--brand)]" aria-hidden />
-              {siteConfig.tagline}
+              {settings.tagline}
             </span>
           </div>
           <div className="flex items-center gap-5">
             <span>{siteConfig.contact.workingHours}</span>
             <a
-              href={`tel:${siteConfig.contact.phonesRaw[0]}`}
+              href={`tel:${settings.contact.phonesRaw[0]}`}
               className="flex items-center gap-1.5 font-medium text-[var(--fg-secondary)] transition-colors hover:text-[var(--brand)]"
             >
               <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.4">
                 <path d="M3 2.5h2.5l1 3-1.6 1a8 8 0 0 0 3.6 3.6l1-1.6 3 1V13a1 1 0 0 1-1.1 1A11 11 0 0 1 2 3.6 1 1 0 0 1 3 2.5Z" />
               </svg>
-              <span className="num">{siteConfig.contact.phones[0]}</span>
+              <span className="num">{settings.contact.phones[0]}</span>
             </a>
           </div>
         </div>
@@ -90,11 +98,11 @@ export function SiteHeader({ categories }: { categories: CategoryNode[] }) {
       >
         <div className="shell flex h-[var(--header-h)] items-center gap-4">
           {/* لوگو */}
-          <Link href="/" className="group flex shrink-0 items-center gap-2.5" aria-label={siteConfig.name}>
+          <Link href="/" className="group flex shrink-0 items-center gap-2.5" aria-label={settings.name}>
             <Logomark className="size-9 text-[var(--brand)] transition-transform duration-500 [transition-timing-function:var(--ease-spring)] group-hover:rotate-[15deg] sm:size-10" />
             <span className="flex flex-col leading-none">
               <span className="font-display text-[1.0625rem] font-extrabold tracking-tight text-[var(--fg-primary)] sm:text-lg">
-                {siteConfig.name}
+                {settings.name}
               </span>
               <span className="mt-1 font-mono text-[0.5625rem] tracking-[0.22em] text-[var(--fg-subtle)]">
                 {siteConfig.latinName}
@@ -152,10 +160,11 @@ export function SiteHeader({ categories }: { categories: CategoryNode[] }) {
           {/* ابزارها */}
           <div className="ms-auto flex items-center gap-2 lg:ms-0">
             <SearchDialog />
-            <CartButton />
+            {/* سبد استعلام با کلید features.cart در تنظیمات مدیر خاموش می‌شود */}
+            {settings.features.cart && <CartButton />}
             <ThemeToggle className="hidden sm:grid" />
             <a
-              href={`tel:${siteConfig.contact.mobileRaw}`}
+              href={`tel:${settings.contact.mobileRaw}`}
               className="hidden h-10 items-center gap-2 rounded-md bg-[var(--brand)] px-4 text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)] xl:flex"
             >
               <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -333,7 +342,7 @@ export function SiteHeader({ categories }: { categories: CategoryNode[] }) {
 
           <div className="border-t border-[var(--border-hairline)] p-5">
             <a
-              href={`tel:${siteConfig.contact.mobileRaw}`}
+              href={`tel:${settings.contact.mobileRaw}`}
               className="flex h-12 items-center justify-center gap-2 rounded-md bg-[var(--brand)] font-medium text-[var(--fg-on-brand)]"
             >
               <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5">

@@ -3,7 +3,33 @@ import type { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { absoluteUrl, stripHtml, truncate } from "@/lib/utils";
 
-/** متادیتای پایه که در layout ریشه اعمال می‌شود */
+/**
+ * متادیتای پایه.
+ *
+ * `settings` اختیاری است: اگر داده شود (از layout ریشه، خوانده‌شده از
+ * پایگاه داده) نام سایت، شعار و توضیحات از تنظیمات مدیر می‌آید؛ اگر نه،
+ * پیش‌فرض‌های config استفاده می‌شود. همان الگوی «پایگاه داده روی پیش‌فرض».
+ */
+export function buildBaseMetadata(settings?: {
+  name: string;
+  tagline: string;
+  seo: { metaTitle: string; metaDescription: string };
+}): Metadata {
+  const name = settings?.name ?? siteConfig.name;
+  const title = settings?.seo.metaTitle ?? `${siteConfig.name} | ${siteConfig.tagline}`;
+  const description = settings?.seo.metaDescription ?? siteConfig.description;
+
+  return {
+    ...baseMetadata,
+    title: { default: title, template: `%s | ${name}` },
+    description,
+    applicationName: name,
+    openGraph: { ...baseMetadata.openGraph, siteName: name, title, description },
+    twitter: { ...baseMetadata.twitter, title, description },
+  };
+}
+
+/** متادیتای پایه — مقادیر پیش‌فرض؛ `buildBaseMetadata` آن را با تنظیمات ترکیب می‌کند */
 export const baseMetadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
@@ -104,23 +130,31 @@ export function pageMetadata({
 /*  داده ساختاریافته (JSON-LD)                                                 */
 /* -------------------------------------------------------------------------- */
 
-export function organizationJsonLd() {
+/** داده ساختاریافته سازمان — با تنظیمات مدیر، وگرنه پیش‌فرض config */
+export function organizationJsonLd(settings?: {
+  name: string;
+  description: string;
+  contact: { address: string; phonesRaw: readonly string[] };
+}) {
+  const address = settings?.contact.address ?? siteConfig.contact.address;
+  const phonesRaw = settings?.contact.phonesRaw ?? siteConfig.contact.phonesRaw;
+
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${siteConfig.url}/#organization`,
     name: siteConfig.legalName,
-    alternateName: siteConfig.name,
+    alternateName: settings?.name ?? siteConfig.name,
     url: siteConfig.url,
-    description: siteConfig.description,
+    description: settings?.description ?? siteConfig.description,
     // فقط وقتی سال تأسیس واقعی ثبت شده باشد در داده ساختاریافته منتشر می‌شود
     ...(siteConfig.foundedYear ? { foundingDate: String(siteConfig.foundedYear) } : {}),
     address: {
       "@type": "PostalAddress",
-      streetAddress: siteConfig.contact.address,
+      streetAddress: address,
       addressCountry: "IR",
     },
-    contactPoint: siteConfig.contact.phonesRaw.map((phone) => ({
+    contactPoint: phonesRaw.map((phone) => ({
       "@type": "ContactPoint",
       telephone: phone,
       contactType: "sales",
@@ -131,13 +165,13 @@ export function organizationJsonLd() {
   };
 }
 
-export function websiteJsonLd() {
+export function websiteJsonLd(settings?: { name: string }) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${siteConfig.url}/#website`,
     url: siteConfig.url,
-    name: siteConfig.name,
+    name: settings?.name ?? siteConfig.name,
     inLanguage: "fa-IR",
     publisher: { "@id": `${siteConfig.url}/#organization` },
     potentialAction: {

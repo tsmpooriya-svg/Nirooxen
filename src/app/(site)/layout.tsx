@@ -1,15 +1,18 @@
 import { CartPanel } from "@/components/site/cart-panel";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
+import { SiteSettingsProvider } from "@/components/site/settings-provider";
 import { JsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { getCategoryTree } from "@/modules/catalog/queries";
+import { getSiteSettings } from "@/modules/settings/queries";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const categories = await getCategoryTree();
+  // هدر و فوتر کامپوننت کلاینت‌اند، پس تنظیمات به‌صورت prop پایین می‌رود
+  const [categories, settings] = await Promise.all([getCategoryTree(), getSiteSettings()]);
 
   return (
     <>
-      <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
+      <JsonLd data={[organizationJsonLd(settings), websiteJsonLd(settings)]} />
 
       {/* پرش به محتوا — الزام دسترس‌پذیری برای کاربران کیبورد */}
       <a
@@ -19,10 +22,12 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         رفتن به محتوای اصلی
       </a>
 
-      <SiteHeader categories={categories} />
-      <main id="main">{children}</main>
-      <SiteFooter />
-      <CartPanel />
+      <SiteSettingsProvider settings={settings}>
+        <SiteHeader categories={categories} settings={settings} />
+        <main id="main">{children}</main>
+        <SiteFooter settings={settings} />
+        {settings.features.cart && <CartPanel />}
+      </SiteSettingsProvider>
     </>
   );
 }

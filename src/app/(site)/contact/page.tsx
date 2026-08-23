@@ -4,6 +4,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { PageHeader } from "@/components/site/breadcrumb";
 import { ContactForm } from "@/components/site/contact-form";
 import { siteConfig } from "@/config/site";
+import { getSiteSettings } from "@/modules/settings/queries";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -12,7 +13,10 @@ export const metadata: Metadata = pageMetadata({
   path: "/contact",
 });
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  // اطلاعات تماس از تنظیمات مدیر می‌آید و روی پیش‌فرض config می‌نشیند
+  const settings = await getSiteSettings();
+
   return (
     <>
       <PageHeader
@@ -33,10 +37,10 @@ export default function ContactPage() {
                 }
               >
                 <ul className="space-y-1.5">
-                  {siteConfig.contact.phones.map((phone, i) => (
+                  {settings.contact.phones.map((phone, i) => (
                     <li key={phone}>
                       <a
-                        href={`tel:${siteConfig.contact.phonesRaw[i]}`}
+                        href={`tel:${settings.contact.phonesRaw[i]}`}
                         className="num text-[0.9375rem] font-medium text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
                       >
                         {phone}
@@ -54,10 +58,10 @@ export default function ContactPage() {
                 icon={<rect x="6" y="2.5" width="8" height="15" rx="2" />}
               >
                 <a
-                  href={`tel:${siteConfig.contact.mobileRaw}`}
+                  href={`tel:${settings.contact.mobileRaw}`}
                   className="num text-[0.9375rem] font-medium text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
                 >
-                  {siteConfig.contact.mobile}
+                  {settings.contact.mobile}
                 </a>
                 <p className="mt-3 text-xs leading-6 text-[var(--fg-subtle)]">
                   خارج از ساعت اداری، پیام واتس‌اپ سریع‌تر پاسخ داده می‌شود.
@@ -76,11 +80,11 @@ export default function ContactPage() {
                 <ul className="space-y-1.5 text-[0.875rem]">
                   <li>
                     <a
-                      href={`mailto:${siteConfig.contact.email}`}
+                      href={`mailto:${settings.contact.email}`}
                       className="text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
                       dir="ltr"
                     >
-                      {siteConfig.contact.email}
+                      {settings.contact.email}
                     </a>
                     <span className="ms-2 text-xs text-[var(--fg-subtle)]">— امور عمومی</span>
                   </li>
@@ -102,7 +106,7 @@ export default function ContactPage() {
                 icon={<path d="M10 2.5c3 3.3 5 6 5 8.2a5 5 0 0 1-10 0c0-2.2 2-4.9 5-8.2Z" />}
               >
                 <p className="text-[0.875rem] leading-8 text-[var(--fg-primary)]">
-                  {siteConfig.contact.address}
+                  {settings.contact.address}
                 </p>
                 <p className="mt-2 text-xs text-[var(--fg-subtle)]">
                   کد پستی: <span className="num">{siteConfig.contact.postalCode}</span>

@@ -7,6 +7,7 @@ import { Section, SectionHeading } from "@/components/site/section";
 import { DomainIcon } from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
 import { pageMetadata } from "@/lib/seo";
+import { getSiteSettings } from "@/modules/settings/queries";
 
 export const metadata: Metadata = pageMetadata({
   title: "خدمات فنی و مهندسی",
@@ -66,7 +67,9 @@ const services = [
   },
 ] as const;
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const settings = await getSiteSettings();
+
   return (
     <>
       <PageHeader
@@ -135,10 +138,10 @@ export default function ServicesPage() {
               درخواست بازدید و مشاوره
             </Link>
             <a
-              href={`tel:${siteConfig.contact.phonesRaw[0]}`}
+              href={`tel:${settings.contact.phonesRaw[0]}`}
               className="inline-flex h-12 items-center rounded-md border border-[var(--border-default)] px-6 text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:text-[var(--brand)]"
             >
-              <span className="num">{siteConfig.contact.phones[0]}</span>
+              <span className="num">{settings.contact.phones[0]}</span>
             </a>
           </div>
           <p className="mt-6 text-center text-xs text-[var(--fg-subtle)]">

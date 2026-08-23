@@ -6,6 +6,7 @@ import { DomainIcon } from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
 import { toFaDigits } from "@/lib/utils";
 import type { CategoryNode } from "@/modules/catalog/queries";
+import type { SiteSettings } from "@/modules/settings/queries";
 
 /**
  * هیرو — «مقطع فنی».
@@ -14,7 +15,13 @@ import type { CategoryNode } from "@/modules/catalog/queries";
  * شبکه بلوپرینت و دو هاله نورانی که آرام جابه‌جا می‌شوند. همه انیمیشن‌ها
  * CSS محض هستند تا در اولین رنگ‌آمیزی بدون هزینه JS اجرا شوند.
  */
-export function Hero({ categories }: { categories: CategoryNode[] }) {
+export function Hero({
+  categories,
+  settings,
+}: {
+  categories: CategoryNode[];
+  settings: SiteSettings;
+}) {
   return (
     <section className="blueprint relative overflow-hidden border-b border-[var(--border-hairline)] pb-16 pt-14 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-24">
       {/* هاله‌های محیطی */}
@@ -83,7 +90,7 @@ export function Hero({ categories }: { categories: CategoryNode[] }) {
                 </Link>
 
                 <a
-                  href={`tel:${siteConfig.contact.mobileRaw}`}
+                  href={`tel:${settings.contact.mobileRaw}`}
                   className="inline-flex h-[3.25rem] items-center gap-2.5 rounded-md border border-[var(--border-default)] px-6 text-[0.9375rem] font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
                 >
                   <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
+import { useSiteSettings } from "@/components/site/settings-provider";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
 import { STOCK_STATUS } from "@/lib/constants";
@@ -21,6 +22,8 @@ export function ProductCard({
   compact?: boolean;
 }) {
   const add = useCart((s) => s.add);
+  // اگر مدیر سبد استعلام را خاموش کند، دکمه افزودن هم باید برود
+  const cartEnabled = useSiteSettings()?.features.cart ?? true;
   const { toast } = useToast();
   const stock = STOCK_STATUS[product.stockStatus];
   const hasPrice = product.priceMode === "PUBLIC" && product.price;
@@ -173,6 +176,7 @@ export function ProductCard({
             >
               {product.priceMode === "PUBLIC" ? "ثبت سفارش" : "استعلام قیمت"}
             </Link>
+            {cartEnabled && (
             <button
               type="button"
               onClick={onAdd}
@@ -186,6 +190,7 @@ export function ProductCard({
                 <circle cx="14.5" cy="16" r="1.2" />
               </svg>
             </button>
+            )}
           </div>
         </div>
       </div>

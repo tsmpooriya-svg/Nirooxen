@@ -5,9 +5,9 @@ import { Reveal } from "@/components/motion/reveal";
 import { DomainIcon } from "@/components/ui/icons";
 import { Section, SectionHeading } from "@/components/site/section";
 import { SolutionCard } from "@/components/site/solution-card";
-import { siteConfig } from "@/config/site";
 import { formatDate, toFaDigits, truncate } from "@/lib/utils";
 import type { CategoryNode } from "@/modules/catalog/queries";
+import type { SiteSettings } from "@/modules/settings/queries";
 import type { SolutionSummary } from "@/modules/solutions/queries";
 
 /* -------------------------------------------------------------------------- */
@@ -484,7 +484,7 @@ export function NewsSection({
 /*  فراخوان پایانی                                                              */
 /* -------------------------------------------------------------------------- */
 
-export function CtaSection() {
+export function CtaSection({ settings }: { settings: SiteSettings }) {
   return (
     <Section className="pb-0">
       <div className="shell">
@@ -513,10 +513,10 @@ export function CtaSection() {
                 ثبت درخواست مشاوره
               </Link>
               <a
-                href={`tel:${siteConfig.contact.phonesRaw[0]}`}
+                href={`tel:${settings.contact.phonesRaw[0]}`}
                 className="inline-flex h-[3.25rem] items-center gap-2.5 rounded-md border border-[var(--border-default)] px-7 text-[0.9375rem] font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
               >
-                <span className="num">{siteConfig.contact.phones[0]}</span>
+                <span className="num">{settings.contact.phones[0]}</span>
               </a>
             </div>
           </div>
