@@ -32,7 +32,6 @@ const {
   productImages,
   productSpecs,
   products,
-  projects,
   settings,
   users,
 } = schema;

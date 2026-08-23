@@ -4,7 +4,7 @@ import * as React from "react";
 
 type Theme = "dark" | "light";
 
-const STORAGE_KEY = "aria-theme";
+const STORAGE_KEY = "nirooxen-theme";
 
 type ThemeContextValue = {
   theme: Theme;
@@ -26,6 +26,25 @@ export function useTheme() {
  */
 export const themeScript = `(function(){try{var t=localStorage.getItem("${STORAGE_KEY}");if(!t){t="dark"}document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","dark")}})();`;
 
+/**
+ * منبع حقیقت تم، صفت `data-theme` روی <html> است — نه state ری‌اکت.
+ * `themeScript` آن را پیش از اولین رنگ‌آمیزی تنظیم می‌کند، پس خواندن از DOM
+ * هم با هیدریشن سازگار است و هم نیازی به setState داخل effect ندارد.
+ */
+const themeStore = {
+  subscribe(onChange: () => void) {
+    const observer = new MutationObserver(onChange);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => observer.disconnect();
+  },
+  getSnapshot(): Theme {
+    return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+  },
+};
+
 export function ThemeProvider({
   children,
   defaultTheme = "dark",
@@ -33,15 +52,15 @@ export function ThemeProvider({
   children: React.ReactNode;
   defaultTheme?: Theme;
 }) {
-  const [theme, setThemeState] = React.useState<Theme>(defaultTheme);
-
-  React.useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY) as Theme | null;
-    if (stored === "dark" || stored === "light") setThemeState(stored);
-  }, []);
+  // مقدار سرور همیشه defaultTheme است؛ کلاینت بلافاصله از DOM می‌خواند.
+  const theme = React.useSyncExternalStore(
+    themeStore.subscribe,
+    themeStore.getSnapshot,
+    () => defaultTheme,
+  );
 
   const setTheme = React.useCallback((next: Theme) => {
-    setThemeState(next);
+    // تغییر صفت، خودبه‌خود از طریق MutationObserver به state منتشر می‌شود
     document.documentElement.setAttribute("data-theme", next);
     try {
       window.localStorage.setItem(STORAGE_KEY, next);

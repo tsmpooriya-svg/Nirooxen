@@ -4,16 +4,15 @@ import Link from "next/link";
 import * as React from "react";
 
 import { useCart, useCartCount, useCartSubtotal } from "@/modules/cart/store";
+import { useMounted } from "@/lib/use-mounted";
 import { cn, formatPrice, toFaDigits } from "@/lib/utils";
 
 /** نشانگر سبد استعلام در هدر */
 export function CartButton() {
   const count = useCartCount();
   const toggle = useCart((s) => s.toggle);
-  const [mounted, setMounted] = React.useState(false);
-
   // شمارنده فقط پس از هیدریشن رندر می‌شود تا با HTML سرور تفاوت نداشته باشد
-  React.useEffect(() => setMounted(true), []);
+  const mounted = useMounted();
 
   return (
     <button
@@ -40,9 +39,7 @@ export function CartButton() {
 export function CartPanel() {
   const { lines, isOpen, close, remove, setQuantity } = useCart();
   const { total, hasHiddenPrice } = useCartSubtotal();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => setMounted(true), []);
+  const mounted = useMounted();
 
   React.useEffect(() => {
     if (!mounted) return;

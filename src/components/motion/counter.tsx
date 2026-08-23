@@ -27,12 +27,15 @@ export function Counter({
     const node = ref.current;
     if (!node) return;
 
+    let frame = 0;
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setDisplay(value);
-      return;
+      // پرش مستقیم به مقدار نهایی. از rAF استفاده می‌شود تا به‌جای یک رندر
+      // آبشاری همگام داخل effect، در فریم بعدی اعمال شود.
+      frame = requestAnimationFrame(() => setDisplay(value));
+      return () => cancelAnimationFrame(frame);
     }
 
-    let frame = 0;
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries[0]?.isIntersecting) return;

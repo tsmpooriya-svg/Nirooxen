@@ -27,7 +27,9 @@ export function SearchDialog() {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
-  const [hits, setHits] = React.useState<SearchHit[]>([]);
+  const [fetchedHits, setFetchedHits] = React.useState<SearchHit[]>([]);
+  // نتایج فقط تا وقتی معتبرند که پرس‌وجو خالی نباشد
+  const hits = query.trim() ? fetchedHits : [];
   const [loading, setLoading] = React.useState(false);
   const [activeIndex, setActiveIndex] = React.useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -53,19 +55,20 @@ export function SearchDialog() {
   }, [open]);
 
   React.useEffect(() => {
-    if (!query.trim()) {
-      setHits([]);
-      return;
-    }
+    // با پرس‌وجوی خالی هیچ درخواستی زده نمی‌شود؛ خالی‌کردن نتایج در زمان
+    // رندر مشتق می‌شود (به `hits` پایین‌تر نگاه کنید) نه با setState در effect.
+    if (!query.trim()) return;
+
     const controller = new AbortController();
-    setLoading(true);
     const timer = window.setTimeout(async () => {
+      // اسپینر بعد از پایان debounce روشن می‌شود، نه با هر بار فشردن کلید
+      setLoading(true);
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
           signal: controller.signal,
         });
         const data = (await res.json()) as { items: SearchHit[] };
-        setHits(data.items ?? []);
+        setFetchedHits(data.items ?? []);
         setActiveIndex(0);
       } catch {
         /* درخواست لغو شد */

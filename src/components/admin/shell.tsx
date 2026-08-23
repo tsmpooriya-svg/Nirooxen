@@ -130,7 +130,12 @@ export function AdminShell({
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  React.useEffect(() => setMobileOpen(false), [pathname]);
+  // بستن منوی موبایل هنگام تغییر مسیر — تنظیم state در زمان رندر
+  const [lastPath, setLastPath] = React.useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
+    setMobileOpen(false);
+  }
 
   const sidebar = (
     <>

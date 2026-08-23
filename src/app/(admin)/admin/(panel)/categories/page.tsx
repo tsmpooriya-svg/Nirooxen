@@ -1,6 +1,5 @@
 import { CategoryDialog, DeleteTaxonomyButton } from "@/components/admin/taxonomy-forms";
 import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/components/admin/ui";
-import { DomainIcon } from "@/components/ui/icons";
 import { toFaDigits } from "@/lib/utils";
 import { getCategoryOptions } from "@/modules/admin/queries";
 

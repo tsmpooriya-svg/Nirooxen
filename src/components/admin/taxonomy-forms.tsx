@@ -43,6 +43,14 @@ export function CategoryDialog({
   const action = saveCategory.bind(null, values.id ?? null);
   const [state, formAction, pending] = useActionState(action, initialState);
 
+  // بستن مودال پس از ذخیره موفق — در زمان رندر، نه داخل effect
+  const [lastState, setLastState] = React.useState(state);
+  if (lastState !== state) {
+    setLastState(state);
+    if (state.status === "success") setOpen(false);
+  }
+
+  // نمایش نوتیفیکیشن، همگام‌سازی با یک سیستم بیرونی است و جای درستش effect است
   React.useEffect(() => {
     if (state.status === "idle") return;
     toast({
@@ -50,7 +58,6 @@ export function CategoryDialog({
       description: state.message,
       tone: state.status === "success" ? "success" : "error",
     });
-    if (state.status === "success") setOpen(false);
   }, [state, toast]);
 
   return (
@@ -177,6 +184,14 @@ export function BrandDialog({
   const action = saveBrand.bind(null, values.id ?? null);
   const [state, formAction, pending] = useActionState(action, initialState);
 
+  // بستن مودال پس از ذخیره موفق — در زمان رندر، نه داخل effect
+  const [lastState, setLastState] = React.useState(state);
+  if (lastState !== state) {
+    setLastState(state);
+    if (state.status === "success") setOpen(false);
+  }
+
+  // نمایش نوتیفیکیشن، همگام‌سازی با یک سیستم بیرونی است و جای درستش effect است
   React.useEffect(() => {
     if (state.status === "idle") return;
     toast({
@@ -184,7 +199,6 @@ export function BrandDialog({
       description: state.message,
       tone: state.status === "success" ? "success" : "error",
     });
-    if (state.status === "success") setOpen(false);
   }, [state, toast]);
 
   return (

@@ -27,10 +27,16 @@ export function SiteHeader({ categories }: { categories: CategoryNode[] }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  React.useEffect(() => {
+  // بستن منوها هنگام تغییر مسیر.
+  // این تنظیم در زمان رندر انجام می‌شود، نه داخل effect — الگوی رسمی ری‌اکت
+  // برای «تنظیم state هنگام تغییر ورودی». اثرش این است که منو بدون یک فریم
+  // اضافه بسته می‌شود.
+  const [lastPath, setLastPath] = React.useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
     setMobileOpen(false);
     setMegaOpen(false);
-  }, [pathname]);
+  }
 
   React.useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";

@@ -32,6 +32,14 @@ export function UserDialog({
   const action = saveUser.bind(null, values.id ?? null);
   const [state, formAction, pending] = useActionState(action, initialState);
 
+  // بستن مودال پس از ذخیره موفق — در زمان رندر، نه داخل effect
+  const [lastState, setLastState] = React.useState(state);
+  if (lastState !== state) {
+    setLastState(state);
+    if (state.status === "success") setOpen(false);
+  }
+
+  // نمایش نوتیفیکیشن، همگام‌سازی با یک سیستم بیرونی است و جای درستش effect است
   React.useEffect(() => {
     if (state.status === "idle") return;
     toast({
@@ -39,7 +47,6 @@ export function UserDialog({
       description: state.message,
       tone: state.status === "success" ? "success" : "error",
     });
-    if (state.status === "success") setOpen(false);
   }, [state, toast]);
 
   return (

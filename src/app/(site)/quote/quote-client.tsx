@@ -4,14 +4,14 @@ import Link from "next/link";
 import * as React from "react";
 
 import { OrderForm } from "@/components/site/order-form";
+import { useMounted } from "@/lib/use-mounted";
 import { formatPrice, toFaDigits } from "@/lib/utils";
 import { useCart } from "@/modules/cart/store";
 
 export function QuoteClient() {
   const { lines, setQuantity, remove, clear } = useCart();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => setMounted(true), []);
+  // سبد از localStorage می‌آید، پس تا پیش از هیدریشن نباید رندر شود
+  const mounted = useMounted();
 
   if (!mounted) {
     return <div className="h-64 animate-pulse rounded-xl border border-[var(--border-subtle)]" />;

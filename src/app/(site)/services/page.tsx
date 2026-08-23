@@ -7,7 +7,6 @@ import { Section, SectionHeading } from "@/components/site/section";
 import { DomainIcon } from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
 import { pageMetadata } from "@/lib/seo";
-import { toFaDigits } from "@/lib/utils";
 
 export const metadata: Metadata = pageMetadata({
   title: "خدمات فنی و مهندسی",
