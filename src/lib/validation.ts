@@ -173,6 +173,24 @@ export const postFormSchema = z.object({
   metaDescription: z.string().trim().max(320).optional(),
 });
 
+/* -------------------------------- پروژه‌ها -------------------------------- */
+
+export const projectFormSchema = z.object({
+  title: z.string().trim().min(3, "عنوان الزامی است").max(220),
+  slug: z.string().trim().max(250).optional(),
+  client: z.string().trim().max(190).optional(),
+  location: z.string().trim().max(160).optional(),
+  year: z.string().trim().max(12).optional(),
+  capacity: z.string().trim().max(120).optional(),
+  summary: z.string().trim().max(600).optional(),
+  description: z.string().trim().max(20000).optional(),
+  coverUrl: z.string().trim().max(500).optional(),
+  tags: z.array(z.string().trim().max(48)).max(20).default([]),
+  position: z.coerce.number().int().min(0).max(9999).default(0),
+  isActive: checkbox.default(true),
+  isFeatured: checkbox.default(false),
+});
+
 /* -------------------------------- مشتریان --------------------------------- */
 
 export const customerFormSchema = z.object({

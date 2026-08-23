@@ -91,6 +91,12 @@ const navGroups: { label: string; items: NavItem[] }[] = [
         permission: "posts",
         icon: icon("M4 3.5h9l3 3v10H4zM7 8h6M7 11h6M7 14h4"),
       },
+      {
+        href: "/admin/projects",
+        title: "پروژه‌ها",
+        permission: "projects",
+        icon: icon("M3 16.5V8l7-4.5L17 8v8.5M7.5 16.5v-5h5v5"),
+      },
     ],
   },
   {

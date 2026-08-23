@@ -27,6 +27,7 @@ import {
   productImages,
   productSpecs,
   products,
+  projects,
   settings,
   users,
   type MessageStatus,
@@ -45,6 +46,7 @@ import {
   customerFormSchema,
   postFormSchema,
   productFormSchema,
+  projectFormSchema,
   toFieldErrors,
   userFormSchema,
   type FieldErrors,
@@ -76,7 +78,7 @@ async function guard(fn: () => Promise<ActionState>): Promise<ActionState> {
 
 /** ساخت نامک یکتا؛ اگر تکراری بود پسوند عددی اضافه می‌کند */
 async function uniqueSlug(
-  table: typeof products | typeof categories | typeof brands | typeof posts,
+  table: typeof products | typeof categories | typeof brands | typeof posts | typeof projects,
   base: string,
   excludeId?: string,
 ): Promise<string> {
@@ -793,6 +795,93 @@ export async function deletePost(postId: string): Promise<ActionState> {
     revalidatePath("/admin/posts");
     revalidatePath("/news");
     return { status: "success", message: "مطلب حذف شد." };
+  });
+}
+
+/* ========================================================================== */
+/*  پروژه‌ها                                                                    */
+/* ========================================================================== */
+
+export async function saveProject(
+  projectId: string | null,
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  return guard(async () => {
+    const user = await requirePermission("projects");
+
+    const parsed = projectFormSchema.safeParse({
+      title: formData.get("title"),
+      slug: formData.get("slug") || undefined,
+      client: formData.get("client") || undefined,
+      location: formData.get("location") || undefined,
+      year: formData.get("year") || undefined,
+      capacity: formData.get("capacity") || undefined,
+      summary: formData.get("summary") || undefined,
+      description: formData.get("description") || undefined,
+      coverUrl: formData.get("coverUrl") || undefined,
+      tags: String(formData.get("tags") ?? "")
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
+      position: formData.get("position") || 0,
+      isActive: formData.get("isActive"),
+      isFeatured: formData.get("isFeatured"),
+    });
+
+    if (!parsed.success) {
+      return { status: "error", message: "لطفاً خطاهای فرم را برطرف کنید.", errors: toFieldErrors(parsed.error) };
+    }
+
+    const input = parsed.data;
+    const slug = await uniqueSlug(projects, input.slug || input.title, projectId ?? undefined);
+
+    const values = {
+      title: input.title,
+      slug,
+      client: input.client ?? null,
+      location: input.location ?? null,
+      year: input.year ?? null,
+      capacity: input.capacity ?? null,
+      summary: input.summary ?? null,
+      description: input.description ?? null,
+      coverUrl: input.coverUrl ?? null,
+      tags: input.tags,
+      position: input.position,
+      isActive: input.isActive,
+      isFeatured: input.isFeatured,
+      updatedAt: new Date(),
+    };
+
+    if (projectId) await db.update(projects).set(values).where(eq(projects.id, projectId));
+    else await db.insert(projects).values(values);
+
+    await logActivity({
+      userId: user.id,
+      action: projectId ? "update" : "create",
+      entity: "project",
+      entityId: projectId ?? undefined,
+      summary: `${projectId ? "ویرایش" : "ایجاد"} پروژه «${input.title}»`,
+    });
+
+    revalidatePath("/admin/projects");
+    revalidatePath("/projects");
+    revalidatePath("/");
+    return { status: "success", message: "پروژه ذخیره شد." };
+  });
+}
+
+export async function deleteProject(projectId: string): Promise<ActionState> {
+  return guard(async () => {
+    const user = await requirePermission("projects");
+    await db.delete(projects).where(eq(projects.id, projectId));
+    await logActivity({
+      userId: user.id, action: "delete", entity: "project", entityId: projectId, summary: "حذف پروژه",
+    });
+    revalidatePath("/admin/projects");
+    revalidatePath("/projects");
+    revalidatePath("/");
+    return { status: "success", message: "پروژه حذف شد." };
   });
 }
 

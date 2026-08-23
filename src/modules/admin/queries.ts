@@ -21,6 +21,7 @@ import {
   productImages,
   productSpecs,
   products,
+  projects,
   settings,
   users,
   type MessageStatus,
@@ -362,6 +363,23 @@ export async function getAdminProduct(id: string) {
   ]);
 
   return { product, images, specs };
+}
+
+/* -------------------------------------------------------------------------- */
+/*  پروژه‌ها                                                                    */
+/* -------------------------------------------------------------------------- */
+
+/** همه پروژه‌ها برای جدول پنل — شامل غیرفعال‌ها، برخلاف کوئری عمومی */
+export async function getAdminProjects() {
+  return db
+    .select()
+    .from(projects)
+    .orderBy(desc(projects.isFeatured), asc(projects.position), desc(projects.createdAt));
+}
+
+export async function getAdminProject(id: string) {
+  const [row] = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+  return row ?? null;
 }
 
 export async function getCategoryOptions() {
