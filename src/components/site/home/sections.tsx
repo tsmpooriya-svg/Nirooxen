@@ -5,7 +5,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { DomainIcon } from "@/components/ui/icons";
 import { Section, SectionHeading } from "@/components/site/section";
 import { SolutionCard } from "@/components/site/solution-card";
-import { formatDate, toFaDigits, truncate } from "@/lib/utils";
+import { cn, formatDate, toFaDigits, truncate } from "@/lib/utils";
 import type { CategoryNode } from "@/modules/catalog/queries";
 import type { SiteSettings } from "@/modules/settings/queries";
 import type { SolutionSummary } from "@/modules/solutions/queries";
@@ -14,8 +14,17 @@ import type { SolutionSummary } from "@/modules/solutions/queries";
 /*  دسته‌بندی‌ها — چیدمان بنتو                                                 */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * دسته‌بندی‌ها با سلسله‌مراتب.
+ *
+ * پنج دسته نمایش داده می‌شود، نه شش‌تای هم‌اندازه: اولی یک کاشی بزرگ ۲×۲ با
+ * تیتر و توضیح کامل، چهار تای بعدی کاشی‌های فشرده. بریف صراحتاً می‌گوید همه
+ * دسته‌ها نباید کارت گرد یکسان باشند. بقیه دسته‌ها از «همه محصولات» در دسترس‌اند.
+ */
 export function CategoriesSection({ categories }: { categories: CategoryNode[] }) {
-  const featured = categories.filter((c) => c.isFeatured).slice(0, 6);
+  const featured = categories.filter((c) => c.isFeatured).slice(0, 5);
+  const [lead, ...rest] = featured;
+  if (!lead) return null;
 
   return (
     <Section id="categories">
@@ -27,60 +36,99 @@ export function CategoriesSection({ categories }: { categories: CategoryNode[] }
           action={{ label: "همه محصولات", href: "/products" }}
         />
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {featured.map((category, index) => (
-            <Reveal key={category.id} delay={index * 70} variant="up">
-              <Link
-                href={`/products?category=${category.slug}`}
-                className={
-                  "brackets group relative flex h-full flex-col overflow-hidden rounded-lg border " +
-                  "border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-6 transition-all duration-500 " +
-                  "[transition-timing-function:var(--ease-out-expo)] hover:-translate-y-1 " +
-                  "hover:border-[var(--border-brand)] hover:shadow-[var(--shadow-lg)]"
-                }
-              >
-                {/* پس‌زمینه شبکه‌ای که هنگام هاور روشن می‌شود */}
-                <span
-                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(to left, var(--grid-line-strong) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line-strong) 1px, transparent 1px)",
-                    backgroundSize: "22px 22px",
-                  }}
-                  aria-hidden
-                />
-
-                <span className="relative mb-5 grid size-14 place-items-center rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-2)] text-[var(--brand)] transition-all duration-500 group-hover:scale-105 group-hover:border-[var(--border-brand)] group-hover:bg-[var(--brand-soft)]">
-                  <DomainIcon name={category.icon} className="size-7" />
-                </span>
-
-                <h3 className="relative mb-2 font-display text-lg font-bold transition-colors group-hover:text-[var(--brand)]">
-                  {category.name}
-                </h3>
-
-                {category.description && (
-                  <p className="relative clamp-3 text-[0.8125rem] leading-7 text-[var(--fg-muted)]">
-                    {category.description}
-                  </p>
-                )}
-
-                <div className="relative mt-5 flex items-center justify-between border-t border-[var(--border-hairline)] pt-4">
-                  <span className="font-mono text-[0.6875rem] text-[var(--fg-subtle)]">
-                    {toFaDigits(category.productCount)} کالا
-                  </span>
-                  <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--brand)] transition-all duration-300 group-hover:gap-3">
-                    مشاهده
-                    <svg viewBox="0 0 16 16" className="size-3" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-                      <path d="M10 3 5 8l5 5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                </div>
-              </Link>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-2">
+          <Reveal variant="up" className="lg:col-span-2 lg:row-span-2">
+            <CategoryTile category={lead} lead />
+          </Reveal>
+          {rest.map((category, index) => (
+            <Reveal key={category.id} delay={(index + 1) * 70} variant="up" className="h-full">
+              <CategoryTile category={category} />
             </Reveal>
           ))}
         </div>
       </div>
     </Section>
+  );
+}
+
+/** یک کاشی دسته‌بندی. حالت `lead` نسخه بزرگ‌تر با تایپوگرافی درشت‌تر است. */
+function CategoryTile({ category, lead }: { category: CategoryNode; lead?: boolean }) {
+  return (
+    <Link
+      href={`/products?category=${category.slug}`}
+      className={cn(
+        "brackets group relative flex h-full flex-col overflow-hidden rounded-lg border",
+        "border-[var(--border-subtle)] bg-[var(--bg-elev-1)] transition-all duration-500",
+        "[transition-timing-function:var(--ease-out-expo)] hover:-translate-y-1",
+        "hover:border-[var(--border-brand)] hover:shadow-[var(--shadow-lg)]",
+        lead ? "p-7 sm:p-9" : "p-5 sm:p-6",
+      )}
+    >
+      {/* پس‌زمینه شبکه‌ای که هنگام هاور روشن می‌شود */}
+      <span
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{
+          backgroundImage:
+            "linear-gradient(to left, var(--grid-line-strong) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line-strong) 1px, transparent 1px)",
+          backgroundSize: lead ? "34px 34px" : "22px 22px",
+        }}
+        aria-hidden
+      />
+
+      <span
+        className={cn(
+          "relative grid shrink-0 place-items-center rounded-lg border border-[var(--border-subtle)]",
+          "bg-[var(--bg-elev-2)] text-[var(--brand-text)] transition-all duration-500",
+          "group-hover:scale-105 group-hover:border-[var(--border-brand)] group-hover:bg-[var(--brand-soft)]",
+          lead ? "mb-7 size-16" : "mb-4 size-11",
+        )}
+      >
+        <DomainIcon name={category.icon} className={lead ? "size-8" : "size-[22px]"} />
+      </span>
+
+      <h3
+        className={cn(
+          "relative font-display font-bold transition-colors group-hover:text-[var(--brand-text)]",
+          lead ? "mb-3 text-display-2" : "mb-1.5 text-base",
+        )}
+      >
+        {category.name}
+      </h3>
+
+      {category.description && (
+        <p
+          className={cn(
+            "relative text-[var(--fg-muted)]",
+            lead ? "mb-2 max-w-md text-lead" : "clamp-2 text-meta",
+          )}
+        >
+          {category.description}
+        </p>
+      )}
+
+      <div
+        className={cn(
+          // mt-auto تا در کاشی بزرگ، فوتر به کف بچسبد و فضای خالی زیرش نماند
+          "relative mt-auto flex items-center justify-between border-t border-[var(--border-hairline)]",
+          lead ? "pt-5" : "pt-3",
+        )}
+      >
+        <span className="font-mono text-micro text-[var(--fg-subtle)]">
+          {toFaDigits(category.productCount)} کالا
+        </span>
+        <span
+          className={cn(
+            "flex items-center gap-1.5 font-medium text-[var(--brand-text)] transition-all duration-300 group-hover:gap-3",
+            lead ? "text-sm" : "text-micro",
+          )}
+        >
+          مشاهده
+          <svg viewBox="0 0 16 16" className="size-3" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+            <path d="M10 3 5 8l5 5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      </div>
+    </Link>
   );
 }
 
@@ -174,34 +222,65 @@ const advantages = [
   },
 ] as const;
 
+/**
+ * «چرا ما» — چیدمان تحریریه‌ای با تیتر در ستون کناری.
+ *
+ * پیش‌تر این بخش هم مثل بقیه «تیتر وسط‌چین + شبکه چهارستونی» بود. وقتی
+ * پشت سر هم چند بخش با همین ریتم بیایند، صفحه به فهرست تبدیل می‌شود نه
+ * روایت. اینجا تیتر در ستون سمت راست می‌چسبد و مزیت‌ها به‌صورت فهرست
+ * عمودی با شماره‌های بزرگ در ستون کناری اسکرول می‌شوند.
+ */
 export function AdvantagesSection() {
   return (
     <Section blueprint className="border-y border-[var(--border-hairline)] bg-[var(--bg-elev-1)]">
       <div className="shell">
-        <SectionHeading
-          eyebrow="چرا ما"
-          title="فروشنده نیستیم، مشاور فنی‌ایم"
-          description="تفاوت یک تأمین‌کننده خوب با یک فروشگاه، در چیزی است که پیش و پس از فروش اتفاق می‌افتد."
-          align="center"
-        />
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-20">
+          <Reveal>
+            <div className="lg:sticky lg:top-[calc(var(--header-h)+3rem)]">
+              <SectionHeading
+                eyebrow="چرا ما"
+                title="فروشنده نیستیم، مشاور فنی‌ایم"
+                description="تفاوت یک تأمین‌کننده خوب با یک فروشگاه، در چیزی است که پیش و پس از فروش اتفاق می‌افتد."
+                align="stack"
+              />
+              <Link
+                href="/services"
+                className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-[var(--brand-text)] transition-all duration-300 hover:gap-3"
+              >
+                خدمات فنی ما
+                <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
+                  <path d="M10 3 5 8l5 5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          </Reveal>
 
-        <div className="grid gap-px overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--border-hairline)] sm:grid-cols-2 lg:grid-cols-4">
-          {advantages.map((item, index) => (
-            <Reveal key={item.title} delay={index * 80} className="h-full">
-              <div className="group relative h-full bg-[var(--bg-elev-1)] p-7 transition-colors duration-500 hover:bg-[var(--bg-elev-2)]">
-                <span className="absolute end-6 top-6 font-mono text-[2.5rem] font-bold leading-none text-[var(--fg-primary)] opacity-[0.045] transition-opacity duration-500 group-hover:opacity-[0.09]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
+          <ul className="stack-divider">
+            {advantages.map((item, index) => (
+              <Reveal key={item.title} as="li" delay={index * 70}>
+                <div className="group flex gap-5 py-7 first:pt-0 sm:gap-8">
+                  <span
+                    className="shrink-0 font-mono text-[1.75rem] font-bold leading-none text-[var(--fg-subtle)] transition-colors duration-500 group-hover:text-[var(--brand-text)] sm:text-[2.25rem]"
+                    aria-hidden
+                  >
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
 
-                <span className="mb-5 grid size-12 place-items-center rounded-lg bg-[var(--brand-soft)] text-[var(--brand)] transition-transform duration-500 [transition-timing-function:var(--ease-spring)] group-hover:scale-110">
-                  <DomainIcon name={item.icon} className="size-6" />
-                </span>
-
-                <h3 className="mb-2.5 font-display text-base font-bold">{item.title}</h3>
-                <p className="text-[0.8125rem] leading-7 text-[var(--fg-muted)]">{item.body}</p>
-              </div>
-            </Reveal>
-          ))}
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-3 flex items-center gap-3">
+                      <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-[var(--brand-soft)] text-[var(--brand-text)] transition-transform duration-500 [transition-timing-function:var(--ease-spring)] group-hover:scale-110">
+                        <DomainIcon name={item.icon} className="size-5" />
+                      </span>
+                      <h3 className="font-display text-lg font-bold">{item.title}</h3>
+                    </div>
+                    {/* اندازه سطر محدود می‌شود؛ ستون فهرست پهن است و بدون
+                        این سقف، خطوط برای خواندن راحت طولانی می‌شوند */}
+                    <p className="max-w-[62ch] text-meta text-[var(--fg-muted)]">{item.body}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </ul>
         </div>
       </div>
     </Section>

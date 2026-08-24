@@ -16,15 +16,22 @@ export function SectionHeading({
   eyebrow?: string;
   title: React.ReactNode;
   description?: React.ReactNode;
-  align?: "start" | "center";
+  /**
+   * start  — تیتر بالای محتوا، اکشن در انتهای همان ردیف (حالت پیش‌فرض)
+   * center — وسط‌چین
+   * stack  — ستونی و بدون فاصله پایین؛ برای وقتی تیتر در ستون کناری می‌نشیند
+   */
+  align?: "start" | "center" | "stack";
   action?: { label: string; href: string };
   className?: string;
 }) {
   return (
     <div
       className={cn(
-        "mb-10 flex flex-col gap-4 sm:mb-12",
-        align === "center" ? "items-center text-center" : "sm:flex-row sm:items-end sm:justify-between",
+        "flex flex-col gap-4",
+        align !== "stack" && "mb-10 sm:mb-12",
+        align === "center" && "items-center text-center",
+        align === "start" && "sm:flex-row sm:items-end sm:justify-between",
         className,
       )}
     >
@@ -35,9 +42,7 @@ export function SectionHeading({
             {eyebrow}
           </p>
         )}
-        <h2 className="font-display text-[1.75rem] font-bold leading-tight tracking-tight sm:text-[2.125rem] lg:text-[2.5rem]">
-          {title}
-        </h2>
+        <h2 className="font-display text-section font-bold">{title}</h2>
         {description && (
           <p className="mt-4 text-[0.9375rem] leading-8 text-[var(--fg-muted)]">{description}</p>
         )}
