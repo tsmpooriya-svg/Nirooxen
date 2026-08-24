@@ -23,7 +23,7 @@ export function Hero({
   settings: SiteSettings;
 }) {
   return (
-    <section className="blueprint relative overflow-hidden border-b border-[var(--border-hairline)] pb-16 pt-14 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-24">
+    <section className="blueprint relative overflow-hidden border-b border-[var(--border-hairline)] pb-20 pt-16 sm:pb-24 sm:pt-20 lg:pb-32 lg:pt-28">
       {/* هاله‌های محیطی */}
       <div
         className="anim-drift pointer-events-none absolute -start-24 -top-32 -z-10 size-[34rem] rounded-full opacity-70 blur-[110px]"
@@ -37,7 +37,12 @@ export function Hero({
       />
 
       <div className="shell">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
+        {/*
+          عمداً نامتقارن: ستون متن حدود ۱.۵ برابر ستون کارت است و کارت با
+          فاصله از بالا پایین‌تر می‌نشیند. ترکیب دو ستونِ هم‌وزن و وسط‌چین،
+          تیتر را از موضع اصلی بودن خارج می‌کرد.
+        */}
+        <div className="grid items-start gap-12 lg:grid-cols-[1.75fr_1fr] lg:gap-16">
           {/* ستون متن */}
           <div>
             <Reveal>
@@ -55,18 +60,27 @@ export function Hero({
               </p>
             </Reveal>
 
+            {/*
+              تأکید فقط با رنگ برند. گرادیان روی متن، امضای بصری قالب‌های
+              عمومی است و بریف کنارش گذاشته. زیرخطِ absolute هم امتحان شد و
+              کنار رفت: وقتی عبارت در موبایل می‌شکند، خط زیر سطر اول می‌افتد
+              و شبیه خط‌خوردگی می‌شود.
+            */}
             <Reveal delay={80}>
-              <h1 className="font-display text-[2.25rem] font-extrabold leading-[1.18] tracking-tight sm:text-[3rem] lg:text-[3.5rem]">
+              {/* text-wrap:normal لازم است — قانون پایه برای همه تیترها
+                  balance می‌گذارد و آن، سطرها را حتی وقتی جا دارند دوباره
+                  می‌شکند و <br>های دستی این تیتر را بی‌اثر می‌کند */}
+              <h1 className="font-display text-display-1 font-extrabold [text-wrap:normal]">
                 تجهیزات آبرسانی
                 <br />
-                <span className="text-gradient-brand">انتخاب‌شده توسط مهندس</span>
+                <span className="text-[var(--brand)]">انتخاب‌شده توسط مهندس</span>
                 <br />
                 نه توسط الگوریتم
               </h1>
             </Reveal>
 
             <Reveal delay={160}>
-              <p className="mt-6 max-w-xl text-base leading-9 text-[var(--fg-muted)] sm:text-[1.0625rem]">
+              <p className="mt-8 max-w-[46ch] text-lead text-[var(--fg-muted)]">
                 پمپ، مخزن، شیرآلات و اتصالات صنعتی از برندهای معتبر جهانی و داخلی. هر سفارش پیش از
                 ثبت، توسط کارشناس فنی بررسی می‌شود تا مطمئن باشید آنچه می‌خرید دقیقاً به کار
                 پروژه‌تان می‌آید.
@@ -74,10 +88,12 @@ export function Hero({
             </Reveal>
 
             <Reveal delay={240}>
-              <div className="mt-9 flex flex-wrap items-center gap-3">
+              {/* روی موبایل تمام‌عرض و هم‌اندازه؛ flex-wrap قبلی دو دکمه با
+                  عرض‌های متفاوت و پلکانی می‌ساخت */}
+              <div className="mt-10 flex flex-col gap-3 xs:flex-row xs:flex-wrap xs:items-center">
                 <Link
                   href="/products"
-                  className="group inline-flex h-[3.25rem] items-center gap-2.5 rounded-md bg-[var(--brand)] px-7 text-[0.9375rem] font-medium text-[var(--fg-on-brand)] shadow-[var(--shadow-sm)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
+                  className="group inline-flex h-[3.25rem] items-center justify-center gap-2.5 rounded-md bg-[var(--brand)] px-7 text-[0.9375rem] font-medium text-[var(--fg-on-brand)] shadow-[var(--shadow-sm)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
                 >
                   مشاهده کاتالوگ محصولات
                   <svg
@@ -94,7 +110,7 @@ export function Hero({
 
                 <a
                   href={`tel:${settings.contact.mobileRaw}`}
-                  className="inline-flex h-[3.25rem] items-center gap-2.5 rounded-md border border-[var(--border-default)] px-6 text-[0.9375rem] font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+                  className="inline-flex h-[3.25rem] items-center justify-center gap-2.5 rounded-md border border-[var(--border-default)] px-6 text-[0.9375rem] font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
                 >
                   <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
                     <path d="M3 2.5h2.5l1 3-1.6 1a8 8 0 0 0 3.6 3.6l1-1.6 3 1V13a1 1 0 0 1-1.1 1A11 11 0 0 1 2 3.6 1 1 0 0 1 3 2.5Z" />
@@ -123,12 +139,12 @@ export function Hero({
             )}
           </div>
 
-          {/* ستون کارت دیتاشیت */}
-          <Reveal variant="scale" delay={200} className="relative">
+          {/* ستون کارت دیتاشیت — پایین‌تر از خط بالایی تیتر می‌نشیند */}
+          <Reveal variant="scale" delay={200} className="relative lg:mt-20">
             <div className="edge-lit grain relative overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-6 shadow-[var(--shadow-xl)] sm:p-7">
               <div className="mb-5 flex items-center justify-between border-b border-[var(--border-hairline)] pb-4">
                 <div>
-                  <p className="font-mono text-[0.625rem] tracking-[0.2em] text-[var(--fg-subtle)]">
+                  <p className="font-mono text-micro tracking-[0.2em] text-[var(--fg-subtle)]">
                     PRODUCT CATEGORIES
                   </p>
                   <p className="mt-1.5 font-display text-lg font-bold">دسته‌بندی تجهیزات</p>
@@ -150,10 +166,10 @@ export function Hero({
                         <DomainIcon name={category.icon} className="size-[18px]" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-medium text-[var(--fg-primary)] transition-colors group-hover:text-[var(--brand)]">
+                        <span className="block truncate text-[0.9375rem] font-medium text-[var(--fg-primary)] transition-colors group-hover:text-[var(--brand)]">
                           {category.name}
                         </span>
-                        <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]">
+                        <span className="mt-1 block font-mono text-micro text-[var(--fg-subtle)]">
                           {toFaDigits(category.productCount)} قلم کالا
                         </span>
                       </span>

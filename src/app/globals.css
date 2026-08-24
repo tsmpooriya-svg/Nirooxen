@@ -360,6 +360,35 @@
   --font-sans: "Vazirmatn", "Estedad", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
 
+  /* ---- Fluid display scale ----------------------------------------------
+     One continuous curve from 360px to 1440px instead of three discrete
+     breakpoint jumps, so the page never sits at an awkward in-between size.
+     Line heights are set per step: Persian needs more leading than Latin at
+     text sizes, and less than the default 1.28 at display sizes. */
+  /* The curve is pinned at both ends by the same constraint: the longest
+     headline line («انتخاب‌شده توسط مهندس») must stay on ONE line, because the
+     hero's breaks are manual and wrapping splits the phrase mid-meaning.
+     Measured need is 696px at 64px, so ~10.9em.
+       1440px → 63.7px, column 738px  (needs 693px)
+        390px → 30.1px, column 358px  (needs 327px) */
+  --text-display-1: clamp(1.875rem, 1.1rem + 3.2vw, 4rem);
+  --text-display-1--line-height: 1.2;
+  --text-display-2: clamp(1.875rem, 1.1rem + 3.4vw, 3.375rem);
+  --text-display-2--line-height: 1.2;
+  --text-section: clamp(1.625rem, 1.05rem + 2.6vw, 2.625rem);
+  --text-section--line-height: 1.26;
+  --text-lead: clamp(1rem, 0.94rem + 0.28vw, 1.1875rem);
+  --text-lead--line-height: 1.95;
+
+  /* ---- Metadata scale ---------------------------------------------------
+     Floor of 12px. Persian glyphs carry more internal detail than Latin at
+     the same nominal size, and the 10px mono labels used across the product
+     cards were below the point where that detail survives. */
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.7;
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.6;
+
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -447,7 +476,11 @@
     font-family: var(--font-display);
     font-weight: 700;
     line-height: 1.28;
-    letter-spacing: -0.015em;
+    /* No negative tracking. Persian is a connected script: pulling glyph
+       clusters together crowds the joins and the descenders of ج/چ/ح/خ, and
+       at display sizes it reads as a rendering fault rather than as style.
+       Latin-only lockups opt back in with .tracking-tight-latin. */
+    letter-spacing: normal;
     color: var(--fg-primary);
     text-wrap: balance;
   }
