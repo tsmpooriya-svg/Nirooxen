@@ -31,11 +31,15 @@ export function SiteHeader({
   const moreTimer = React.useRef<number | null>(null);
   const moreRef = React.useRef<HTMLDivElement>(null);
 
-  const secondaryNav = React.useMemo(
-    () => mainNav.filter((item): item is typeof item & { secondary: true } => "secondary" in item && item.secondary),
+  /** موارد قابل جمع‌شدن — هر کدام با بریک‌پوینتی که از آن به بعد در نوار می‌آید */
+  const collapsibleNav = React.useMemo(
+    () =>
+      mainNav.filter(
+        (item): item is typeof item & { collapse: "xl" | "always" } => "collapse" in item,
+      ),
     [],
   );
-  const hasActiveSecondary = secondaryNav.some((item) => pathname.startsWith(item.href));
+  const hasActiveCollapsed = collapsibleNav.some((item) => pathname.startsWith(item.href));
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -151,21 +155,32 @@ export function SiteHeader({
           </Link>
 
           {/*
-            ناوبری دسکتاپ.
+            ناوبری دسکتاپ — نردبان تراکم دو پله‌ای:
+              lg (۱۰۲۴+)  سه مورد اصلی + «بیشتر»
+              xl (۱۲۸۰+)  پنج مورد + «بیشتر»
+            پله سوم («همه نُه مورد») وجود ندارد، چون ذاتاً جا نمی‌شود؛
+            توضیح کامل در `mainNav` در config/site.ts.
 
-            موارد اصلی همیشه دیده می‌شوند. موارد `secondary` تا پیش از 2xl
-            داخل منوی «بیشتر» جمع می‌شوند و از 2xl به بعد مستقیم در ردیف
-            می‌نشینند — یعنی طراحی عریض دست‌نخورده می‌ماند و فقط در عرض‌های
-            کمتر تراکم کم می‌شود.
+            بدون `min-w-0`.
+
+            قبلاً این کلاس اینجا بود و اجازه می‌داد nav از عرض محتوایش کوچک‌تر
+            شود. چون آیتم‌ها `whitespace-nowrap` هستند، کوچک‌شدن ظرف باعث
+            نمی‌شد متن بشکند؛ فقط از ظرف بیرون می‌زد و روی کادر جستجو می‌افتاد.
+            بدتر اینکه در RTL این سرریز به سمت inline-end است و
+            `scrollWidth` را بزرگ نمی‌کند — یعنی سنجش overflow صفر گزارش
+            می‌داد در حالی که صفحه چشمی خراب بود. حالا اگر روزی جا کم بیاید،
+            به‌جای همپوشانی خاموش، سرریز واقعی و قابل اندازه‌گیری می‌شود.
           */}
-          <nav className="mx-auto hidden min-w-0 items-center lg:flex" aria-label="ناوبری اصلی">
+          <nav className="mx-auto hidden items-center lg:flex" aria-label="ناوبری اصلی">
             {mainNav.map((item) => {
-              const isSecondary = "secondary" in item && item.secondary;
+              const collapse = "collapse" in item ? item.collapse : undefined;
               const isProducts = "hasMegaMenu" in item && item.hasMegaMenu;
               return (
                 <div
                   key={item.href}
-                  className={isSecondary ? "hidden 2xl:block" : undefined}
+                  className={
+                    collapse === "always" ? "hidden" : collapse === "xl" ? "hidden xl:block" : undefined
+                  }
                   onMouseEnter={isProducts ? openMega : undefined}
                   onMouseLeave={isProducts ? scheduleClose : undefined}
                 >
@@ -179,11 +194,11 @@ export function SiteHeader({
               );
             })}
 
-            {/* «بیشتر» — فقط وقتی موارد ثانویه در ردیف جا نمی‌شوند */}
-            {secondaryNav.length > 0 && (
+            {/* «بیشتر» — روی دسکتاپ همیشه هست، چون سقف پنج مورد در نوار است */}
+            {collapsibleNav.length > 0 && (
               <div
                 ref={moreRef}
-                className="relative 2xl:hidden"
+                className="relative"
                 onMouseEnter={openMore}
                 onMouseLeave={scheduleMoreClose}
               >
@@ -194,7 +209,7 @@ export function SiteHeader({
                   aria-haspopup="true"
                   className={cn(
                     "relative flex items-center gap-1 whitespace-nowrap px-3.5 py-2 text-[0.875rem] font-medium transition-colors duration-200",
-                    hasActiveSecondary || moreOpen
+                    hasActiveCollapsed || moreOpen
                       ? "text-[var(--brand)]"
                       : "text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]",
                   )}
@@ -214,7 +229,7 @@ export function SiteHeader({
                     className={cn(
                       "absolute inset-x-3 -bottom-px h-px origin-center bg-[var(--brand)] transition-transform duration-300",
                       "[transition-timing-function:var(--ease-out-expo)]",
-                      hasActiveSecondary ? "scale-x-100" : "scale-x-0",
+                      hasActiveCollapsed ? "scale-x-100" : "scale-x-0",
                     )}
                     aria-hidden
                   />
@@ -232,10 +247,12 @@ export function SiteHeader({
                   )}
                 >
                   <ul>
-                    {secondaryNav.map((item) => {
+                    {collapsibleNav.map((item) => {
                       const active = pathname.startsWith(item.href);
                       return (
-                        <li key={item.href}>
+                        // موردی که از xl به بعد مستقیم در نوار می‌آید، از همان
+                        // بریک‌پوینت از این فهرست حذف می‌شود تا تکراری نشود
+                        <li key={item.href} className={item.collapse === "xl" ? "xl:hidden" : undefined}>
                           <Link
                             href={item.href}
                             className={cn(
