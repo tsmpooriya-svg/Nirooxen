@@ -490,6 +490,26 @@ export function ProductToolbar({
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const sort = params.get("sort") ?? "newest";
 
+  // شیت modal است، پس صفحه پشتش نباید اسکرول شود
+  React.useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [mobileOpen]);
+
+  // بستن با Escape
+  React.useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileOpen]);
+
   function onSortChange(value: string) {
     const next = new URLSearchParams(params.toString());
     if (value === "newest") next.delete("sort");
@@ -534,7 +554,12 @@ export function ProductToolbar({
         </div>
       </div>
 
-      {/* کشوی فیلتر موبایل */}
+      {/*
+        شیت پایینی فیلتر (موبایل).
+        قبلاً کشوی کناری بود. روی موبایل، شیت پایینی هم در دسترس شست است و هم
+        الگوی متعارف iOS/Android؛ دکمه «نمایش نتایج» دقیقاً جایی می‌نشیند که
+        انگشت هست، نه در گوشه بالای صفحه.
+      */}
       <div
         className={cn("fixed inset-0 z-[70] lg:hidden", mobileOpen ? "pointer-events-auto" : "pointer-events-none")}
         aria-hidden={!mobileOpen}
@@ -547,26 +572,48 @@ export function ProductToolbar({
           )}
         />
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="فیلترها"
           className={cn(
-            "absolute inset-y-0 end-0 w-[min(21rem,90vw)] overflow-y-auto border-s border-[var(--border-subtle)] bg-[var(--bg-base)] p-4 transition-transform duration-400",
+            "absolute inset-x-0 bottom-0 flex max-h-[86dvh] flex-col rounded-t-2xl border-t border-[var(--border-subtle)]",
+            "bg-[var(--bg-base)] shadow-[0_-16px_48px_-16px_rgb(0_0_0/0.45)] transition-transform duration-400",
             "[transition-timing-function:var(--ease-out-expo)]",
-            mobileOpen ? "translate-x-0" : "translate-x-full rtl:-translate-x-full",
+            mobileOpen ? "translate-y-0" : "translate-y-full",
           )}
         >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display font-bold">فیلترها</h2>
+          {/* دستگیره */}
+          <div className="flex shrink-0 justify-center pt-3" aria-hidden>
+            <span className="h-1 w-10 rounded-full bg-[var(--border-strong)]" />
+          </div>
+
+          <div className="flex shrink-0 items-center justify-between px-5 pb-3 pt-2">
+            <h2 className="font-display text-base font-bold">فیلترها</h2>
             <button
               type="button"
               onClick={() => setMobileOpen(false)}
               aria-label="بستن"
-              className="grid size-8 place-items-center rounded-md text-[var(--fg-muted)] hover:bg-[var(--bg-elev-3)]"
+              className="grid size-9 place-items-center rounded-md text-[var(--fg-muted)] transition-colors hover:bg-[var(--bg-elev-3)]"
             >
               <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.7">
                 <path d="m4 4 8 8M12 4l-8 8" strokeLinecap="round" />
               </svg>
             </button>
           </div>
-          {filtersSlot}
+
+          {/* بدنه اسکرول‌شونده */}
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4">{filtersSlot}</div>
+
+          {/* اقدام چسبان */}
+          <div className="shrink-0 border-t border-[var(--border-hairline)] bg-[var(--bg-elev-1)] px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              className="flex h-12 w-full items-center justify-center rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)]"
+            >
+              نمایش {toFaDigits(total)} کالا
+            </button>
+          </div>
         </div>
       </div>
     </>

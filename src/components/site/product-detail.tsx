@@ -63,6 +63,27 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
 
   const keySpecs = specGroups.flatMap((g) => g.items).filter((s) => s.isKey).slice(0, 4);
 
+  /*
+   * نوار اقدام چسبان موبایل.
+   *
+   * تا وقتی پنل خرید در دید است چیزی نشان داده نمی‌شود؛ به‌محض اینکه از کادر
+   * خارج شد، نوار بالا می‌آید. IntersectionObserver به‌جای رویداد scroll
+   * استفاده شده تا در هر فریم اسکرول محاسبه‌ای انجام نشود.
+   */
+  const buyPanelRef = React.useRef<HTMLElement>(null);
+  const [showStickyBar, setShowStickyBar] = React.useState(false);
+
+  React.useEffect(() => {
+    const node = buyPanelRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowStickyBar(!entry.isIntersecting),
+      { rootMargin: "-120px 0px 0px 0px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   function addToCart() {
     add(
       {
@@ -82,7 +103,8 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
 
   return (
     <>
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem] lg:gap-12">
+      {/* pb برای اینکه نوار چسبان موبایل روی محتوای انتهای صفحه نیفتد */}
+      <div className="grid gap-8 pb-24 lg:grid-cols-[minmax(0,1fr)_26rem] lg:gap-12 lg:pb-0">
         {/* ستون تصویر و محتوا */}
         <div className="min-w-0">
           {/* گالری */}
@@ -219,7 +241,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
         </div>
 
         {/* ستون خرید — چسبان روی دسکتاپ */}
-        <aside className="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:h-fit">
+        <aside ref={buyPanelRef} className="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:h-fit">
           <div className="edge-lit rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2 font-mono text-micro text-[var(--fg-subtle)]">
               {brand && (
@@ -407,6 +429,69 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
           ]}
         />
       </Modal>
+
+      {/* نوار اقدام چسبان — فقط موبایل و تبلت */}
+      <div
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-40 border-t border-[var(--border-subtle)] lg:hidden",
+          "bg-[var(--bg-glass-strong)] backdrop-blur-xl transition-transform duration-400",
+          "[transition-timing-function:var(--ease-out-expo)]",
+          "pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_28px_-12px_rgb(0_0_0/0.35)]",
+          showStickyBar ? "translate-y-0" : "translate-y-full",
+        )}
+      >
+        <div className="flex items-center gap-3 px-4 py-3">
+          <div className="min-w-0 flex-1">
+            {hasPrice ? (
+              <>
+                <p className="font-display text-base font-extrabold leading-tight text-[var(--fg-primary)]">
+                  {formatPrice(product.price)}
+                </p>
+                <p className="mt-0.5 truncate text-micro text-[var(--fg-subtle)]">
+                  هر {product.unit}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-meta font-semibold text-[var(--brand-text)]">
+                  {product.priceMode === "CALL" ? "قیمت تلفنی" : "قیمت با استعلام"}
+                </p>
+                <p className="mt-0.5 truncate text-micro text-[var(--fg-subtle)]">{stock.label}</p>
+              </>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={addToCart}
+            aria-label={`افزودن ${product.name} به سبد استعلام`}
+            className="grid size-11 shrink-0 place-items-center rounded-md border border-[var(--border-default)] text-[var(--fg-muted)] transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand-text)]"
+          >
+            <svg viewBox="0 0 20 20" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M3 3h2l1.6 8.4a1.5 1.5 0 0 0 1.5 1.2h6.3a1.5 1.5 0 0 0 1.5-1.2L17 6H5.4" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="8.5" cy="16" r="1.2" />
+              <circle cx="14.5" cy="16" r="1.2" />
+            </svg>
+          </button>
+
+          {product.priceMode === "CALL" ? (
+            <a
+              href={`tel:${siteConfig.contact.phonesRaw[0]}`}
+              className="flex h-11 shrink-0 items-center justify-center gap-2 rounded-md bg-[var(--brand)] px-5 text-meta font-medium text-[var(--fg-on-brand)]"
+            >
+              تماس با کارشناس
+            </a>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setOrderOpen(true)}
+              className="flex h-11 shrink-0 items-center justify-center rounded-md bg-[var(--brand)] px-6 text-meta font-medium text-[var(--fg-on-brand)]"
+            >
+              {hasPrice ? "ثبت سفارش" : "استعلام قیمت"}
+            </button>
+          )}
+        </div>
+      </div>
     </>
   );
 }
