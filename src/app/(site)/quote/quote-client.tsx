@@ -68,7 +68,7 @@ export function QuoteClient() {
           <button
             type="button"
             onClick={clear}
-            className="text-xs text-[var(--fg-subtle)] transition-colors hover:text-[var(--danger)]"
+            className="text-xs text-[var(--fg-subtle)] transition-colors hover:text-[var(--danger-text)]"
           >
             خالی کردن سبد
           </button>
@@ -138,7 +138,7 @@ export function QuoteClient() {
                 type="button"
                 onClick={() => remove(line.productId)}
                 aria-label={`حذف ${line.name}`}
-                className="rounded-sm p-1.5 text-[var(--fg-subtle)] transition-colors hover:text-[var(--danger)]"
+                className="rounded-sm p-1.5 text-[var(--fg-subtle)] transition-colors hover:text-[var(--danger-text)]"
               >
                 <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.6">
                   <path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5 5 13h6l.5-8.5" strokeLinecap="round" strokeLinejoin="round" />

@@ -16,7 +16,7 @@ export default function GlobalError({
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-6 text-center">
       <span className="mb-6 grid size-16 place-items-center rounded-full border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)]">
-        <svg viewBox="0 0 24 24" className="size-7 text-[var(--danger)]" fill="none" stroke="currentColor" strokeWidth="1.6">
+        <svg viewBox="0 0 24 24" className="size-7 text-[var(--danger-text)]" fill="none" stroke="currentColor" strokeWidth="1.6">
           <path d="M12 8v5M12 16.5h.01" strokeLinecap="round" />
           <circle cx="12" cy="12" r="9" />
         </svg>

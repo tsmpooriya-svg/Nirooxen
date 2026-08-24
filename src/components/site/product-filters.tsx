@@ -110,7 +110,7 @@ export function ProductFilters({
             router.push(pathname, { scroll: false });
             onNavigate?.();
           }}
-          className="flex w-full items-center justify-center gap-2 rounded-md border border-[var(--border-default)] py-2.5 text-xs font-medium text-[var(--fg-secondary)] transition-colors hover:border-[var(--danger)] hover:text-[var(--danger)]"
+          className="flex w-full items-center justify-center gap-2 rounded-md border border-[var(--border-default)] py-2.5 text-xs font-medium text-[var(--fg-secondary)] transition-colors hover:border-[var(--danger)] hover:text-[var(--danger-text)]"
         >
           <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
             <path d="m4 4 8 8M12 4l-8 8" strokeLinecap="round" />

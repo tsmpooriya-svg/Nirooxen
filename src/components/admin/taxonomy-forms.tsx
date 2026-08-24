@@ -128,7 +128,7 @@ export function CategoryDialog({
           </div>
 
           {state.status === "error" && state.message && (
-            <p className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3 text-xs text-[var(--danger)]">
+            <p className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3 text-xs text-[var(--danger-text)]">
               {state.message}
             </p>
           )}
@@ -244,7 +244,7 @@ export function BrandDialog({
           </div>
 
           {state.status === "error" && state.message && (
-            <p className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3 text-xs text-[var(--danger)]">
+            <p className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3 text-xs text-[var(--danger-text)]">
               {state.message}
             </p>
           )}
@@ -295,7 +295,7 @@ export function DeleteTaxonomyButton({
         onClick={() => setOpen(true)}
         aria-label={`حذف ${name}`}
         title="حذف"
-        className="grid size-8 place-items-center rounded-md text-[var(--fg-subtle)] transition-colors hover:text-[var(--danger)]"
+        className="grid size-8 place-items-center rounded-md text-[var(--fg-subtle)] transition-colors hover:text-[var(--danger-text)]"
       >
         <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6">
           <path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5 5 13h6l.5-8.5" strokeLinecap="round" strokeLinejoin="round" />

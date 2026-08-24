@@ -62,7 +62,10 @@
   --hydro-300: #4fd3e8;
   --hydro-400: #22bcd6;
   --hydro-500: #00a6c0;
-  --hydro-600: #0086a0;
+  /* 600 is the light-theme brand. Darkened from #0086a0 so the same token can
+     serve BOTH brand-coloured text on light surfaces (4.60:1) and white text
+     on a brand fill (5.42:1) — the old value failed both at 3.62 / 4.27. */
+  --hydro-600: #00748b;
   --hydro-700: #076a80;
   --hydro-800: #0b5265;
   --hydro-900: #0d3f4e;
@@ -91,7 +94,9 @@
   --slate-200: #cbd8ea;
   --slate-300: #a6b8d1;
   --slate-400: #7f93b1;
-  --slate-500: #62779a;
+  /* Dark-theme --fg-subtle. Lightened from #62779a, which reached only 3.84:1
+     on the lightest dark surface (--bg-elev-3). Now 4.60:1. */
+  --slate-500: #7184a4;
   --slate-600: #4a5d7d;
   --slate-700: #35455f;
   --slate-800: #223047;
@@ -129,6 +134,9 @@
   --fg-subtle: var(--slate-500);
   --fg-inverse: var(--graphite-950);
   --fg-on-brand: #00252e;
+  /* Text sitting on a --danger fill. The dark-theme danger red is light
+     enough that white text only reached 2.77:1; near-black gives 6.42:1. */
+  --fg-on-danger: #3a0004;
 
   --border-hairline: rgb(255 255 255 / 0.06);
   --border-subtle: rgb(255 255 255 / 0.09);
@@ -154,6 +162,29 @@
   --danger-soft: rgb(255 107 111 / 0.14);
   --info: #6aa5ff;
   --info-soft: rgb(106 165 255 / 0.14);
+
+  /* Text variants of the status colours.
+     On dark surfaces every status colour already clears 4.5:1 as text
+     (5.69–8.30:1), so these simply alias the base token. The light theme
+     overrides them — see the light block. Components colour *text* with
+     these and keep --signal/--ok/… for fills, borders and dots. */
+  --brand-text: var(--brand);
+  --signal-text: var(--signal);
+  --ok-text: var(--ok);
+  --warn-text: var(--warn);
+  --danger-text: var(--danger);
+  --info-text: var(--info);
+
+  /* Opaque chip fills — the *-soft colours pre-composited onto --bg-elev-2.
+     Badges sit on top of product photography, so a translucent fill inherits
+     the image and its text contrast becomes whatever the photo happens to be.
+     An opaque chip makes the pairing deterministic (5.69–8.30:1 here). */
+  --brand-chip: #0e2636;
+  --signal-chip: #2c2a28;
+  --ok-chip: #132d2f;
+  --warn-chip: #2c2721;
+  --danger-chip: #2d1e2b;
+  --info-chip: #18273f;
 
   --grid-line: rgb(255 255 255 / 0.028);
   --grid-line-strong: rgb(34 188 214 / 0.07);
@@ -189,22 +220,25 @@
   --fg-primary: #0a1424;
   --fg-secondary: #2c3e57;
   --fg-muted: #55677e;
-  --fg-subtle: #7d8ea5;
+  /* Darkened from #7d8ea5, which was only 2.84:1 on --bg-sunken. Now 4.60:1. */
+  --fg-subtle: #5e6b7d;
   --fg-inverse: #ffffff;
   --fg-on-brand: #ffffff;
+  /* Light-theme danger red is dark enough for white text (5.23:1). */
+  --fg-on-danger: #ffffff;
 
   --border-hairline: rgb(10 20 36 / 0.07);
   --border-subtle: rgb(10 20 36 / 0.1);
   --border-default: rgb(10 20 36 / 0.16);
   --border-strong: rgb(10 20 36 / 0.28);
-  --border-brand: rgb(0 134 160 / 0.4);
+  --border-brand: rgb(0 116 139 / 0.4);
 
   --brand: var(--hydro-600);
   --brand-hover: var(--hydro-700);
   --brand-pressed: var(--hydro-800);
-  --brand-soft: rgb(0 134 160 / 0.09);
-  --brand-soft-hover: rgb(0 134 160 / 0.16);
-  --brand-ring: rgb(0 134 160 / 0.45);
+  --brand-soft: rgb(0 116 139 / 0.09);
+  --brand-soft-hover: rgb(0 116 139 / 0.16);
+  --brand-ring: rgb(0 116 139 / 0.45);
 
   --signal: var(--signal-600);
   --signal-soft: rgb(209 129 26 / 0.12);
@@ -218,10 +252,31 @@
   --info: #2a6fd0;
   --info-soft: rgb(42 111 208 / 0.1);
 
+  /* Text variants. The base status colours above are tuned as FILLS — the
+     signal button in particular needs to stay a real amber so its dark label
+     keeps 5.81:1. As text on white they ranged 2.60–4.44:1, so text gets its
+     own darker token. Each value clears 4.5:1 on every light surface AND on
+     its own --*-soft chip. */
+  --brand-text: var(--brand);
+  --signal-text: #965d13;
+  --ok-text: #1c7947;
+  --warn-text: #916007;
+  --danger-text: #c53237;
+  --info-text: #2768c4;
+
+  /* Opaque chip fills — see the dark block. Composited onto --bg-elev-1.
+     Each --*-text above clears 4.67–4.81:1 on its own chip. */
+  --brand-chip: #e8f2f5;
+  --signal-chip: #f9f0e4;
+  --ok-chip: #e5f3eb;
+  --warn-chip: #f7efe1;
+  --danger-chip: #faebeb;
+  --info-chip: #eaf1fa;
+
   --grid-line: rgb(10 30 60 / 0.045);
-  --grid-line-strong: rgb(0 134 160 / 0.08);
+  --grid-line-strong: rgb(0 116 139 / 0.08);
   --noise-opacity: 0.02;
-  --glow-brand: rgb(0 134 160 / 0.14);
+  --glow-brand: rgb(0 116 139 / 0.14);
   --glow-signal: rgb(209 129 26 / 0.1);
 
   --shadow-xs: 0 1px 2px rgb(16 32 56 / 0.06);
@@ -229,7 +284,7 @@
   --shadow-md: 0 10px 26px -8px rgb(16 32 56 / 0.16), 0 2px 6px rgb(16 32 56 / 0.06);
   --shadow-lg: 0 26px 60px -18px rgb(16 32 56 / 0.22), 0 6px 16px rgb(16 32 56 / 0.08);
   --shadow-xl: 0 44px 100px -30px rgb(16 32 56 / 0.28);
-  --shadow-brand: 0 14px 40px -14px rgb(0 134 160 / 0.42);
+  --shadow-brand: 0 14px 40px -14px rgb(0 116 139 / 0.42);
   --shadow-inset-top: inset 0 1px 0 rgb(255 255 255 / 0.9);
 }
 
@@ -284,6 +339,22 @@
   --color-danger-soft: var(--danger-soft);
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
+
+  /* Accessible text variants — see section 3/4 */
+  --color-on-danger: var(--fg-on-danger);
+  --color-brand-text: var(--brand-text);
+  --color-signal-text: var(--signal-text);
+  --color-ok-text: var(--ok-text);
+  --color-warn-text: var(--warn-text);
+  --color-danger-text: var(--danger-text);
+  --color-info-text: var(--info-text);
+
+  --color-brand-chip: var(--brand-chip);
+  --color-signal-chip: var(--signal-chip);
+  --color-ok-chip: var(--ok-chip);
+  --color-warn-chip: var(--warn-chip);
+  --color-danger-chip: var(--danger-chip);
+  --color-info-chip: var(--info-chip);
 
   --font-display: "Estedad", "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Vazirmatn", "Estedad", ui-sans-serif, system-ui, sans-serif;

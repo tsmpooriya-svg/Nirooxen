@@ -147,7 +147,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
 
               <Td className="text-xs">
                 {order.assigneeName ?? (
-                  <span className="text-[var(--warn)]">ارجاع نشده</span>
+                  <span className="text-[var(--warn-text)]">ارجاع نشده</span>
                 )}
               </Td>
 

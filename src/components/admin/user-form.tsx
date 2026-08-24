@@ -88,7 +88,7 @@ export function UserDialog({
           <Checkbox name="isActive" defaultChecked={values.isActive} label="حساب فعال است" />
 
           {state.status === "error" && state.message && (
-            <p className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3 text-xs text-[var(--danger)]">
+            <p className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3 text-xs text-[var(--danger-text)]">
               {state.message}
             </p>
           )}

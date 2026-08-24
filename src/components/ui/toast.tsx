@@ -29,7 +29,7 @@ const toneStyles: Record<ToastTone, { ring: string; icon: React.ReactNode }> = {
   success: {
     ring: "border-[color-mix(in_oklab,var(--ok)_45%,transparent)]",
     icon: (
-      <svg viewBox="0 0 20 20" className="size-5 text-[var(--ok)]" fill="none" stroke="currentColor" strokeWidth="1.75">
+      <svg viewBox="0 0 20 20" className="size-5 text-[var(--ok-text)]" fill="none" stroke="currentColor" strokeWidth="1.75">
         <circle cx="10" cy="10" r="8" opacity=".35" />
         <path d="m6.5 10.2 2.4 2.4 4.6-5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -38,7 +38,7 @@ const toneStyles: Record<ToastTone, { ring: string; icon: React.ReactNode }> = {
   error: {
     ring: "border-[color-mix(in_oklab,var(--danger)_45%,transparent)]",
     icon: (
-      <svg viewBox="0 0 20 20" className="size-5 text-[var(--danger)]" fill="none" stroke="currentColor" strokeWidth="1.75">
+      <svg viewBox="0 0 20 20" className="size-5 text-[var(--danger-text)]" fill="none" stroke="currentColor" strokeWidth="1.75">
         <circle cx="10" cy="10" r="8" opacity=".35" />
         <path d="M10 6v5M10 13.5h.01" strokeLinecap="round" />
       </svg>
@@ -56,7 +56,7 @@ const toneStyles: Record<ToastTone, { ring: string; icon: React.ReactNode }> = {
   warning: {
     ring: "border-[color-mix(in_oklab,var(--warn)_45%,transparent)]",
     icon: (
-      <svg viewBox="0 0 20 20" className="size-5 text-[var(--warn)]" fill="none" stroke="currentColor" strokeWidth="1.75">
+      <svg viewBox="0 0 20 20" className="size-5 text-[var(--warn-text)]" fill="none" stroke="currentColor" strokeWidth="1.75">
         <path d="M10 3.5 18 16.5H2L10 3.5Z" opacity=".35" />
         <path d="M10 8.5v3.5M10 14.5h.01" strokeLinecap="round" />
       </svg>

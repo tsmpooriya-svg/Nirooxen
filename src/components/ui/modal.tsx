@@ -163,9 +163,9 @@ export function ConfirmDialog({
             onClick={onConfirm}
             disabled={loading}
             className={cn(
-              "h-10 rounded-md px-4 text-sm font-medium text-white transition-all disabled:opacity-50",
+              "h-10 rounded-md px-4 text-sm font-medium transition-all disabled:opacity-50",
               tone === "danger"
-                ? "bg-[var(--danger)] hover:brightness-110"
+                ? "bg-[var(--danger)] text-[var(--fg-on-danger)] hover:brightness-110"
                 : "bg-[var(--brand)] text-[var(--fg-on-brand)] hover:bg-[var(--brand-hover)]",
             )}
           >

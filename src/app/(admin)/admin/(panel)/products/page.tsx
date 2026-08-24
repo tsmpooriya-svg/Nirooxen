@@ -156,7 +156,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
                 <Td>
                   <StatusBadge map={PRODUCT_STATUS} value={product.status} />
                   {product.isFeatured && (
-                    <span className="mt-1 block text-[0.625rem] text-[var(--signal)]">شاخص</span>
+                    <span className="mt-1 block text-[0.625rem] text-[var(--signal-text)]">شاخص</span>
                   )}
                 </Td>
 

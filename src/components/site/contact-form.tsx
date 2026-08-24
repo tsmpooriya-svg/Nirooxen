@@ -14,7 +14,7 @@ export function ContactForm() {
     return (
       <div className="anim-pop flex flex-col items-center rounded-xl border border-[color-mix(in_oklab,var(--ok)_40%,transparent)] bg-[var(--ok-soft)] p-10 text-center">
         <span className="mb-5 grid size-14 place-items-center rounded-full border border-[color-mix(in_oklab,var(--ok)_45%,transparent)] bg-[var(--bg-elev-1)]">
-          <svg viewBox="0 0 24 24" className="size-7 text-[var(--ok)]" fill="none" stroke="currentColor" strokeWidth="1.6">
+          <svg viewBox="0 0 24 24" className="size-7 text-[var(--ok-text)]" fill="none" stroke="currentColor" strokeWidth="1.6">
             <path d="m5 12.5 4.5 4.5L19 7" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
@@ -84,7 +84,7 @@ export function ContactForm() {
       {state.status === "error" && state.message && (
         <p
           role="alert"
-          className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3.5 text-[0.8125rem] text-[var(--danger)]"
+          className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3.5 text-[0.8125rem] text-[var(--danger-text)]"
         >
           {state.message}
         </p>

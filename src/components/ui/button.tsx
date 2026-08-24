@@ -30,7 +30,7 @@ const variants: Record<Variant, string> = {
     "bg-[var(--signal)] text-[#241500] shadow-[var(--shadow-sm)] hover:brightness-110 " +
     "hover:shadow-[0_12px_36px_-12px_var(--glow-signal)]",
   danger:
-    "bg-[var(--danger)] text-white hover:brightness-110 shadow-[var(--shadow-sm)]",
+    "bg-[var(--danger)] text-[var(--fg-on-danger)] hover:brightness-110 shadow-[var(--shadow-sm)]",
   link: "text-[var(--brand)] underline-offset-4 hover:underline px-0 h-auto",
 };
 

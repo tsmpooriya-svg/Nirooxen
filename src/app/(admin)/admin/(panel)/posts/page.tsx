@@ -57,7 +57,7 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: S
               <Td className="text-xs">{post.category}</Td>
               <Td>
                 <StatusBadge map={POST_STATUS} value={post.status} />
-                {post.isFeatured && <span className="mt-1 block text-[0.625rem] text-[var(--signal)]">شاخص</span>}
+                {post.isFeatured && <span className="mt-1 block text-[0.625rem] text-[var(--signal-text)]">شاخص</span>}
               </Td>
               <Td className="text-xs">{post.authorName ?? "—"}</Td>
               <Td className="font-mono text-xs">{toFaDigits(post.viewCount)}</Td>

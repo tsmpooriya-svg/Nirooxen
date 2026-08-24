@@ -135,7 +135,7 @@ export function OrderWorkflow({
             type="button"
             disabled={pending}
             onClick={() => run(() => updateOrderStatus(orderId, "REJECTED"))}
-            className="rounded-md border border-[color-mix(in_oklab,var(--danger)_35%,transparent)] px-3 py-1.5 text-[0.6875rem] text-[var(--danger)] transition-colors hover:bg-[var(--danger-soft)] disabled:opacity-50"
+            className="rounded-md border border-[color-mix(in_oklab,var(--danger)_35%,transparent)] px-3 py-1.5 text-[0.6875rem] text-[var(--danger-text)] transition-colors hover:bg-[var(--danger-soft)] disabled:opacity-50"
           >
             رد / اسپم
           </button>

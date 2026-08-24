@@ -41,7 +41,7 @@ export default async function AdminBrandsPage() {
                   map={{ on: { label: "فعال", tone: "ok" }, off: { label: "غیرفعال", tone: "neutral" } }}
                   value={brand.isActive ? "on" : "off"}
                 />
-                {brand.isFeatured && <span className="mt-1 block text-[0.625rem] text-[var(--signal)]">شاخص</span>}
+                {brand.isFeatured && <span className="mt-1 block text-[0.625rem] text-[var(--signal-text)]">شاخص</span>}
               </Td>
               <Td className="font-mono text-xs">{toFaDigits(brand.position)}</Td>
               <Td className="w-24">

@@ -49,7 +49,7 @@ export default async function AdminProjectsPage() {
                   value={project.isActive ? "on" : "off"}
                 />
                 {project.isFeatured && (
-                  <span className="mt-1 block text-[0.625rem] text-[var(--signal)]">صفحه اصلی</span>
+                  <span className="mt-1 block text-[0.625rem] text-[var(--signal-text)]">صفحه اصلی</span>
                 )}
               </Td>
               <Td className="font-mono text-xs">{toFaDigits(project.position)}</Td>

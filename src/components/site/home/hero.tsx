@@ -41,7 +41,10 @@ export function Hero({
           {/* ستون متن */}
           <div>
             <Reveal>
-              <p className="eyebrow mb-6 inline-flex items-center gap-2.5 rounded-full border border-[var(--border-brand)] bg-[var(--brand-soft)] px-4 py-2">
+              {/* opaque chip, not --brand-soft: this pill sits over the hero's
+                  blueprint grid and glow, which darkened the translucent fill
+                  enough to drop the label to 4.41:1 */}
+              <p className="eyebrow mb-6 inline-flex items-center gap-2.5 rounded-full border border-[var(--border-brand)] bg-[var(--brand-chip)] px-4 py-2">
                 <span className="relative flex size-1.5">
                   <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--brand)] opacity-70" />
                   <span className="relative inline-flex size-1.5 rounded-full bg-[var(--brand)]" />
