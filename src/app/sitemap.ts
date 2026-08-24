@@ -20,6 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/news`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${base}/about`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.3 },
   ];
 
   const [products, posts, brands, categories, projects] = await Promise.all([

@@ -16,6 +16,8 @@ export const metadata: Metadata = pageMetadata({
 export default async function ContactPage() {
   // اطلاعات تماس از تنظیمات مدیر می‌آید و روی پیش‌فرض config می‌نشیند
   const settings = await getSiteSettings();
+  // ۰،۰ یعنی مختصات دفتر هنوز در تنظیمات ثبت نشده است
+  const hasGeo = settings.contact.geo.lat !== 0 || settings.contact.geo.lng !== 0;
 
   return (
     <>
@@ -49,7 +51,7 @@ export default async function ContactPage() {
                   ))}
                 </ul>
                 <p className="mt-3 text-xs leading-6 text-[var(--fg-subtle)]">
-                  {siteConfig.contact.workingHours}
+                  {settings.contact.workingHours}
                 </p>
               </ContactCard>
 
@@ -90,11 +92,11 @@ export default async function ContactPage() {
                   </li>
                   <li>
                     <a
-                      href={`mailto:${siteConfig.contact.salesEmail}`}
+                      href={`mailto:${settings.contact.salesEmail}`}
                       className="text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
                       dir="ltr"
                     >
-                      {siteConfig.contact.salesEmail}
+                      {settings.contact.salesEmail}
                     </a>
                     <span className="ms-2 text-xs text-[var(--fg-subtle)]">— فروش و استعلام</span>
                   </li>
@@ -109,27 +111,38 @@ export default async function ContactPage() {
                   {settings.contact.address}
                 </p>
                 <p className="mt-2 text-xs text-[var(--fg-subtle)]">
-                  کد پستی: <span className="num">{siteConfig.contact.postalCode}</span>
+                  کد پستی: <span className="num">{settings.contact.postalCode}</span>
                 </p>
               </ContactCard>
 
               {/* نقشه — جانشین سبک بلوپرینت تا نقشه واقعی جایگزین شود */}
               <div className="blueprint blueprint-dense relative flex h-48 items-center justify-center overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-2)]">
+                {/* مختصات و لینک نقشه فقط وقتی رندر می‌شوند که در تنظیمات
+                    ثبت شده باشند؛ نمایش ۰٫۰۰۰۰° یا لینک خالی بدتر از
+                    نمایش‌ندادن است */}
                 <div className="text-center">
-                  <p className="font-mono text-micro tracking-[0.2em] text-[var(--fg-subtle)]">
-                    {siteConfig.contact.geo.lat.toFixed(4)}° N · {siteConfig.contact.geo.lng.toFixed(4)}° E
-                  </p>
-                  <a
-                    href={siteConfig.contact.mapUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-flex h-10 items-center gap-2 rounded-md border border-[var(--border-brand)] bg-[var(--brand-soft)] px-4 text-xs font-medium text-[var(--brand)] transition-colors hover:bg-[var(--brand-soft-hover)]"
-                  >
-                    مشاهده روی نقشه
-                    <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
-                      <path d="M6 3h7v7M13 3 6.5 9.5M11 10.5V13H3V5h2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </a>
+                  {hasGeo && (
+                    <p className="font-mono text-micro tracking-[0.2em] text-[var(--fg-subtle)]">
+                      {settings.contact.geo.lat.toFixed(4)}° N · {settings.contact.geo.lng.toFixed(4)}° E
+                    </p>
+                  )}
+                  {settings.contact.mapUrl ? (
+                    <a
+                      href={settings.contact.mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-flex h-10 items-center gap-2 rounded-md border border-[var(--border-brand)] bg-[var(--brand-soft)] px-4 text-xs font-medium text-[var(--brand-text)] transition-colors hover:bg-[var(--brand-soft-hover)]"
+                    >
+                      مشاهده روی نقشه
+                      <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+                        <path d="M6 3h7v7M13 3 6.5 9.5M11 10.5V13H3V5h2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </a>
+                  ) : (
+                    <p className="text-micro text-[var(--fg-subtle)]">
+                      موقعیت روی نقشه هنوز ثبت نشده است
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

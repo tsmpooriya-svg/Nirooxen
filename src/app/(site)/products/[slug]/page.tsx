@@ -6,6 +6,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { Breadcrumb } from "@/components/site/breadcrumb";
 import { ProductCard } from "@/components/site/product-card";
 import { ProductDetail } from "@/components/site/product-detail";
+import { getSiteSettings } from "@/modules/settings/queries";
 import { SectionHeading } from "@/components/site/section";
 import { JsonLd, pageMetadata, productJsonLd } from "@/lib/seo";
 import {
@@ -47,9 +48,10 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   const { product, category, brand, images, specGroups } = data;
 
-  const [related, categoryPath] = await Promise.all([
+  const [related, categoryPath, settings] = await Promise.all([
     getRelatedProducts(product.id, product.categoryId),
     getCategoryPath(category.slug),
+    getSiteSettings(),
   ]);
 
   // شمارنده بازدید پس از ارسال پاسخ اجرا می‌شود تا رندر صفحه را کند نکند
@@ -85,6 +87,7 @@ export default async function ProductPage({ params }: { params: Params }) {
 
       <div className="shell py-10">
         <ProductDetail
+          salesPhoneRaw={settings.contact.phonesRaw[0]}
           product={{
             id: product.id,
             name: product.name,

@@ -5,7 +5,6 @@ import { Reveal } from "@/components/motion/reveal";
 import { PageHeader } from "@/components/site/breadcrumb";
 import { Section, SectionHeading } from "@/components/site/section";
 import { DomainIcon } from "@/components/ui/icons";
-import { siteConfig } from "@/config/site";
 import { pageMetadata } from "@/lib/seo";
 import { getSiteSettings } from "@/modules/settings/queries";
 
@@ -145,7 +144,7 @@ export default async function ServicesPage() {
             </a>
           </div>
           <p className="mt-6 text-center text-xs text-[var(--fg-subtle)]">
-            ساعات پاسخ‌گویی: {siteConfig.contact.workingHours}
+            ساعات پاسخ‌گویی: {settings.contact.workingHours}
           </p>
         </div>
       </Section>

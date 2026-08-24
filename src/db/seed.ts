@@ -810,10 +810,23 @@ async function main() {
   await db.insert(settings).values([
     { key: "site.name", value: "نیروژن", group: "general", label: "نام سایت" },
     { key: "site.tagline", value: "تأمین، فروش و نصب تجهیزات صنعتی و آبرسانی", group: "general", label: "شعار سایت" },
-    { key: "contact.phone", value: "021-12345678", group: "contact", label: "تلفن اصلی" },
-    { key: "contact.mobile", value: "0912-1234567", group: "contact", label: "موبایل پشتیبانی" },
-    { key: "contact.email", value: "info@example.com", group: "contact", label: "ایمیل" },
-    { key: "contact.address", value: "تهران، بزرگراه فتح، خیابان صنعت، پلاک ۱۲۸", group: "contact", label: "آدرس" },
+    /*
+     * ⚠️ همه مقادیر تماس، جانشین‌اند و باید پیش از انتشار از پنل مدیریت با
+     * داده واقعی جایگزین شوند. عمداً به‌شکل آشکار «نمونه» نوشته شده‌اند تا
+     * اگر کسی فراموش کرد، روی سایت زنده به چشم بیاید — نه اینکه یک شماره
+     * یا ایمیل بی‌ربطِ باورپذیر منتشر شود.
+     */
+    { key: "contact.phone", value: "۰۲۱-۰۰۰۰۰۰۰۰ (نمونه)", group: "contact", label: "تلفن اصلی" },
+    { key: "contact.phoneAlt", value: "", group: "contact", label: "تلفن دوم (اختیاری)" },
+    { key: "contact.mobile", value: "۰۹۱۲-۰۰۰۰۰۰۰ (نمونه)", group: "contact", label: "موبایل پشتیبانی" },
+    { key: "contact.email", value: "", group: "contact", label: "ایمیل عمومی" },
+    { key: "contact.salesEmail", value: "", group: "contact", label: "ایمیل فروش و استعلام" },
+    { key: "contact.address", value: "نشانی دفتر هنوز ثبت نشده است", group: "contact", label: "نشانی دفتر" },
+    { key: "contact.postalCode", value: "", group: "contact", label: "کد پستی" },
+    { key: "contact.workingHours", value: "شنبه تا چهارشنبه ۸:۰۰ تا ۱۷:۰۰ — پنجشنبه ۸:۰۰ تا ۱۳:۰۰", group: "contact", label: "ساعات کاری" },
+    { key: "contact.mapUrl", value: "", group: "contact", label: "لینک نقشه (Google Maps)" },
+    { key: "contact.geoLat", value: "", group: "contact", label: "عرض جغرافیایی دفتر" },
+    { key: "contact.geoLng", value: "", group: "contact", label: "طول جغرافیایی دفتر" },
     { key: "orders.notifyEmail", value: "sales@example.com", group: "orders", label: "ایمیل دریافت سفارش‌ها" },
     { key: "orders.autoAssign", value: false, group: "orders", label: "ارجاع خودکار سفارش‌ها" },
     { key: "features.cart", value: true, group: "features", label: "فعال‌سازی سبد استعلام" },

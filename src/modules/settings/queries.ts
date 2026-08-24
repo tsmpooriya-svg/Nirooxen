@@ -35,9 +35,16 @@ export const SETTING_KEYS = {
   siteName: "site.name",
   siteTagline: "site.tagline",
   contactPhone: "contact.phone",
+  contactPhoneAlt: "contact.phoneAlt",
   contactMobile: "contact.mobile",
   contactEmail: "contact.email",
+  contactSalesEmail: "contact.salesEmail",
   contactAddress: "contact.address",
+  contactPostalCode: "contact.postalCode",
+  contactWorkingHours: "contact.workingHours",
+  contactMapUrl: "contact.mapUrl",
+  contactGeoLat: "contact.geoLat",
+  contactGeoLng: "contact.geoLng",
   seoMetaTitle: "seo.metaTitle",
   seoMetaDescription: "seo.metaDescription",
   featureCart: "features.cart",
@@ -55,7 +62,12 @@ export type SiteSettings = {
     mobile: string;
     mobileRaw: string;
     email: string;
+    salesEmail: string;
     address: string;
+    postalCode: string;
+    workingHours: string;
+    mapUrl: string;
+    geo: { lat: number; lng: number };
   };
   seo: { metaTitle: string; metaDescription: string };
   features: { cart: boolean };
@@ -70,6 +82,16 @@ function bool(value: unknown, fallback: boolean): boolean {
   if (typeof value === "boolean") return value;
   if (value === "true") return true;
   if (value === "false") return false;
+  return fallback;
+}
+
+/** عدد معتبر جایگزین پیش‌فرض می‌شود؛ رشته هم پذیرفته می‌شود چون فرم تنظیمات متن ذخیره می‌کند */
+function num(value: unknown, fallback: number): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const n = Number(value.trim());
+    if (Number.isFinite(n)) return n;
+  }
   return fallback;
 }
 
@@ -90,22 +112,32 @@ export function resolveSiteSettings(rows: { key: string; value: unknown }[]): Si
   const phoneDisplay = str(get(SETTING_KEYS.contactPhone), siteConfig.contact.phones[0]);
   const mobileDisplay = str(get(SETTING_KEYS.contactMobile), siteConfig.contact.mobile);
 
-  // شماره‌های اضافی همچنان از config می‌آیند؛ جدول تنظیمات فعلاً یک شماره
-  // اصلی دارد. اگر مدیر شماره اصلی را عوض کند، بقیه دست‌نخورده می‌مانند.
-  const extraPhones = siteConfig.contact.phones.slice(1);
-  const extraRaw = siteConfig.contact.phonesRaw.slice(1);
+  // شماره دوم اختیاری است و فقط از تنظیمات می‌آید (config پیش‌فرضی برایش
+  // ندارد). خالی که باشد از فهرست حذف می‌شود، یعنی شرکتی که یک خط تلفن دارد
+  // شماره جانشین نمایش نمی‌دهد.
+  const phoneAltDisplay = str(get(SETTING_KEYS.contactPhoneAlt), "");
+  const phonesDisplay = [phoneDisplay, ...(phoneAltDisplay ? [phoneAltDisplay] : [])];
+  const phonesRaw = phonesDisplay.map((p) => dialable(p, siteConfig.contact.phonesRaw[0]));
 
   return {
     name: str(get(SETTING_KEYS.siteName), siteConfig.name),
     tagline: str(get(SETTING_KEYS.siteTagline), siteConfig.tagline),
     description: str(get(SETTING_KEYS.seoMetaDescription), siteConfig.description),
     contact: {
-      phones: [phoneDisplay, ...extraPhones],
-      phonesRaw: [dialable(phoneDisplay, siteConfig.contact.phonesRaw[0]), ...extraRaw],
+      phones: phonesDisplay,
+      phonesRaw,
       mobile: mobileDisplay,
       mobileRaw: dialable(mobileDisplay, siteConfig.contact.mobileRaw),
       email: str(get(SETTING_KEYS.contactEmail), siteConfig.contact.email),
+      salesEmail: str(get(SETTING_KEYS.contactSalesEmail), siteConfig.contact.salesEmail),
       address: str(get(SETTING_KEYS.contactAddress), siteConfig.contact.address),
+      postalCode: str(get(SETTING_KEYS.contactPostalCode), siteConfig.contact.postalCode),
+      workingHours: str(get(SETTING_KEYS.contactWorkingHours), siteConfig.contact.workingHours),
+      mapUrl: str(get(SETTING_KEYS.contactMapUrl), siteConfig.contact.mapUrl),
+      geo: {
+        lat: num(get(SETTING_KEYS.contactGeoLat), siteConfig.contact.geo.lat),
+        lng: num(get(SETTING_KEYS.contactGeoLng), siteConfig.contact.geo.lng),
+      },
     },
     seo: {
       metaTitle: str(

@@ -26,7 +26,16 @@ export function SiteHeader({
   const [scrolled, setScrolled] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [megaOpen, setMegaOpen] = React.useState(false);
+  const [moreOpen, setMoreOpen] = React.useState(false);
   const closeTimer = React.useRef<number | null>(null);
+  const moreTimer = React.useRef<number | null>(null);
+  const moreRef = React.useRef<HTMLDivElement>(null);
+
+  const secondaryNav = React.useMemo(
+    () => mainNav.filter((item): item is typeof item & { secondary: true } => "secondary" in item && item.secondary),
+    [],
+  );
+  const hasActiveSecondary = secondaryNav.some((item) => pathname.startsWith(item.href));
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -44,6 +53,7 @@ export function SiteHeader({
     setLastPath(pathname);
     setMobileOpen(false);
     setMegaOpen(false);
+    setMoreOpen(false);
   }
 
   React.useEffect(() => {
@@ -61,6 +71,36 @@ export function SiteHeader({
     closeTimer.current = window.setTimeout(() => setMegaOpen(false), 160);
   };
 
+  const openMore = () => {
+    if (moreTimer.current) window.clearTimeout(moreTimer.current);
+    setMoreOpen(true);
+  };
+  const scheduleMoreClose = () => {
+    moreTimer.current = window.setTimeout(() => setMoreOpen(false), 160);
+  };
+
+  /*
+   * کلیک روی «بیشتر» فقط باز می‌کند و هیچ‌وقت نمی‌بندد.
+   * اگر toggle باشد، روی دسکتاپ hover اول منو را باز می‌کند و بعد کلیک
+   * بلافاصله می‌بنددش — یعنی دکمه عملاً کار نمی‌کند. بستن با خروج نشانگر،
+   * کلیک بیرون یا Escape انجام می‌شود تا روی لمسی هم راه خروج وجود داشته باشد.
+   */
+  React.useEffect(() => {
+    if (!moreOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!moreRef.current?.contains(event.target as Node)) setMoreOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMoreOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [moreOpen]);
+
   return (
     <>
       {/* نوار اطلاعات تماس — روی موبایل مخفی است */}
@@ -73,7 +113,7 @@ export function SiteHeader({
             </span>
           </div>
           <div className="flex items-center gap-5">
-            <span>{siteConfig.contact.workingHours}</span>
+            <span>{settings.contact.workingHours}</span>
             <a
               href={`tel:${settings.contact.phonesRaw[0]}`}
               className="flex items-center gap-1.5 font-medium text-[var(--fg-secondary)] transition-colors hover:text-[var(--brand)]"
@@ -110,51 +150,111 @@ export function SiteHeader({
             </span>
           </Link>
 
-          {/* ناوبری دسکتاپ */}
-          <nav className="mx-auto hidden items-center lg:flex" aria-label="ناوبری اصلی">
+          {/*
+            ناوبری دسکتاپ.
+
+            موارد اصلی همیشه دیده می‌شوند. موارد `secondary` تا پیش از 2xl
+            داخل منوی «بیشتر» جمع می‌شوند و از 2xl به بعد مستقیم در ردیف
+            می‌نشینند — یعنی طراحی عریض دست‌نخورده می‌ماند و فقط در عرض‌های
+            کمتر تراکم کم می‌شود.
+          */}
+          <nav className="mx-auto hidden min-w-0 items-center lg:flex" aria-label="ناوبری اصلی">
             {mainNav.map((item) => {
-              const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+              const isSecondary = "secondary" in item && item.secondary;
               const isProducts = "hasMegaMenu" in item && item.hasMegaMenu;
               return (
                 <div
                   key={item.href}
+                  className={isSecondary ? "hidden 2xl:block" : undefined}
                   onMouseEnter={isProducts ? openMega : undefined}
                   onMouseLeave={isProducts ? scheduleClose : undefined}
                 >
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "relative flex items-center gap-1 whitespace-nowrap px-3.5 py-2 text-[0.875rem] font-medium transition-colors duration-200",
-                      active ? "text-[var(--brand)]" : "text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]",
-                    )}
-                    aria-current={active ? "page" : undefined}
-                    aria-expanded={isProducts ? megaOpen : undefined}
-                  >
-                    {item.title}
-                    {isProducts && (
-                      <svg
-                        viewBox="0 0 16 16"
-                        className={cn("size-3 transition-transform duration-300", megaOpen && "rotate-180")}
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.6"
-                        aria-hidden
-                      >
-                        <path d="m4 6 4 4 4-4" strokeLinecap="round" />
-                      </svg>
-                    )}
-                    <span
-                      className={cn(
-                        "absolute inset-x-3 -bottom-px h-px origin-center scale-x-0 bg-[var(--brand)] transition-transform duration-300",
-                        "[transition-timing-function:var(--ease-out-expo)]",
-                        active && "scale-x-100",
-                      )}
-                      aria-hidden
-                    />
-                  </Link>
+                  <NavLink
+                    item={item}
+                    pathname={pathname}
+                    hasCaret={isProducts}
+                    caretOpen={isProducts ? megaOpen : undefined}
+                  />
                 </div>
               );
             })}
+
+            {/* «بیشتر» — فقط وقتی موارد ثانویه در ردیف جا نمی‌شوند */}
+            {secondaryNav.length > 0 && (
+              <div
+                ref={moreRef}
+                className="relative 2xl:hidden"
+                onMouseEnter={openMore}
+                onMouseLeave={scheduleMoreClose}
+              >
+                <button
+                  type="button"
+                  onClick={openMore}
+                  aria-expanded={moreOpen}
+                  aria-haspopup="true"
+                  className={cn(
+                    "relative flex items-center gap-1 whitespace-nowrap px-3.5 py-2 text-[0.875rem] font-medium transition-colors duration-200",
+                    hasActiveSecondary || moreOpen
+                      ? "text-[var(--brand)]"
+                      : "text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]",
+                  )}
+                >
+                  بیشتر
+                  <svg
+                    viewBox="0 0 16 16"
+                    className={cn("size-3 transition-transform duration-300", moreOpen && "rotate-180")}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    aria-hidden
+                  >
+                    <path d="m4 6 4 4 4-4" strokeLinecap="round" />
+                  </svg>
+                  <span
+                    className={cn(
+                      "absolute inset-x-3 -bottom-px h-px origin-center bg-[var(--brand)] transition-transform duration-300",
+                      "[transition-timing-function:var(--ease-out-expo)]",
+                      hasActiveSecondary ? "scale-x-100" : "scale-x-0",
+                    )}
+                    aria-hidden
+                  />
+                </button>
+
+                {/* همان زبان بصری مگامنو: پنل شیشه‌ای با همان سایه و حاشیه */}
+                <div
+                  className={cn(
+                    "glass absolute end-0 top-full min-w-48 overflow-hidden rounded-lg border border-[var(--border-subtle)]",
+                    "py-1.5 shadow-[var(--shadow-lg)] transition-all duration-300",
+                    "[transition-timing-function:var(--ease-out-expo)]",
+                    moreOpen
+                      ? "visible translate-y-0 opacity-100"
+                      : "invisible -translate-y-1 opacity-0",
+                  )}
+                >
+                  <ul>
+                    {secondaryNav.map((item) => {
+                      const active = pathname.startsWith(item.href);
+                      return (
+                        <li key={item.href}>
+                          <Link
+                            href={item.href}
+                            className={cn(
+                              "block whitespace-nowrap px-4 py-2.5 text-[0.875rem] font-medium transition-colors duration-200",
+                              active
+                                ? "bg-[var(--brand-soft)] text-[var(--brand)]"
+                                : "text-[var(--fg-secondary)] hover:bg-[var(--bg-elev-3)] hover:text-[var(--fg-primary)]",
+                            )}
+                            aria-current={active ? "page" : undefined}
+                          >
+                            {item.title}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </div>
+            )}
           </nav>
 
           {/* ابزارها */}
@@ -354,5 +454,59 @@ export function SiteHeader({
         </nav>
       </div>
     </>
+  );
+}
+
+/**
+ * یک آیتم ناوبری دسکتاپ.
+ *
+ * پیش‌تر این نشانه‌گذاری داخل map ناوبری تکرار می‌شد؛ حالا که هم موارد
+ * اصلی و هم منوی «بیشتر» از آن استفاده می‌کنند، در یک جا جمع شده است.
+ */
+function NavLink({
+  item,
+  pathname,
+  hasCaret,
+  caretOpen,
+}: {
+  item: { title: string; href: string };
+  pathname: string;
+  hasCaret?: boolean;
+  caretOpen?: boolean;
+}) {
+  const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+
+  return (
+    <Link
+      href={item.href}
+      className={cn(
+        "relative flex items-center gap-1 whitespace-nowrap px-3.5 py-2 text-[0.875rem] font-medium transition-colors duration-200",
+        active ? "text-[var(--brand)]" : "text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]",
+      )}
+      aria-current={active ? "page" : undefined}
+      aria-expanded={hasCaret ? caretOpen : undefined}
+    >
+      {item.title}
+      {hasCaret && (
+        <svg
+          viewBox="0 0 16 16"
+          className={cn("size-3 transition-transform duration-300", caretOpen && "rotate-180")}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          aria-hidden
+        >
+          <path d="m4 6 4 4 4-4" strokeLinecap="round" />
+        </svg>
+      )}
+      <span
+        className={cn(
+          "absolute inset-x-3 -bottom-px h-px origin-center bg-[var(--brand)] transition-transform duration-300",
+          "[transition-timing-function:var(--ease-out-expo)]",
+          active ? "scale-x-100" : "scale-x-0",
+        )}
+        aria-hidden
+      />
+    </Link>
   );
 }

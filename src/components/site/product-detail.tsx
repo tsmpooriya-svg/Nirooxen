@@ -7,7 +7,6 @@ import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
-import { siteConfig } from "@/config/site";
 import { STOCK_STATUS } from "@/lib/constants";
 import { cn, formatPrice, toFaDigits } from "@/lib/utils";
 import { useCart } from "@/modules/cart/store";
@@ -41,9 +40,11 @@ export type ProductDetailProps = {
   brand: { name: string; slug: string; latinName: string | null } | null;
   images: Image[];
   specGroups: SpecGroup[];
+  /** از تنظیمات مدیر می‌آید تا شماره اینجا با بقیه سایت یکی باشد */
+  salesPhoneRaw: string;
 };
 
-export function ProductDetail({ product, category, brand, images, specGroups }: ProductDetailProps) {
+export function ProductDetail({ product, category, brand, images, specGroups, salesPhoneRaw }: ProductDetailProps) {
   const [activeImage, setActiveImage] = React.useState(0);
   const [quantity, setQuantity] = React.useState(product.minOrderQty);
   const [orderOpen, setOrderOpen] = React.useState(false);
@@ -344,7 +345,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
             <div className="mt-6 space-y-2.5">
               {product.priceMode === "CALL" ? (
                 <a
-                  href={`tel:${siteConfig.contact.phonesRaw[0]}`}
+                  href={`tel:${salesPhoneRaw}`}
                   className="flex h-12 items-center justify-center gap-2 rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
                 >
                   <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -476,7 +477,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
 
           {product.priceMode === "CALL" ? (
             <a
-              href={`tel:${siteConfig.contact.phonesRaw[0]}`}
+              href={`tel:${salesPhoneRaw}`}
               className="flex h-11 shrink-0 items-center justify-center gap-2 rounded-md bg-[var(--brand)] px-5 text-meta font-medium text-[var(--fg-on-brand)]"
             >
               تماس با کارشناس

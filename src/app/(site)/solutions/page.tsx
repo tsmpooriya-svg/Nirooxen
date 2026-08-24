@@ -8,6 +8,7 @@ import { SolutionCard } from "@/components/site/solution-card";
 import { siteConfig } from "@/config/site";
 import { JsonLd, pageMetadata } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/utils";
+import { getSiteSettings } from "@/modules/settings/queries";
 import { listSolutionSummaries } from "@/modules/solutions/queries";
 
 export const revalidate = 3600;
@@ -20,6 +21,7 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function SolutionsPage() {
+  const settings = await getSiteSettings();
   const summaries = await listSolutionSummaries();
 
   // ترکیب عمداً نامتقارن: دو راهکار اول بزرگ‌اند، بقیه در ریتم فشرده‌تر.
@@ -107,7 +109,7 @@ export default async function SolutionsPage() {
                     ثبت درخواست مشاوره
                   </Link>
                   <a
-                    href={`tel:${siteConfig.contact.mobileRaw}`}
+                    href={`tel:${settings.contact.mobileRaw}`}
                     className="inline-flex h-12 items-center justify-center gap-2.5 rounded-md border border-[var(--border-default)] px-6 text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
                   >
                     <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
