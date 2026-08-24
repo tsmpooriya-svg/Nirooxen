@@ -189,6 +189,10 @@
   --grid-line: rgb(255 255 255 / 0.028);
   --grid-line-strong: rgb(34 188 214 / 0.07);
   --noise-opacity: 0.035;
+  /* overlay lifts noise OUT of a dark surface — correct here */
+  --grain-blend: overlay;
+  /* Grid is background texture here, so it fades out early */
+  --blueprint-mask: radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 82%);
   --glow-brand: rgb(0 166 192 / 0.28);
   --glow-signal: rgb(240 160 40 / 0.18);
 
@@ -198,7 +202,6 @@
   --shadow-lg: 0 24px 60px -14px rgb(0 0 0 / 0.7), 0 6px 16px rgb(0 0 0 / 0.4);
   --shadow-xl: 0 40px 96px -24px rgb(0 0 0 / 0.78);
   --shadow-brand: 0 12px 40px -12px rgb(0 166 192 / 0.5);
-  --shadow-inset-top: inset 0 1px 0 rgb(255 255 255 / 0.06);
 }
 
 /* --------------------------------------------------------------------------
@@ -227,11 +230,15 @@
   /* Light-theme danger red is dark enough for white text (5.23:1). */
   --fg-on-danger: #ffffff;
 
-  --border-hairline: rgb(10 20 36 / 0.07);
-  --border-subtle: rgb(10 20 36 / 0.1);
-  --border-default: rgb(10 20 36 / 0.16);
-  --border-strong: rgb(10 20 36 / 0.28);
-  --border-brand: rgb(0 116 139 / 0.4);
+  /* Heavier than the dark theme's borders, not a mirror of them. On a dark
+     surface, elevation reads as lightness; on paper you cannot go lighter
+     than white, so a light UI has to define objects by their EDGE. These are
+     the main depth cue in this theme, which is why they carry more weight. */
+  --border-hairline: rgb(10 20 36 / 0.08);
+  --border-subtle: rgb(10 20 36 / 0.13);
+  --border-default: rgb(10 20 36 / 0.19);
+  --border-strong: rgb(10 20 36 / 0.3);
+  --border-brand: rgb(0 116 139 / 0.42);
 
   --brand: var(--hydro-600);
   --brand-hover: var(--hydro-700);
@@ -273,11 +280,23 @@
   --danger-chip: #faebeb;
   --info-chip: #eaf1fa;
 
-  --grid-line: rgb(10 30 60 / 0.045);
-  --grid-line-strong: rgb(0 116 139 / 0.08);
-  --noise-opacity: 0.02;
-  --glow-brand: rgb(0 116 139 / 0.14);
-  --glow-signal: rgb(209 129 26 / 0.1);
+  /* The blueprint grid is deliberately MORE present here than in the dark
+     theme. On a dark console it is a faint background texture; on a light
+     surface the same device reads as drafting paper, which is the more
+     literal and more useful reading for an engineering catalogue. */
+  --grid-line: rgb(10 30 60 / 0.075);
+  --grid-line-strong: rgb(0 116 139 / 0.11);
+  /* multiply, not overlay: on light surfaces overlay washes noise out and
+     leaves a dirty grey cast. multiply reads as paper tooth. */
+  --noise-opacity: 0.05;
+  --grain-blend: multiply;
+  /* Grid is the primary atmosphere here, not a background texture, so it is
+     carried much further down the section before fading. */
+  --blueprint-mask: radial-gradient(140% 105% at 50% 0%, #000 48%, transparent 94%);
+  /* Blur blobs read as smudges on white, so the ambient glow is pulled back
+     and the grid carries the atmosphere instead. */
+  --glow-brand: rgb(0 116 139 / 0.09);
+  --glow-signal: rgb(209 129 26 / 0.07);
 
   --shadow-xs: 0 1px 2px rgb(16 32 56 / 0.06);
   --shadow-sm: 0 2px 6px rgb(16 32 56 / 0.07), 0 1px 2px rgb(16 32 56 / 0.05);
@@ -285,7 +304,6 @@
   --shadow-lg: 0 26px 60px -18px rgb(16 32 56 / 0.22), 0 6px 16px rgb(16 32 56 / 0.08);
   --shadow-xl: 0 44px 100px -30px rgb(16 32 56 / 0.28);
   --shadow-brand: 0 14px 40px -14px rgb(0 116 139 / 0.42);
-  --shadow-inset-top: inset 0 1px 0 rgb(255 255 255 / 0.9);
 }
 
 /* --------------------------------------------------------------------------
@@ -574,7 +592,7 @@
       linear-gradient(to left, var(--grid-line) 1px, transparent 1px),
       linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
     background-size: 72px 72px;
-    mask-image: radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 82%);
+    mask-image: var(--blueprint-mask);
   }
 
   .blueprint-dense::before {
@@ -590,7 +608,7 @@
     pointer-events: none;
     opacity: var(--noise-opacity);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-    mix-blend-mode: overlay;
+    mix-blend-mode: var(--grain-blend);
   }
 
   .glow-brand {
