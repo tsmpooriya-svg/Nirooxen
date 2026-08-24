@@ -24,7 +24,7 @@ export function Field({ label, htmlFor, hint, error, required, className, childr
       {label && (
         <label
           htmlFor={htmlFor}
-          className="flex items-center gap-1 text-[0.8125rem] font-medium text-[var(--fg-secondary)]"
+          className="flex items-center gap-1 text-meta font-medium text-[var(--fg-secondary)]"
         >
           {label}
           {required && (

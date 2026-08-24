@@ -91,7 +91,7 @@ export default async function ServicesPage() {
                 </span>
 
                 <div className="min-w-0">
-                  <span className="font-mono text-[0.625rem] tracking-[0.2em] text-[var(--fg-subtle)]">
+                  <span className="font-mono text-micro tracking-[0.2em] text-[var(--fg-subtle)]">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <h2 className="mt-2 font-display text-xl font-bold">{service.title}</h2>

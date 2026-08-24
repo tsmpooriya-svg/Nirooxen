@@ -132,7 +132,7 @@ export function ProductFilters({
                     type="button"
                     onClick={() => setParam("category", category.slug)}
                     className={cn(
-                      "flex flex-1 items-center gap-2.5 rounded-sm px-2 py-2 text-start text-[0.8125rem] transition-colors",
+                      "flex flex-1 items-center gap-2.5 rounded-sm px-2 py-2 text-start text-meta transition-colors",
                       isActive
                         ? "bg-[var(--brand-soft)] font-medium text-[var(--brand)]"
                         : "text-[var(--fg-secondary)] hover:bg-[var(--bg-elev-3)]",
@@ -143,7 +143,7 @@ export function ProductFilters({
                       className={cn("size-4 shrink-0", isActive ? "text-[var(--brand)]" : "text-[var(--fg-subtle)]")}
                     />
                     <span className="flex-1 truncate">{category.name}</span>
-                    <span className="font-mono text-[0.625rem] text-[var(--fg-subtle)]">
+                    <span className="font-mono text-micro text-[var(--fg-subtle)]">
                       {toFaDigits(category.productCount)}
                     </span>
                   </button>
@@ -214,7 +214,7 @@ export function ProductFilters({
                 type="button"
                 onClick={() => setParam("brand", brand.slug)}
                 className={cn(
-                  "flex w-full items-center gap-2 rounded-sm px-2 py-2 text-start text-[0.8125rem] transition-colors",
+                  "flex w-full items-center gap-2 rounded-sm px-2 py-2 text-start text-meta transition-colors",
                   activeBrand === brand.slug
                     ? "bg-[var(--brand-soft)] font-medium text-[var(--brand)]"
                     : "text-[var(--fg-secondary)] hover:bg-[var(--bg-elev-3)]",
@@ -236,7 +236,7 @@ export function ProductFilters({
                   )}
                 </span>
                 <span className="flex-1 truncate">{brand.name}</span>
-                <span className="font-mono text-[0.625rem] text-[var(--fg-subtle)]">
+                <span className="font-mono text-micro text-[var(--fg-subtle)]">
                   {toFaDigits(brand.productCount)}
                 </span>
               </button>
@@ -254,7 +254,7 @@ export function ProductFilters({
                 type="button"
                 onClick={() => setParam("stock", key)}
                 className={cn(
-                  "flex w-full items-center gap-2.5 rounded-sm px-2 py-2 text-start text-[0.8125rem] transition-colors",
+                  "flex w-full items-center gap-2.5 rounded-sm px-2 py-2 text-start text-meta transition-colors",
                   activeStock === key
                     ? "bg-[var(--brand-soft)] font-medium text-[var(--brand)]"
                     : "text-[var(--fg-secondary)] hover:bg-[var(--bg-elev-3)]",
@@ -274,7 +274,7 @@ export function ProductFilters({
 
       {/* قیمت */}
       <FilterGroup title="قیمت">
-        <label className="flex cursor-pointer items-center gap-2.5 rounded-sm px-2 py-2 text-[0.8125rem] text-[var(--fg-secondary)] transition-colors hover:bg-[var(--bg-elev-3)]">
+        <label className="flex cursor-pointer items-center gap-2.5 rounded-sm px-2 py-2 text-meta text-[var(--fg-secondary)] transition-colors hover:bg-[var(--bg-elev-3)]">
           <input
             type="checkbox"
             checked={onlyPriced}
@@ -284,7 +284,7 @@ export function ProductFilters({
           فقط کالاهای دارای قیمت
         </label>
         {priceRange.max > 0 && (
-          <p className="mt-2 px-2 text-[0.6875rem] leading-6 text-[var(--fg-subtle)]">
+          <p className="mt-2 px-2 text-micro leading-6 text-[var(--fg-subtle)]">
             بازه قیمت کالاهای قیمت‌دار: {formatPrice(priceRange.min, { withUnit: false })} تا{" "}
             {formatPrice(priceRange.max)}
           </p>
@@ -400,7 +400,7 @@ function SpecRangeFilter({
         </label>
       </div>
 
-      {hint && <p className="mt-2 font-mono text-[0.625rem] text-[var(--fg-subtle)]">{hint}</p>}
+      {hint && <p className="mt-2 font-mono text-micro text-[var(--fg-subtle)]">{hint}</p>}
 
       {dirty && (
         <button
@@ -434,7 +434,7 @@ function SpecOptionsFilter({
             <li key={option.value}>
               <label
                 className={cn(
-                  "flex cursor-pointer items-center gap-2.5 rounded-sm px-2 py-2 text-[0.8125rem] transition-colors",
+                  "flex cursor-pointer items-center gap-2.5 rounded-sm px-2 py-2 text-meta transition-colors",
                   checked
                     ? "bg-[var(--brand-soft)] font-medium text-[var(--brand)]"
                     : "text-[var(--fg-secondary)] hover:bg-[var(--bg-elev-3)]",
@@ -447,7 +447,7 @@ function SpecOptionsFilter({
                   className="size-4 shrink-0 accent-[var(--brand)]"
                 />
                 <span className="min-w-0 flex-1 truncate">{option.label}</span>
-                <span className="shrink-0 font-mono text-[0.625rem] text-[var(--fg-subtle)]">
+                <span className="shrink-0 font-mono text-micro text-[var(--fg-subtle)]">
                   {toFaDigits(option.count)}
                 </span>
               </label>
@@ -467,7 +467,7 @@ function round(value: number): number {
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-4">
-      <h3 className="mb-3 text-[0.8125rem] font-semibold text-[var(--fg-primary)]">{title}</h3>
+      <h3 className="mb-3 text-meta font-semibold text-[var(--fg-primary)]">{title}</h3>
       {children}
     </div>
   );

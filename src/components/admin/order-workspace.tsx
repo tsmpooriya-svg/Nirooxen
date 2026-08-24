@@ -75,7 +75,7 @@ export function OrderWorkflow({
                 onClick={() => run(() => updateOrderStatus(orderId, step))}
                 title={ORDER_STATUS[step].description}
                 className={cn(
-                  "whitespace-nowrap rounded-full border px-3 py-1.5 text-[0.6875rem] font-medium transition-all duration-300",
+                  "whitespace-nowrap rounded-full border px-3 py-1.5 text-micro font-medium transition-all duration-300",
                   "[transition-timing-function:var(--ease-out-expo)] disabled:opacity-50",
                   active
                     ? "border-[var(--brand)] bg-[var(--brand)] text-[var(--fg-on-brand)]"
@@ -109,7 +109,7 @@ export function OrderWorkflow({
                 disabled={pending}
                 onClick={() => run(() => updateOrderPriority(orderId, level))}
                 className={cn(
-                  "rounded-md border px-2.5 py-1 text-[0.6875rem] transition-all duration-200 disabled:opacity-50",
+                  "rounded-md border px-2.5 py-1 text-micro transition-all duration-200 disabled:opacity-50",
                   priority === level
                     ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand)]"
                     : "border-[var(--border-subtle)] text-[var(--fg-muted)] hover:text-[var(--fg-primary)]",
@@ -127,7 +127,7 @@ export function OrderWorkflow({
             type="button"
             disabled={pending}
             onClick={() => run(() => updateOrderStatus(orderId, "CANCELLED"))}
-            className="rounded-md border border-[var(--border-subtle)] px-3 py-1.5 text-[0.6875rem] text-[var(--fg-muted)] transition-colors hover:border-[var(--border-default)] hover:text-[var(--fg-primary)] disabled:opacity-50"
+            className="rounded-md border border-[var(--border-subtle)] px-3 py-1.5 text-micro text-[var(--fg-muted)] transition-colors hover:border-[var(--border-default)] hover:text-[var(--fg-primary)] disabled:opacity-50"
           >
             لغو پرونده
           </button>
@@ -135,7 +135,7 @@ export function OrderWorkflow({
             type="button"
             disabled={pending}
             onClick={() => run(() => updateOrderStatus(orderId, "REJECTED"))}
-            className="rounded-md border border-[color-mix(in_oklab,var(--danger)_35%,transparent)] px-3 py-1.5 text-[0.6875rem] text-[var(--danger-text)] transition-colors hover:bg-[var(--danger-soft)] disabled:opacity-50"
+            className="rounded-md border border-[color-mix(in_oklab,var(--danger)_35%,transparent)] px-3 py-1.5 text-micro text-[var(--danger-text)] transition-colors hover:bg-[var(--danger-soft)] disabled:opacity-50"
           >
             رد / اسپم
           </button>
@@ -163,7 +163,7 @@ export function AssigneePicker({
 
   return (
     <label className="block">
-      <span className="mb-2 block text-[0.6875rem] text-[var(--fg-muted)]">کارشناس مسئول</span>
+      <span className="mb-2 block text-micro text-[var(--fg-muted)]">کارشناس مسئول</span>
       <select
         defaultValue={currentId ?? ""}
         disabled={pending}
@@ -280,14 +280,14 @@ export function QuoteBuilder({ orderId, items }: { orderId: string; items: Item[
                 className="flex flex-wrap items-center gap-3 rounded-lg border border-[var(--border-hairline)] bg-[var(--bg-elev-2)] p-3.5"
               >
                 <div className="min-w-[12rem] flex-1">
-                  <p className="text-[0.8125rem] font-medium">{item.productName}</p>
-                  <p className="mt-0.5 font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">
+                  <p className="text-meta font-medium">{item.productName}</p>
+                  <p className="mt-0.5 font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">
                     {item.productSku ?? "—"} × {toFaDigits(item.quantity)} {item.unit}
                   </p>
                 </div>
 
                 <label className="flex items-center gap-2">
-                  <span className="text-[0.6875rem] text-[var(--fg-muted)]">قیمت واحد</span>
+                  <span className="text-micro text-[var(--fg-muted)]">قیمت واحد</span>
                   <input
                     value={prices[item.id] ?? ""}
                     onChange={(e) => setPrices((p) => ({ ...p, [item.id]: e.target.value }))}
@@ -339,7 +339,7 @@ function NumberField({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-[0.6875rem] text-[var(--fg-muted)]">{label}</span>
+      <span className="mb-1.5 block text-micro text-[var(--fg-muted)]">{label}</span>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -400,7 +400,7 @@ export function OrderTimeline({
           onChange={(e) => setNote(e.target.value)}
           rows={3}
           placeholder="مثلاً: با مشتری تماس گرفته شد، درخواست ارسال پیش‌فاکتور رسمی دارد."
-          className="w-full resize-y rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] p-3 text-[0.8125rem] leading-7 outline-none transition-colors focus:border-[var(--brand)]"
+          className="w-full resize-y rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] p-3 text-meta leading-7 outline-none transition-colors focus:border-[var(--brand)]"
         />
         <div className="mt-3 flex flex-wrap gap-2">
           <button
@@ -439,8 +439,8 @@ export function OrderTimeline({
               )}
               aria-hidden
             />
-            <p className="text-[0.8125rem] leading-7 text-[var(--fg-secondary)]">{event.message}</p>
-            <p className="mt-0.5 text-[0.6875rem] text-[var(--fg-subtle)]">
+            <p className="text-meta leading-7 text-[var(--fg-secondary)]">{event.message}</p>
+            <p className="mt-0.5 text-micro text-[var(--fg-subtle)]">
               {event.userName ?? "سیستم"} · {formatRelative(event.createdAt)}
             </p>
           </li>
@@ -471,11 +471,11 @@ export function CustomerHistory({
             href={`/admin/orders/${item.id}`}
             className="flex items-center justify-between gap-3 rounded-md border border-[var(--border-hairline)] p-2.5 transition-colors hover:border-[var(--border-brand)]"
           >
-            <span className="font-mono text-[0.6875rem] text-[var(--brand)]" dir="ltr">
+            <span className="font-mono text-micro text-[var(--brand)]" dir="ltr">
               {item.number}
             </span>
             <StatusBadge map={ORDER_STATUS} value={item.status} />
-            <span className="font-mono text-[0.625rem] text-[var(--fg-subtle)]">
+            <span className="font-mono text-micro text-[var(--fg-subtle)]">
               {formatRelative(item.createdAt)}
             </span>
           </Link>

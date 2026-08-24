@@ -19,7 +19,7 @@ export function ContactForm() {
           </svg>
         </span>
         <h3 className="font-display text-base font-bold">پیام شما دریافت شد</h3>
-        <p className="mt-3 max-w-sm text-[0.8125rem] leading-8 text-[var(--fg-secondary)]">{state.message}</p>
+        <p className="mt-3 max-w-sm text-meta leading-8 text-[var(--fg-secondary)]">{state.message}</p>
       </div>
     );
   }
@@ -84,7 +84,7 @@ export function ContactForm() {
       {state.status === "error" && state.message && (
         <p
           role="alert"
-          className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3.5 text-[0.8125rem] text-[var(--danger-text)]"
+          className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3.5 text-meta text-[var(--danger-text)]"
         >
           {state.message}
         </p>

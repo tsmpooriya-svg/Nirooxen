@@ -27,7 +27,7 @@ export function CartButton() {
         <circle cx="14.5" cy="16" r="1.2" />
       </svg>
       {mounted && count > 0 && (
-        <span className="anim-pop absolute -top-1.5 -end-1.5 grid min-w-5 place-items-center rounded-full bg-[var(--brand)] px-1 font-mono text-[0.625rem] font-bold text-[var(--fg-on-brand)]">
+        <span className="anim-pop absolute -top-1.5 -end-1.5 grid min-w-5 place-items-center rounded-full bg-[var(--brand)] px-1 font-mono text-micro font-bold text-[var(--fg-on-brand)]">
           {toFaDigits(count)}
         </span>
       )}
@@ -138,7 +138,7 @@ export function CartPanel() {
                     <Link
                       href={`/products/${line.slug}`}
                       onClick={close}
-                      className="clamp-2 text-[0.8125rem] font-medium leading-6 text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
+                      className="clamp-2 text-meta font-medium leading-6 text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
                     >
                       {line.name}
                     </Link>

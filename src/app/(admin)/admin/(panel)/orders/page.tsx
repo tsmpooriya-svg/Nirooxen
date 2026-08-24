@@ -122,13 +122,13 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                 <span className="block font-medium">{order.contactName}</span>
                 <a
                   href={`tel:${order.contactPhone}`}
-                  className="mt-0.5 block font-mono text-[0.6875rem] text-[var(--fg-muted)] transition-colors hover:text-[var(--brand)]"
+                  className="mt-0.5 block font-mono text-micro text-[var(--fg-muted)] transition-colors hover:text-[var(--brand)]"
                   dir="ltr"
                 >
                   {order.contactPhone}
                 </a>
                 {order.contactCompany && (
-                  <span className="mt-0.5 block text-[0.6875rem] text-[var(--fg-subtle)]">
+                  <span className="mt-0.5 block text-micro text-[var(--fg-subtle)]">
                     {order.contactCompany}
                   </span>
                 )}
@@ -136,7 +136,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
 
               <Td>
                 <StatusBadge map={ORDER_TYPE} value={order.type} />
-                <span className="mt-1 block text-[0.6875rem] text-[var(--fg-subtle)]">
+                <span className="mt-1 block text-micro text-[var(--fg-subtle)]">
                   {ORDER_SOURCE[order.source].label} · {toFaDigits(order.itemCount)} قلم
                 </span>
               </Td>
@@ -156,10 +156,10 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
               </Td>
 
               <Td className="whitespace-nowrap">
-                <span className="block text-[0.6875rem] text-[var(--fg-secondary)]">
+                <span className="block text-micro text-[var(--fg-secondary)]">
                   {formatRelative(order.createdAt)}
                 </span>
-                <span className="mt-0.5 block text-[0.625rem] text-[var(--fg-subtle)]">
+                <span className="mt-0.5 block text-micro text-[var(--fg-subtle)]">
                   {formatDateTime(order.createdAt)}
                 </span>
               </Td>
@@ -186,7 +186,7 @@ function FilterChip({
     <Link
       href={href}
       className={
-        "rounded-full border px-3 py-1.5 text-[0.6875rem] font-medium transition-all duration-200 " +
+        "rounded-full border px-3 py-1.5 text-micro font-medium transition-all duration-200 " +
         (active
           ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand)]"
           : "border-[var(--border-subtle)] text-[var(--fg-muted)] hover:border-[var(--border-brand)] hover:text-[var(--brand)]")

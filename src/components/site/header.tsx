@@ -104,7 +104,7 @@ export function SiteHeader({
               <span className="font-display text-[1.0625rem] font-extrabold tracking-tight text-[var(--fg-primary)] sm:text-lg">
                 {settings.name}
               </span>
-              <span className="mt-1 font-mono text-[0.5625rem] tracking-[0.22em] text-[var(--fg-subtle)]">
+              <span className="mt-1 font-mono text-label tracking-[0.22em] text-[var(--fg-subtle)]">
                 {siteConfig.latinName}
               </span>
             </span>
@@ -230,7 +230,7 @@ export function SiteHeader({
                     <span className="block text-sm font-semibold text-[var(--fg-primary)] transition-colors group-hover:text-[var(--brand)]">
                       {category.name}
                     </span>
-                    <span className="block font-mono text-[0.625rem] text-[var(--fg-subtle)]">
+                    <span className="block font-mono text-micro text-[var(--fg-subtle)]">
                       {toFaDigits(category.productCount)} کالا
                     </span>
                   </span>
@@ -240,7 +240,7 @@ export function SiteHeader({
                     <li key={child.id}>
                       <Link
                         href={`/products?category=${child.slug}`}
-                        className="block text-[0.8125rem] text-[var(--fg-muted)] transition-all duration-200 hover:translate-x-[-3px] hover:text-[var(--brand)]"
+                        className="block text-meta text-[var(--fg-muted)] transition-all duration-200 hover:translate-x-[-3px] hover:text-[var(--brand)]"
                       >
                         {child.name}
                       </Link>

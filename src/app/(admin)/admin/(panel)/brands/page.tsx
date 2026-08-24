@@ -32,7 +32,7 @@ export default async function AdminBrandsPage() {
             <Tr key={brand.id}>
               <Td>
                 <span className="block font-medium">{brand.name}</span>
-                <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">{brand.slug}</span>
+                <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">{brand.slug}</span>
               </Td>
               <Td className="text-xs">{brand.country ?? "—"}</Td>
               <Td className="font-mono text-xs">{toFaDigits(brand.productCount)}</Td>
@@ -41,7 +41,7 @@ export default async function AdminBrandsPage() {
                   map={{ on: { label: "فعال", tone: "ok" }, off: { label: "غیرفعال", tone: "neutral" } }}
                   value={brand.isActive ? "on" : "off"}
                 />
-                {brand.isFeatured && <span className="mt-1 block text-[0.625rem] text-[var(--signal-text)]">شاخص</span>}
+                {brand.isFeatured && <span className="mt-1 block text-micro text-[var(--signal-text)]">شاخص</span>}
               </Td>
               <Td className="font-mono text-xs">{toFaDigits(brand.position)}</Td>
               <Td className="w-24">

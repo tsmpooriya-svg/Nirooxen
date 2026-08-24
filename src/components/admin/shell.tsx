@@ -155,7 +155,7 @@ export function AdminShell({
         <Logomark className="size-8 text-[var(--brand)]" />
         <div className="min-w-0 leading-none">
           <p className="truncate font-display text-[0.9375rem] font-bold">{siteConfig.name}</p>
-          <p className="mt-1 font-mono text-[0.5625rem] tracking-[0.2em] text-[var(--fg-subtle)]">
+          <p className="mt-1 font-mono text-label tracking-[0.2em] text-[var(--fg-subtle)]">
             ADMIN CONSOLE
           </p>
         </div>
@@ -168,7 +168,7 @@ export function AdminShell({
 
           return (
             <div key={group.label}>
-              <p className="mb-2 px-3 font-mono text-[0.5625rem] tracking-[0.18em] text-[var(--fg-subtle)]">
+              <p className="mb-2 px-3 font-mono text-micro tracking-[0.12em] text-[var(--fg-subtle)]">
                 {group.label.toUpperCase()}
               </p>
               <ul className="space-y-0.5">
@@ -183,7 +183,7 @@ export function AdminShell({
                         href={item.href}
                         aria-current={active ? "page" : undefined}
                         className={cn(
-                          "group relative flex items-center gap-3 rounded-md px-3 py-2.5 text-[0.8125rem] transition-all duration-200",
+                          "group relative flex items-center gap-3 rounded-md px-3 py-2.5 text-meta transition-all duration-200",
                           active
                             ? "bg-[var(--brand-soft)] font-medium text-[var(--brand)]"
                             : "text-[var(--fg-secondary)] hover:bg-[var(--bg-elev-3)] hover:text-[var(--fg-primary)]",
@@ -202,7 +202,7 @@ export function AdminShell({
                         </span>
                         <span className="flex-1 truncate">{item.title}</span>
                         {badge > 0 && (
-                          <span className="grid min-w-5 place-items-center rounded-full bg-[var(--brand)] px-1.5 py-0.5 font-mono text-[0.625rem] font-bold text-[var(--fg-on-brand)]">
+                          <span className="grid min-w-5 place-items-center rounded-full bg-[var(--brand)] px-1.5 py-0.5 font-mono text-micro font-bold text-[var(--fg-on-brand)]">
                             {toFaDigits(badge)}
                           </span>
                         )}
@@ -222,8 +222,8 @@ export function AdminShell({
             {initials(user.name)}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[0.8125rem] font-medium">{user.name}</p>
-            <p className="truncate text-[0.6875rem] text-[var(--fg-subtle)]">
+            <p className="truncate text-meta font-medium">{user.name}</p>
+            <p className="truncate text-micro text-[var(--fg-subtle)]">
               {USER_ROLE[user.role].label}
             </p>
           </div>

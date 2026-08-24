@@ -36,7 +36,7 @@ export function AdminPageHeader({
           </nav>
         )}
         <h1 className="font-display text-xl font-bold sm:text-2xl">{title}</h1>
-        {description && <p className="mt-1.5 text-[0.8125rem] text-[var(--fg-muted)]">{description}</p>}
+        {description && <p className="mt-1.5 text-meta text-[var(--fg-muted)]">{description}</p>}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
     </div>
@@ -90,11 +90,11 @@ export function StatCard({
 
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[0.6875rem] text-[var(--fg-muted)]">{label}</p>
+          <p className="text-micro text-[var(--fg-muted)]">{label}</p>
           <p className="mt-2 font-display text-2xl font-extrabold leading-none" style={{ color: toneColor }}>
             {typeof value === "number" ? toFaDigits(value) : value}
           </p>
-          {hint && <p className="mt-2 text-[0.6875rem] leading-5 text-[var(--fg-subtle)]">{hint}</p>}
+          {hint && <p className="mt-2 text-micro leading-5 text-[var(--fg-subtle)]">{hint}</p>}
         </div>
         {icon && (
           <span
@@ -157,14 +157,14 @@ export function DataTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[44rem] border-collapse text-start text-[0.8125rem]">
+      <table className="w-full min-w-[44rem] border-collapse text-start text-meta">
         <thead>
           <tr className="border-b border-[var(--border-hairline)] bg-[var(--bg-elev-2)]">
             {head.map((cell, index) => (
               <th
                 key={index}
                 scope="col"
-                className="whitespace-nowrap px-4 py-3 text-start text-[0.6875rem] font-medium text-[var(--fg-muted)]"
+                className="whitespace-nowrap px-4 py-3 text-start text-micro font-medium text-[var(--fg-muted)]"
               >
                 {cell}
               </th>
@@ -238,7 +238,7 @@ export function EmptyState({
         </svg>
       </span>
       <h3 className="font-display text-base font-bold">{title}</h3>
-      {description && <p className="mt-2 max-w-sm text-[0.8125rem] leading-7 text-[var(--fg-muted)]">{description}</p>}
+      {description && <p className="mt-2 max-w-sm text-meta leading-7 text-[var(--fg-muted)]">{description}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
   );

@@ -77,7 +77,7 @@ export default async function AdminSpecsPage() {
             <Tr key={row.definition.id}>
               <Td>
                 <span className="block font-medium">{row.definition.label}</span>
-                <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">
+                <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">
                   {row.definition.key}
                 </span>
               </Td>
@@ -85,7 +85,7 @@ export default async function AdminSpecsPage() {
               <Td className="text-xs">
                 {row.unitLabel ?? "—"}
                 {row.unitSymbol && (
-                  <span className="ms-1 font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">
+                  <span className="ms-1 font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">
                     {row.unitSymbol}
                   </span>
                 )}
@@ -148,7 +148,7 @@ export default async function AdminSpecsPage() {
             <Tr key={row.link.id}>
               <Td>
                 <span className="block font-medium">{row.categoryName}</span>
-                <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">
+                <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">
                   {row.categorySlug}
                 </span>
               </Td>
@@ -191,7 +191,7 @@ export default async function AdminSpecsPage() {
             <Tr key={row.unit.id}>
               <Td>
                 <span className="block font-medium">{row.unit.label}</span>
-                <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">
+                <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">
                   {row.unit.code}
                   {row.unit.symbol ? ` · ${row.unit.symbol}` : ""}
                 </span>

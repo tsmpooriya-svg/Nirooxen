@@ -40,7 +40,7 @@ export default async function AdminMessagesPage({ searchParams }: { searchParams
                 <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="font-medium">{message.name}</p>
-                    <p className="mt-1 flex flex-wrap items-center gap-3 text-[0.6875rem] text-[var(--fg-subtle)]">
+                    <p className="mt-1 flex flex-wrap items-center gap-3 text-micro text-[var(--fg-subtle)]">
                       <a href={`tel:${message.phone}`} className="font-mono transition-colors hover:text-[var(--brand)]" dir="ltr">
                         {message.phone}
                       </a>
@@ -57,9 +57,9 @@ export default async function AdminMessagesPage({ searchParams }: { searchParams
                 </div>
 
                 {message.subject && (
-                  <p className="mb-2 text-[0.8125rem] font-medium text-[var(--fg-secondary)]">{message.subject}</p>
+                  <p className="mb-2 text-meta font-medium text-[var(--fg-secondary)]">{message.subject}</p>
                 )}
-                <p className="whitespace-pre-line rounded-lg border border-[var(--border-hairline)] bg-[var(--bg-elev-2)] p-4 text-[0.8125rem] leading-8 text-[var(--fg-secondary)]">
+                <p className="whitespace-pre-line rounded-lg border border-[var(--border-hairline)] bg-[var(--bg-elev-2)] p-4 text-meta leading-8 text-[var(--fg-secondary)]">
                   {message.message}
                 </p>
               </Panel>
@@ -78,7 +78,7 @@ function Chip({ href, active, children }: { href: string; active: boolean; child
     <Link
       href={href}
       className={
-        "rounded-full border px-3 py-1.5 text-[0.6875rem] font-medium transition-all " +
+        "rounded-full border px-3 py-1.5 text-micro font-medium transition-all " +
         (active
           ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand)]"
           : "border-[var(--border-subtle)] text-[var(--fg-muted)] hover:border-[var(--border-brand)] hover:text-[var(--brand)]")

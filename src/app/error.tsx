@@ -28,7 +28,7 @@ export default function GlobalError({
       </p>
 
       {error.digest && (
-        <p className="mt-3 font-mono text-[0.6875rem] text-[var(--fg-subtle)]">کد خطا: {error.digest}</p>
+        <p className="mt-3 font-mono text-micro text-[var(--fg-subtle)]">کد خطا: {error.digest}</p>
       )}
 
       <button

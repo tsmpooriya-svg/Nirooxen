@@ -41,26 +41,26 @@ export default async function BrandsPage() {
                       {brand.name}
                     </h2>
                     {brand.latinName && (
-                      <p className="mt-1.5 font-mono text-[0.6875rem] tracking-[0.16em] text-[var(--fg-subtle)]">
+                      <p className="mt-1.5 font-mono text-micro tracking-[0.16em] text-[var(--fg-subtle)]">
                         {brand.latinName.toUpperCase()}
                       </p>
                     )}
                   </div>
                   {brand.country && (
-                    <span className="shrink-0 rounded-full border border-[var(--border-hairline)] px-2.5 py-1 text-[0.6875rem] text-[var(--fg-muted)]">
+                    <span className="shrink-0 rounded-full border border-[var(--border-hairline)] px-2.5 py-1 text-micro text-[var(--fg-muted)]">
                       {brand.country}
                     </span>
                   )}
                 </div>
 
                 {brand.description && (
-                  <p className="clamp-3 text-[0.8125rem] leading-7 text-[var(--fg-muted)]">
+                  <p className="clamp-3 text-meta leading-7 text-[var(--fg-muted)]">
                     {brand.description}
                   </p>
                 )}
 
                 <div className="mt-auto flex items-center justify-between border-t border-[var(--border-hairline)] pt-4">
-                  <span className="font-mono text-[0.6875rem] text-[var(--fg-subtle)]">
+                  <span className="font-mono text-micro text-[var(--fg-subtle)]">
                     {toFaDigits(brand.productCount)} کالا
                   </span>
                   <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--brand)] transition-all duration-300 group-hover:gap-3">

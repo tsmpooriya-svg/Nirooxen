@@ -144,7 +144,7 @@ export default async function PostPage({ params }: { params: Params }) {
                     href={`/news/${item.slug}`}
                     className="group block h-full rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-2)] p-5 transition-all duration-400 hover:-translate-y-1 hover:border-[var(--border-brand)]"
                   >
-                    <p className="mb-2 font-mono text-[0.625rem] text-[var(--fg-subtle)]">
+                    <p className="mb-2 font-mono text-micro text-[var(--fg-subtle)]">
                       {formatDate(item.publishedAt)}
                     </p>
                     <h3 className="clamp-3 text-[0.875rem] font-semibold leading-7 transition-colors group-hover:text-[var(--brand)]">
@@ -215,7 +215,7 @@ function PostBody({ content }: { content: string }) {
             <ol key={index} className="space-y-2.5">
               {items.map((item, i) => (
                 <li key={i} className="flex items-start gap-3 text-[0.9375rem] leading-9 text-[var(--fg-secondary)]">
-                  <span className="mt-1.5 grid size-6 shrink-0 place-items-center rounded-full bg-[var(--brand-soft)] font-mono text-[0.6875rem] text-[var(--brand)]">
+                  <span className="mt-1.5 grid size-6 shrink-0 place-items-center rounded-full bg-[var(--brand-soft)] font-mono text-micro text-[var(--brand)]">
                     {toFaDigits(i + 1)}
                   </span>
                   <span>{renderInline(item.replace(/^\d+\. /, ""))}</span>

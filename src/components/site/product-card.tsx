@@ -112,7 +112,7 @@ export function ProductCard({
 
       {/* محتوا */}
       <div className={cn("flex flex-1 flex-col p-4", !compact && "sm:p-5")}>
-        <div className="mb-2 flex items-center gap-2 font-mono text-[0.625rem] tracking-wider text-[var(--fg-subtle)]">
+        <div className="mb-2 flex items-center gap-2 font-mono text-micro tracking-wider text-[var(--fg-subtle)]">
           {product.brandName && (
             <Link
               href={`/brands/${product.brandSlug}`}
@@ -139,7 +139,7 @@ export function ProductCard({
           <dl className="mb-4 grid grid-cols-2 gap-x-3 gap-y-1.5 border-y border-[var(--border-hairline)] py-3">
             {product.keySpecs.slice(0, 2).map((spec) => (
               <div key={spec.label} className="min-w-0">
-                <dt className="truncate text-[0.6875rem] text-[var(--fg-subtle)]">{spec.label}</dt>
+                <dt className="truncate text-micro text-[var(--fg-subtle)]">{spec.label}</dt>
                 <dd className="truncate text-xs font-medium text-[var(--fg-secondary)]">
                   {spec.value}
                   {spec.unit && <span className="text-[var(--fg-subtle)]"> {spec.unit}</span>}
@@ -172,7 +172,7 @@ export function ProductCard({
           <div className="flex gap-2">
             <Link
               href={`/products/${product.slug}`}
-              className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md bg-[var(--brand)] text-[0.8125rem] font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
+              className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md bg-[var(--brand)] text-meta font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
             >
               {product.priceMode === "PUBLIC" ? "ثبت سفارش" : "استعلام قیمت"}
             </Link>

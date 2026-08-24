@@ -157,7 +157,7 @@ export function ProductBulkBar({
               type="button"
               disabled={selected.length === 0 || pending}
               onClick={() => apply(status)}
-              className="rounded-md border border-[var(--border-default)] px-3 py-1.5 text-[0.6875rem] transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)] disabled:opacity-40"
+              className="rounded-md border border-[var(--border-default)] px-3 py-1.5 text-micro transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)] disabled:opacity-40"
             >
               {status === "PUBLISHED" ? "انتشار" : status === "DRAFT" ? "پیش‌نویس" : "بایگانی"}
             </button>

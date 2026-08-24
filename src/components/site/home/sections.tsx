@@ -322,7 +322,7 @@ export function ProcessSection() {
                   {toFaDigits(index + 1)}
                 </span>
                 <h3 className="mb-2.5 font-display text-base font-bold">{step.title}</h3>
-                <p className="text-[0.8125rem] leading-7 text-[var(--fg-muted)]">{step.body}</p>
+                <p className="text-meta leading-7 text-[var(--fg-muted)]">{step.body}</p>
               </div>
             </Reveal>
           ))}
@@ -381,12 +381,12 @@ export function BrandsSection({
             >
               <span className="font-display text-base font-bold text-[var(--fg-primary)]">{brand.name}</span>
               {brand.latinName && (
-                <span className="font-mono text-[0.625rem] tracking-[0.18em] text-[var(--fg-subtle)]">
+                <span className="font-mono text-micro tracking-[0.18em] text-[var(--fg-subtle)]">
                   {brand.latinName.toUpperCase()}
                 </span>
               )}
               {brand.country && (
-                <span className="text-[0.6875rem] text-[var(--fg-muted)]">{brand.country}</span>
+                <span className="text-micro text-[var(--fg-muted)]">{brand.country}</span>
               )}
             </Link>
           ))}
@@ -443,7 +443,7 @@ export function ProjectsSection({
                   )}
                   <span className="absolute inset-0 bg-gradient-to-t from-[var(--bg-elev-1)] via-transparent to-transparent" aria-hidden />
                   {project.year && (
-                    <span className="absolute end-3 top-3 rounded-full border border-[var(--border-brand)] bg-[var(--bg-glass-strong)] px-2.5 py-1 font-mono text-[0.625rem] text-[var(--brand)] backdrop-blur-sm">
+                    <span className="absolute end-3 top-3 rounded-full border border-[var(--border-brand)] bg-[var(--bg-glass-strong)] px-2.5 py-1 font-mono text-micro text-[var(--brand)] backdrop-blur-sm">
                       {project.year}
                     </span>
                   )}
@@ -454,11 +454,11 @@ export function ProjectsSection({
                     {project.title}
                   </h3>
                   {project.summary && (
-                    <p className="clamp-2 text-[0.8125rem] leading-7 text-[var(--fg-muted)]">
+                    <p className="clamp-2 text-meta leading-7 text-[var(--fg-muted)]">
                       {project.summary}
                     </p>
                   )}
-                  <dl className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-[var(--border-hairline)] pt-4 text-[0.6875rem]">
+                  <dl className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-[var(--border-hairline)] pt-4 text-micro">
                     {project.location && (
                       <div>
                         <dt className="text-[var(--fg-subtle)]">موقعیت</dt>
@@ -531,7 +531,7 @@ export function NewsSection({
                   )}
                 </div>
                 <div className="flex flex-1 flex-col p-5">
-                  <div className="mb-3 flex items-center gap-2.5 text-[0.6875rem] text-[var(--fg-subtle)]">
+                  <div className="mb-3 flex items-center gap-2.5 text-micro text-[var(--fg-subtle)]">
                     <span className="rounded-full bg-[var(--brand-soft)] px-2.5 py-1 font-medium text-[var(--brand)]">
                       {post.category}
                     </span>
@@ -545,7 +545,7 @@ export function NewsSection({
                   </h3>
 
                   {post.excerpt && (
-                    <p className="clamp-3 text-[0.8125rem] leading-7 text-[var(--fg-muted)]">
+                    <p className="clamp-3 text-meta leading-7 text-[var(--fg-muted)]">
                       {truncate(post.excerpt, 140)}
                     </p>
                   )}

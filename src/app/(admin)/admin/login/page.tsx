@@ -28,7 +28,7 @@ export default async function LoginPage() {
         <div className="mb-8 flex flex-col items-center text-center">
           <Logomark className="mb-5 size-14 text-[var(--brand)]" />
           <h1 className="font-display text-xl font-extrabold">پنل مدیریت {siteConfig.name}</h1>
-          <p className="mt-2 font-mono text-[0.625rem] tracking-[0.22em] text-[var(--fg-subtle)]">
+          <p className="mt-2 font-mono text-micro tracking-[0.22em] text-[var(--fg-subtle)]">
             {siteConfig.latinName} · ADMIN CONSOLE
           </p>
         </div>
@@ -37,7 +37,7 @@ export default async function LoginPage() {
           <LoginForm />
         </div>
 
-        <p className="mt-6 text-center text-[0.6875rem] leading-6 text-[var(--fg-subtle)]">
+        <p className="mt-6 text-center text-micro leading-6 text-[var(--fg-subtle)]">
           این بخش فقط برای کارکنان مجاز است. تمام ورودها ثبت و نگهداری می‌شود.
         </p>
       </div>

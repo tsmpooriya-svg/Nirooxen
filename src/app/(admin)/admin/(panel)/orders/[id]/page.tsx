@@ -64,9 +64,9 @@ export default async function OrderDetailPage({ params }: { params: Params }) {
           {/* اقلام */}
           <Panel title={`اقلام درخواست (${toFaDigits(items.length)})`} padded={false}>
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[38rem] text-[0.8125rem]">
+              <table className="w-full min-w-[38rem] text-meta">
                 <thead>
-                  <tr className="border-b border-[var(--border-hairline)] bg-[var(--bg-elev-2)] text-[0.6875rem] text-[var(--fg-muted)]">
+                  <tr className="border-b border-[var(--border-hairline)] bg-[var(--bg-elev-2)] text-micro text-[var(--fg-muted)]">
                     <th scope="col" className="px-4 py-3 text-start">محصول</th>
                     <th scope="col" className="px-4 py-3 text-start">تعداد</th>
                     <th scope="col" className="px-4 py-3 text-start">قیمت سایت</th>
@@ -90,7 +90,7 @@ export default async function OrderDetailPage({ params }: { params: Params }) {
                           <span className="font-medium">{item.productName}</span>
                         )}
                         {item.productSku && (
-                          <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">
+                          <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">
                             {item.productSku}
                           </span>
                         )}
@@ -132,7 +132,7 @@ export default async function OrderDetailPage({ params }: { params: Params }) {
                   </span>
                 </div>
                 {order.quoteValidUntil && (
-                  <p className="pt-1 text-[0.625rem] text-[var(--fg-subtle)]">
+                  <p className="pt-1 text-micro text-[var(--fg-subtle)]">
                     اعتبار پیش‌فاکتور تا {formatDateTime(order.quoteValidUntil)}
                   </p>
                 )}
@@ -143,7 +143,7 @@ export default async function OrderDetailPage({ params }: { params: Params }) {
           {/* یادداشت مشتری */}
           {order.note && (
             <Panel title="توضیحات مشتری">
-              <p className="whitespace-pre-line text-[0.8125rem] leading-8 text-[var(--fg-secondary)]">
+              <p className="whitespace-pre-line text-meta leading-8 text-[var(--fg-secondary)]">
                 {order.note}
               </p>
             </Panel>
@@ -165,7 +165,7 @@ export default async function OrderDetailPage({ params }: { params: Params }) {
           </Panel>
 
           <Panel title="اطلاعات تماس">
-            <dl className="space-y-3 text-[0.8125rem]">
+            <dl className="space-y-3 text-meta">
               <Info label="نام" value={order.contactName} />
               <Info label="تلفن" value={order.contactPhone} mono href={`tel:${order.contactPhone}`} />
               {order.contactEmail && (
@@ -175,12 +175,12 @@ export default async function OrderDetailPage({ params }: { params: Params }) {
               {order.contactCity && <Info label="شهر" value={order.contactCity} />}
               {customerTags && customerTags.length > 0 && (
                 <div>
-                  <dt className="mb-1.5 text-[0.6875rem] text-[var(--fg-subtle)]">برچسب‌های مشتری</dt>
+                  <dt className="mb-1.5 text-micro text-[var(--fg-subtle)]">برچسب‌های مشتری</dt>
                   <dd className="flex flex-wrap gap-1.5">
                     {customerTags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full bg-[var(--brand-soft)] px-2.5 py-1 text-[0.625rem] text-[var(--brand)]"
+                        className="rounded-full bg-[var(--brand-soft)] px-2.5 py-1 text-micro text-[var(--brand)]"
                       >
                         {tag}
                       </span>
@@ -200,17 +200,17 @@ export default async function OrderDetailPage({ params }: { params: Params }) {
           </Panel>
 
           <Panel title="خلاصه پرونده">
-            <dl className="space-y-3 text-[0.8125rem]">
+            <dl className="space-y-3 text-meta">
               <div className="flex items-center justify-between">
-                <dt className="text-[0.6875rem] text-[var(--fg-subtle)]">نوع</dt>
+                <dt className="text-micro text-[var(--fg-subtle)]">نوع</dt>
                 <dd><StatusBadge map={ORDER_TYPE} value={order.type} /></dd>
               </div>
               <div className="flex items-center justify-between">
-                <dt className="text-[0.6875rem] text-[var(--fg-subtle)]">وضعیت</dt>
+                <dt className="text-micro text-[var(--fg-subtle)]">وضعیت</dt>
                 <dd><StatusBadge map={ORDER_STATUS} value={order.status} /></dd>
               </div>
               <div className="flex items-center justify-between">
-                <dt className="text-[0.6875rem] text-[var(--fg-subtle)]">پرداخت</dt>
+                <dt className="text-micro text-[var(--fg-subtle)]">پرداخت</dt>
                 <dd><StatusBadge map={PAYMENT_STATUS} value={order.paymentStatus} /></dd>
               </div>
               <Info label="کارشناس" value={assigneeName ?? "ارجاع نشده"} />
@@ -241,14 +241,14 @@ function Info({
   href?: string;
 }) {
   const content = (
-    <span className={mono ? "font-mono text-xs" : "text-[0.8125rem]"} dir={mono ? "ltr" : undefined}>
+    <span className={mono ? "font-mono text-xs" : "text-meta"} dir={mono ? "ltr" : undefined}>
       {value}
     </span>
   );
 
   return (
     <div className="flex items-center justify-between gap-3">
-      <dt className="shrink-0 text-[0.6875rem] text-[var(--fg-subtle)]">{label}</dt>
+      <dt className="shrink-0 text-micro text-[var(--fg-subtle)]">{label}</dt>
       <dd className="min-w-0 truncate text-end text-[var(--fg-secondary)]">
         {href ? (
           <a href={href} className="transition-colors hover:text-[var(--brand)]">

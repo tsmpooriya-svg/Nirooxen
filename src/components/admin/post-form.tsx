@@ -63,7 +63,7 @@ export function PostForm({ values }: { values: PostFormValues }) {
             error={state.errors?.content}
             hint="### برای تیتر · > برای نقل‌قول · - برای فهرست · **متن** برای پررنگ"
           >
-            <Textarea id="content" name="content" rows={20} defaultValue={values.content} required className="font-mono text-[0.8125rem] leading-8" />
+            <Textarea id="content" name="content" rows={20} defaultValue={values.content} required className="font-mono text-meta leading-8" />
           </Field>
         </div>
 

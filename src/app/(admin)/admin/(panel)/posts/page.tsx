@@ -52,16 +52,16 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: S
                 <Link href={`/admin/posts/${post.id}`} className="block max-w-[22rem] truncate font-medium transition-colors hover:text-[var(--brand)]">
                   {post.title}
                 </Link>
-                <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">{post.slug}</span>
+                <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">{post.slug}</span>
               </Td>
               <Td className="text-xs">{post.category}</Td>
               <Td>
                 <StatusBadge map={POST_STATUS} value={post.status} />
-                {post.isFeatured && <span className="mt-1 block text-[0.625rem] text-[var(--signal-text)]">شاخص</span>}
+                {post.isFeatured && <span className="mt-1 block text-micro text-[var(--signal-text)]">شاخص</span>}
               </Td>
               <Td className="text-xs">{post.authorName ?? "—"}</Td>
               <Td className="font-mono text-xs">{toFaDigits(post.viewCount)}</Td>
-              <Td className="whitespace-nowrap text-[0.6875rem] text-[var(--fg-subtle)]">
+              <Td className="whitespace-nowrap text-micro text-[var(--fg-subtle)]">
                 {post.publishedAt ? formatDate(post.publishedAt) : "منتشر نشده"}
                 <span className="mt-0.5 block">{formatRelative(post.updatedAt)}</span>
               </Td>

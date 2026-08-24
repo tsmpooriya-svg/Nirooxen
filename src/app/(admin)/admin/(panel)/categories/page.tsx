@@ -38,7 +38,7 @@ export default async function AdminCategoriesPage() {
                   <span className="font-medium">{category.name}</span>
                 </span>
               </Td>
-              <Td className="font-mono text-[0.6875rem] text-[var(--fg-subtle)]" dir="ltr">{category.slug}</Td>
+              <Td className="font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">{category.slug}</Td>
               <Td className="font-mono text-xs">{toFaDigits(category.productCount)}</Td>
               <Td>
                 <StatusBadge

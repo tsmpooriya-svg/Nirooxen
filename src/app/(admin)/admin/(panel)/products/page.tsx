@@ -127,7 +127,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
                       >
                         {product.name}
                       </Link>
-                      <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">
+                      <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">
                         {product.sku ?? product.slug}
                       </span>
                     </div>
@@ -136,7 +136,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
 
                 <Td className="text-xs">
                   <span className="block">{product.categoryName}</span>
-                  <span className="mt-0.5 block text-[0.6875rem] text-[var(--fg-subtle)]">
+                  <span className="mt-0.5 block text-micro text-[var(--fg-subtle)]">
                     {product.brandName ?? "—"}
                   </span>
                 </Td>
@@ -156,11 +156,11 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
                 <Td>
                   <StatusBadge map={PRODUCT_STATUS} value={product.status} />
                   {product.isFeatured && (
-                    <span className="mt-1 block text-[0.625rem] text-[var(--signal-text)]">شاخص</span>
+                    <span className="mt-1 block text-micro text-[var(--signal-text)]">شاخص</span>
                   )}
                 </Td>
 
-                <Td className="whitespace-nowrap font-mono text-[0.625rem] text-[var(--fg-subtle)]">
+                <Td className="whitespace-nowrap font-mono text-micro text-[var(--fg-subtle)]">
                   <span className="block">{toFaDigits(product.viewCount)} بازدید</span>
                   <span className="block">{toFaDigits(product.orderCount)} سفارش</span>
                   <span className="mt-1 block">{formatRelative(product.updatedAt)}</span>

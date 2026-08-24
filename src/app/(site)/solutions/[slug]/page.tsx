@@ -106,14 +106,14 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
                 </p>
 
                 <div className="mt-7 border-t border-[var(--border-hairline)] pt-6">
-                  <p className="mb-4 font-mono text-[0.625rem] tracking-[0.2em] text-[var(--fg-subtle)]">
+                  <p className="mb-4 font-mono text-micro tracking-[0.2em] text-[var(--fg-subtle)]">
                     آنچه انتخاب تجهیز را تعیین می‌کند
                   </p>
                   <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
                     {solution.considerations.map((item) => (
                       <li
                         key={item}
-                        className="flex items-start gap-2.5 text-[0.8125rem] leading-7 text-[var(--fg-secondary)]"
+                        className="flex items-start gap-2.5 text-meta leading-7 text-[var(--fg-secondary)]"
                       >
                         <svg
                           viewBox="0 0 16 16"
@@ -161,7 +161,7 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
                         <span className="block truncate text-sm font-semibold transition-colors group-hover:text-[var(--brand)]">
                           {category.name}
                         </span>
-                        <span className="mt-1 block font-mono text-[0.625rem] text-[var(--fg-subtle)]">
+                        <span className="mt-1 block font-mono text-micro text-[var(--fg-subtle)]">
                           {toFaDigits(category.productCount)} کالا
                         </span>
                       </span>

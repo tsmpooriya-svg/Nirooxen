@@ -121,7 +121,7 @@ export default function AboutPage() {
                   </span>
                   <div>
                     <h3 className="font-display text-[0.9375rem] font-bold">{value.title}</h3>
-                    <p className="mt-1.5 text-[0.8125rem] leading-7 text-[var(--fg-muted)]">{value.body}</p>
+                    <p className="mt-1.5 text-meta leading-7 text-[var(--fg-muted)]">{value.body}</p>
                   </div>
                 </div>
               ))}

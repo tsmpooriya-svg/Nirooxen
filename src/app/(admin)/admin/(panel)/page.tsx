@@ -99,13 +99,13 @@ export default async function DashboardPage() {
                 </Td>
                 <Td>
                   <span className="block font-medium">{order.contactName}</span>
-                  <span className="mt-0.5 block font-mono text-[0.6875rem] text-[var(--fg-subtle)]" dir="ltr">
+                  <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">
                     {order.contactPhone}
                   </span>
                 </Td>
                 <Td>
                   <StatusBadge map={ORDER_TYPE} value={order.type} />
-                  <span className="mt-1 block text-[0.6875rem] text-[var(--fg-subtle)]">
+                  <span className="mt-1 block text-micro text-[var(--fg-subtle)]">
                     {toFaDigits(order.itemCount)} قلم
                   </span>
                 </Td>
@@ -115,7 +115,7 @@ export default async function DashboardPage() {
                 <Td className="whitespace-nowrap text-xs">
                   {order.total > 0 ? formatPrice(order.total, { withUnit: false }) : "—"}
                 </Td>
-                <Td className="whitespace-nowrap text-[0.6875rem] text-[var(--fg-subtle)]">
+                <Td className="whitespace-nowrap text-micro text-[var(--fg-subtle)]">
                   {formatRelative(order.createdAt)}
                 </Td>
               </Tr>
@@ -136,10 +136,10 @@ export default async function DashboardPage() {
                       className="w-full rounded-t-sm bg-[var(--brand)] transition-all duration-500 [transition-timing-function:var(--ease-out-expo)] group-hover:bg-[var(--brand-hover)]"
                       style={{ height: `${Math.max(6, (day.total / maxTrend) * 100)}%`, opacity: 0.55 + (day.total / maxTrend) * 0.45 }}
                     />
-                    <span className="font-mono text-[0.5625rem] text-[var(--fg-subtle)]">
+                    <span className="font-mono text-micro text-[var(--fg-subtle)]">
                       {toFaDigits(day.total)}
                     </span>
-                    <span className="pointer-events-none absolute -top-7 hidden whitespace-nowrap rounded-sm bg-[var(--bg-elev-3)] px-2 py-1 font-mono text-[0.5625rem] text-[var(--fg-secondary)] group-hover:block">
+                    <span className="pointer-events-none absolute -top-7 hidden whitespace-nowrap rounded-sm bg-[var(--bg-elev-3)] px-2 py-1 font-mono text-micro text-[var(--fg-secondary)] group-hover:block">
                       {day.day}
                     </span>
                   </div>
@@ -186,17 +186,17 @@ export default async function DashboardPage() {
             <ul className="divide-y divide-[var(--border-hairline)]">
               {topProducts.map((product, index) => (
                 <li key={product.id} className="flex items-center gap-4 px-5 py-3.5">
-                  <span className="grid size-7 shrink-0 place-items-center rounded-md bg-[var(--brand-soft)] font-mono text-[0.6875rem] font-bold text-[var(--brand)]">
+                  <span className="grid size-7 shrink-0 place-items-center rounded-md bg-[var(--brand-soft)] font-mono text-micro font-bold text-[var(--brand)]">
                     {toFaDigits(index + 1)}
                   </span>
                   <Link
                     href={`/products/${product.slug}`}
                     target="_blank"
-                    className="min-w-0 flex-1 truncate text-[0.8125rem] transition-colors hover:text-[var(--brand)]"
+                    className="min-w-0 flex-1 truncate text-meta transition-colors hover:text-[var(--brand)]"
                   >
                     {product.name}
                   </Link>
-                  <span className="shrink-0 font-mono text-[0.6875rem] text-[var(--fg-subtle)]">
+                  <span className="shrink-0 font-mono text-micro text-[var(--fg-subtle)]">
                     {toFaDigits(product.orderCount)} سفارش · {toFaDigits(product.viewCount)} بازدید
                   </span>
                 </li>
@@ -223,8 +223,8 @@ export default async function DashboardPage() {
                 <li key={log.id} className="flex items-start gap-3 px-5 py-3.5">
                   <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-[var(--brand)]" aria-hidden />
                   <div className="min-w-0 flex-1">
-                    <p className="text-[0.8125rem] leading-6">{log.summary}</p>
-                    <p className="mt-0.5 text-[0.6875rem] text-[var(--fg-subtle)]">
+                    <p className="text-meta leading-6">{log.summary}</p>
+                    <p className="mt-0.5 text-micro text-[var(--fg-subtle)]">
                       {log.userName ?? "سیستم"} · {formatRelative(log.createdAt)}
                     </p>
                   </div>

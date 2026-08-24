@@ -31,7 +31,7 @@ export function Badge({ className, tone = "neutral", size = "md", dot, children,
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border font-medium leading-none",
-        size === "sm" ? "px-2 py-1 text-[0.6875rem]" : "px-2.5 py-1.5 text-xs",
+        size === "sm" ? "px-2 py-1 text-micro" : "px-2.5 py-1.5 text-xs",
         tones[tone],
         className,
       )}

@@ -96,7 +96,7 @@ export function QuoteClient() {
                   {line.name}
                 </Link>
                 {line.sku && (
-                  <p className="mt-1 font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">
+                  <p className="mt-1 font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">
                     SKU {line.sku}
                   </p>
                 )}

@@ -36,7 +36,7 @@ export default async function AdminProjectsPage() {
             <Tr key={project.id}>
               <Td>
                 <span className="block font-medium">{project.title}</span>
-                <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">
+                <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">
                   {project.slug}
                 </span>
               </Td>
@@ -49,7 +49,7 @@ export default async function AdminProjectsPage() {
                   value={project.isActive ? "on" : "off"}
                 />
                 {project.isFeatured && (
-                  <span className="mt-1 block text-[0.625rem] text-[var(--signal-text)]">صفحه اصلی</span>
+                  <span className="mt-1 block text-micro text-[var(--signal-text)]">صفحه اصلی</span>
                 )}
               </Td>
               <Td className="font-mono text-xs">{toFaDigits(project.position)}</Td>

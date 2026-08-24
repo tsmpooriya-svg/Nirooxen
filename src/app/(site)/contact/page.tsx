@@ -116,7 +116,7 @@ export default async function ContactPage() {
               {/* نقشه — جانشین سبک بلوپرینت تا نقشه واقعی جایگزین شود */}
               <div className="blueprint blueprint-dense relative flex h-48 items-center justify-center overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-2)]">
                 <div className="text-center">
-                  <p className="font-mono text-[0.625rem] tracking-[0.2em] text-[var(--fg-subtle)]">
+                  <p className="font-mono text-micro tracking-[0.2em] text-[var(--fg-subtle)]">
                     {siteConfig.contact.geo.lat.toFixed(4)}° N · {siteConfig.contact.geo.lng.toFixed(4)}° E
                   </p>
                   <a
@@ -139,7 +139,7 @@ export default async function ContactPage() {
           <Reveal delay={120}>
             <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-6 sm:p-8">
               <h2 className="font-display text-lg font-bold">ارسال پیام</h2>
-              <p className="mt-2 text-[0.8125rem] leading-7 text-[var(--fg-muted)]">
+              <p className="mt-2 text-meta leading-7 text-[var(--fg-muted)]">
                 فرم زیر را پر کنید؛ درخواست شما مستقیماً در پنل کارشناسان ثبت می‌شود و پیگیری خواهد شد.
               </p>
               <div className="mt-6">
@@ -170,7 +170,7 @@ function ContactCard({
         </svg>
       </span>
       <div className="min-w-0 flex-1">
-        <h2 className="mb-2 text-[0.8125rem] font-semibold text-[var(--fg-secondary)]">{title}</h2>
+        <h2 className="mb-2 text-meta font-semibold text-[var(--fg-secondary)]">{title}</h2>
         {children}
       </div>
     </div>

@@ -103,8 +103,8 @@ export function SearchDialog() {
           <circle cx="9" cy="9" r="6" />
           <path d="m13.5 13.5 3.5 3.5" strokeLinecap="round" />
         </svg>
-        <span className="hidden flex-1 text-start text-[0.8125rem] md:block">جستجوی محصول…</span>
-        <kbd className="hidden shrink-0 rounded-xs border border-[var(--border-subtle)] px-1.5 py-0.5 font-mono text-[0.625rem] text-[var(--fg-subtle)] lg:block">
+        <span className="hidden flex-1 text-start text-meta md:block">جستجوی محصول…</span>
+        <kbd className="hidden shrink-0 rounded-xs border border-[var(--border-subtle)] px-1.5 py-0.5 font-mono text-micro text-[var(--fg-subtle)] lg:block">
           Ctrl K
         </kbd>
       </button>
@@ -145,7 +145,7 @@ export function SearchDialog() {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="shrink-0 rounded-xs border border-[var(--border-subtle)] px-2 py-1 font-mono text-[0.625rem] text-[var(--fg-subtle)] transition-colors hover:text-[var(--fg-primary)]"
+                className="shrink-0 rounded-xs border border-[var(--border-subtle)] px-2 py-1 font-mono text-micro text-[var(--fg-subtle)] transition-colors hover:text-[var(--fg-primary)]"
               >
                 ESC
               </button>
@@ -185,7 +185,7 @@ export function SearchDialog() {
                     <span className="block truncate text-sm font-medium text-[var(--fg-primary)]">
                       {hit.name}
                     </span>
-                    <span className="mt-0.5 block truncate font-mono text-[0.6875rem] text-[var(--fg-subtle)]">
+                    <span className="mt-0.5 block truncate font-mono text-micro text-[var(--fg-subtle)]">
                       {[hit.brandName, hit.model, hit.categoryName].filter(Boolean).join(" · ")}
                     </span>
                   </span>

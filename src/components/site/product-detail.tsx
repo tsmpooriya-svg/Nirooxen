@@ -167,7 +167,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
                           <div
                             key={spec.id}
                             className={cn(
-                              "flex items-start gap-4 px-4 py-3 text-[0.8125rem]",
+                              "flex items-start gap-4 px-4 py-3 text-meta",
                               index % 2 === 0 ? "bg-[var(--bg-elev-1)]" : "bg-[var(--bg-elev-2)]",
                             )}
                           >
@@ -221,7 +221,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
         {/* ستون خرید — چسبان روی دسکتاپ */}
         <aside className="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:h-fit">
           <div className="edge-lit rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-6">
-            <div className="mb-4 flex flex-wrap items-center gap-2 font-mono text-[0.6875rem] text-[var(--fg-subtle)]">
+            <div className="mb-4 flex flex-wrap items-center gap-2 font-mono text-micro text-[var(--fg-subtle)]">
               {brand && (
                 <Link href={`/brands/${brand.slug}`} className="uppercase transition-colors hover:text-[var(--brand)]">
                   {brand.latinName ?? brand.name}
@@ -238,7 +238,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
             <h1 className="font-display text-[1.375rem] font-bold leading-9">{product.name}</h1>
 
             {product.shortDescription && (
-              <p className="mt-3 text-[0.8125rem] leading-7 text-[var(--fg-muted)]">
+              <p className="mt-3 text-meta leading-7 text-[var(--fg-muted)]">
                 {product.shortDescription}
               </p>
             )}
@@ -248,8 +248,8 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
               <dl className="mt-5 grid grid-cols-2 gap-3 border-y border-[var(--border-hairline)] py-4">
                 {keySpecs.map((spec) => (
                   <div key={spec.id}>
-                    <dt className="text-[0.6875rem] text-[var(--fg-subtle)]">{spec.label}</dt>
-                    <dd className="mt-1 text-[0.8125rem] font-semibold text-[var(--fg-primary)]">
+                    <dt className="text-micro text-[var(--fg-subtle)]">{spec.label}</dt>
+                    <dd className="mt-1 text-meta font-semibold text-[var(--fg-primary)]">
                       {spec.value}
                       {spec.unit && <span className="ms-1 font-normal text-[var(--fg-muted)]">{spec.unit}</span>}
                     </dd>
@@ -270,7 +270,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
                   <p className="font-display text-[1.625rem] font-extrabold text-[var(--fg-primary)]">
                     {formatPrice(product.price)}
                   </p>
-                  <p className="mt-1 text-[0.6875rem] text-[var(--fg-subtle)]">
+                  <p className="mt-1 text-micro text-[var(--fg-subtle)]">
                     قیمت برای هر {product.unit} — امکان تخفیف در تعداد بالا
                   </p>
                 </>
@@ -279,7 +279,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
                   <p className="text-sm font-semibold text-[var(--brand)]">
                     {product.priceMode === "CALL" ? "قیمت تلفنی اعلام می‌شود" : "قیمت با استعلام"}
                   </p>
-                  <p className="mt-1.5 text-[0.6875rem] leading-6 text-[var(--fg-secondary)]">
+                  <p className="mt-1.5 text-micro leading-6 text-[var(--fg-secondary)]">
                     قیمت این کالا به مشخصات دقیق و تعداد سفارش بستگی دارد. درخواست خود را ثبت کنید تا
                     کارشناس با شما تماس بگیرد.
                   </p>
@@ -290,7 +290,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
             {/* تعداد */}
             {product.priceMode !== "CALL" && (
               <div className="mt-5 flex items-center gap-3">
-                <span className="text-[0.8125rem] text-[var(--fg-muted)]">تعداد</span>
+                <span className="text-meta text-[var(--fg-muted)]">تعداد</span>
                 <div className="flex items-center rounded-md border border-[var(--border-subtle)]">
                   <button
                     type="button"
@@ -314,7 +314,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
                     </svg>
                   </button>
                 </div>
-                <span className="text-[0.6875rem] text-[var(--fg-subtle)]">{product.unit}</span>
+                <span className="text-micro text-[var(--fg-subtle)]">{product.unit}</span>
               </div>
             )}
 
@@ -343,7 +343,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
               <button
                 type="button"
                 onClick={addToCart}
-                className="flex h-11 w-full items-center justify-center gap-2 rounded-md border border-[var(--border-default)] text-[0.8125rem] font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-md border border-[var(--border-default)] text-meta font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
               >
                 <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M3 3h2l1.6 8.4a1.5 1.5 0 0 0 1.5 1.2h6.3a1.5 1.5 0 0 0 1.5-1.2L17 6H5.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -372,7 +372,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
                   <Link
                     key={tag}
                     href={`/products?q=${encodeURIComponent(tag)}`}
-                    className="rounded-full border border-[var(--border-hairline)] px-2.5 py-1 text-[0.6875rem] text-[var(--fg-muted)] transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)]"
+                    className="rounded-full border border-[var(--border-hairline)] px-2.5 py-1 text-micro text-[var(--fg-muted)] transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)]"
                   >
                     {tag}
                   </Link>

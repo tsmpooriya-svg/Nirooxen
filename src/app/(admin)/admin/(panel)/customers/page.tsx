@@ -48,7 +48,7 @@ export default async function AdminCustomersPage({ searchParams }: { searchParam
                 {customer.tags.length > 0 && (
                   <span className="mt-1 flex flex-wrap gap-1">
                     {customer.tags.map((tag) => (
-                      <span key={tag} className="rounded-full bg-[var(--brand-soft)] px-2 py-0.5 text-[0.5625rem] text-[var(--brand)]">
+                      <span key={tag} className="rounded-full bg-[var(--brand-soft)] px-2 py-0.5 text-micro text-[var(--brand-text)]">
                         {tag}
                       </span>
                     ))}
@@ -56,25 +56,25 @@ export default async function AdminCustomersPage({ searchParams }: { searchParam
                 )}
               </Td>
               <Td>
-                <a href={`tel:${customer.phone}`} className="block font-mono text-[0.6875rem] transition-colors hover:text-[var(--brand)]" dir="ltr">
+                <a href={`tel:${customer.phone}`} className="block font-mono text-micro transition-colors hover:text-[var(--brand)]" dir="ltr">
                   {customer.phone}
                 </a>
                 {customer.email && (
-                  <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">{customer.email}</span>
+                  <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">{customer.email}</span>
                 )}
               </Td>
               <Td>
                 <StatusBadge map={TYPE_MAP} value={customer.type} />
                 {customer.companyName && (
-                  <span className="mt-1 block text-[0.625rem] text-[var(--fg-subtle)]">{customer.companyName}</span>
+                  <span className="mt-1 block text-micro text-[var(--fg-subtle)]">{customer.companyName}</span>
                 )}
               </Td>
               <Td className="text-xs">{customer.city ?? "—"}</Td>
               <Td className="font-mono text-xs">{toFaDigits(customer.orderCount)}</Td>
-              <Td className="text-[0.6875rem] text-[var(--fg-muted)]">
+              <Td className="text-micro text-[var(--fg-muted)]">
                 {customer.lastOrderAt ? formatRelative(customer.lastOrderAt) : "—"}
               </Td>
-              <Td className="text-[0.6875rem] text-[var(--fg-subtle)]">{formatDate(customer.createdAt)}</Td>
+              <Td className="text-micro text-[var(--fg-subtle)]">{formatDate(customer.createdAt)}</Td>
             </Tr>
           ))}
         </DataTable>

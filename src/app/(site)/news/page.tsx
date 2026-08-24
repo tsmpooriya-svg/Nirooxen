@@ -77,7 +77,7 @@ export default async function NewsPage({ searchParams }: { searchParams: SearchP
                   </div>
 
                   <div className="flex flex-1 flex-col p-5">
-                    <div className="mb-3 flex flex-wrap items-center gap-2.5 text-[0.6875rem] text-[var(--fg-subtle)]">
+                    <div className="mb-3 flex flex-wrap items-center gap-2.5 text-micro text-[var(--fg-subtle)]">
                       <span className="rounded-full bg-[var(--brand-soft)] px-2.5 py-1 font-medium text-[var(--brand)]">
                         {post.category}
                       </span>
@@ -91,7 +91,7 @@ export default async function NewsPage({ searchParams }: { searchParams: SearchP
                     </h2>
 
                     {post.excerpt && (
-                      <p className="clamp-3 text-[0.8125rem] leading-7 text-[var(--fg-muted)]">
+                      <p className="clamp-3 text-meta leading-7 text-[var(--fg-muted)]">
                         {truncate(post.excerpt, 150)}
                       </p>
                     )}

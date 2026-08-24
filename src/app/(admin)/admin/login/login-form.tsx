@@ -64,7 +64,7 @@ export function LoginForm() {
       {state.status === "error" && state.message && (
         <p
           role="alert"
-          className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3 text-[0.8125rem] leading-6 text-[var(--danger-text)]"
+          className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3 text-meta leading-6 text-[var(--danger-text)]"
         >
           {state.message}
         </p>

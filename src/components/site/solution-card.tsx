@@ -75,7 +75,7 @@ export function SolutionCard({
           </span>
 
           {typeof index === "number" && (
-            <span className="font-mono text-[0.625rem] tracking-[0.2em] text-[var(--fg-subtle)]" aria-hidden>
+            <span className="font-mono text-micro tracking-[0.2em] text-[var(--fg-subtle)]" aria-hidden>
               {String(index + 1).padStart(2, "0")}
             </span>
           )}
@@ -96,14 +96,14 @@ export function SolutionCard({
         <p
           className={cn(
             "relative mt-3 text-[var(--fg-muted)]",
-            isFeature ? "text-[0.9375rem] leading-8" : "clamp-2 text-[0.8125rem] leading-7",
+            isFeature ? "text-[0.9375rem] leading-8" : "clamp-2 text-meta leading-7",
           )}
         >
           {isFeature ? solution.situation : solution.summary}
         </p>
 
         <div className="relative mt-auto flex items-center justify-between gap-3 border-t border-[var(--border-hairline)] pt-4 [margin-block-start:1.5rem]">
-          <span className="font-mono text-[0.6875rem] text-[var(--fg-subtle)]">
+          <span className="font-mono text-micro text-[var(--fg-subtle)]">
             {productCount > 0 ? `${toFaDigits(productCount)} کالا` : "در حال تکمیل"}
           </span>
           <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--brand)] transition-all duration-300 group-hover:gap-3">

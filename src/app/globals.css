@@ -406,6 +406,12 @@
   --text-meta--line-height: 1.7;
   --text-micro: 0.75rem;
   --text-micro--line-height: 1.6;
+  /* 11px, and ONLY for all-caps Latin mono lockups (the logo sub-label,
+     "PRODUCT CATEGORIES", entity ids). Latin at 11px stays legible because
+     the letterforms are simple and widely tracked; Persian at the same size
+     loses its dots and diacritics, so Persian never uses this step. */
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.5;
 
   --radius-xs: 4px;
   --radius-sm: 6px;
@@ -685,11 +691,15 @@
 
   .eyebrow {
     font-family: var(--font-mono);
-    font-size: 0.6875rem;
+    /* 12px, not 11px: most eyebrows are Persian («چرا ما», «فرآیند خرید»)
+       and the mono fallback renders Persian without the tracking benefit
+       Latin gets, so the extra pixel matters here. */
+    font-size: var(--text-micro);
+    line-height: 1.6;
     font-weight: 500;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--brand);
+    color: var(--brand-text);
   }
 
   .stack-divider > * + * {

@@ -73,7 +73,7 @@ export function OrderForm({
       {/* خلاصه اقلام */}
       {!compact && (
         <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-2)] p-4">
-          <p className="mb-3 text-[0.8125rem] font-medium text-[var(--fg-secondary)]">
+          <p className="mb-3 text-meta font-medium text-[var(--fg-secondary)]">
             اقلام درخواست ({toFaDigits(lines.length)} قلم)
           </p>
           <ul className="space-y-2.5">
@@ -81,7 +81,7 @@ export function OrderForm({
               <li key={`${line.productId ?? index}`} className="flex items-start justify-between gap-3 text-xs">
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[var(--fg-primary)]">{line.productName}</span>
-                  <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]">
+                  <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]">
                     {toFaDigits(line.quantity)} {line.unit ?? "دستگاه"}
                   </span>
                 </span>
@@ -98,7 +98,7 @@ export function OrderForm({
             </div>
           )}
           {hasUnpriced && (
-            <p className="mt-3 text-[0.6875rem] leading-6 text-[var(--fg-subtle)]">
+            <p className="mt-3 text-micro leading-6 text-[var(--fg-subtle)]">
               قیمت برخی اقلام پس از بررسی کارشناس اعلام می‌شود.
             </p>
           )}
@@ -192,7 +192,7 @@ export function OrderForm({
       {state.status === "error" && state.message && (
         <p
           role="alert"
-          className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3.5 text-[0.8125rem] leading-7 text-[var(--danger-text)]"
+          className="rounded-md border border-[color-mix(in_oklab,var(--danger)_40%,transparent)] bg-[var(--danger-soft)] p-3.5 text-meta leading-7 text-[var(--danger-text)]"
         >
           {state.message}
         </p>
@@ -219,7 +219,7 @@ export function OrderForm({
         )}
       </button>
 
-      <p className="text-center text-[0.6875rem] leading-6 text-[var(--fg-subtle)]">
+      <p className="text-center text-micro leading-6 text-[var(--fg-subtle)]">
         با ثبت این فرم، اطلاعات شما فقط برای پیگیری همین درخواست استفاده می‌شود.
       </p>
     </form>
@@ -236,7 +236,7 @@ function OrderSuccess({ message, orderNumber }: { message: string; orderNumber?:
       </span>
 
       <h3 className="font-display text-lg font-bold">درخواست شما ثبت شد</h3>
-      <p className="mt-3 max-w-md text-[0.8125rem] leading-8 text-[var(--fg-secondary)]">{message}</p>
+      <p className="mt-3 max-w-md text-meta leading-8 text-[var(--fg-secondary)]">{message}</p>
 
       {orderNumber && orderNumber !== "—" && (
         <p className="mt-5 rounded-md border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] px-4 py-2.5 font-mono text-sm">

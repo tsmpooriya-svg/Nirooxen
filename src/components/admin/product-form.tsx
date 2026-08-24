@@ -106,7 +106,7 @@ export function ProductForm({
             type="button"
             onClick={() => setTab(item.key)}
             className={cn(
-              "relative whitespace-nowrap px-4 py-2.5 text-[0.8125rem] font-medium transition-colors",
+              "relative whitespace-nowrap px-4 py-2.5 text-meta font-medium transition-colors",
               tab === item.key ? "text-[var(--brand)]" : "text-[var(--fg-muted)] hover:text-[var(--fg-primary)]",
             )}
           >
@@ -182,7 +182,7 @@ export function ProductForm({
         </div>
 
         <fieldset className="rounded-lg border border-[var(--border-subtle)] p-5">
-          <legend className="px-2 text-[0.8125rem] font-medium text-[var(--fg-secondary)]">قیمت و موجودی</legend>
+          <legend className="px-2 text-meta font-medium text-[var(--fg-secondary)]">قیمت و موجودی</legend>
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             <Field label="نحوه نمایش قیمت" htmlFor="priceMode">
@@ -377,7 +377,7 @@ function SpecEditor({
             />
 
             <div className="flex items-center gap-1">
-              <label className="flex cursor-pointer items-center gap-1.5 rounded-md border border-[var(--border-subtle)] px-2.5 py-2 text-[0.625rem] text-[var(--fg-muted)]">
+              <label className="flex cursor-pointer items-center gap-1.5 rounded-md border border-[var(--border-subtle)] px-2.5 py-2 text-micro text-[var(--fg-muted)]">
                 <input
                   type="checkbox"
                   checked={Boolean(spec.isKey)}
@@ -479,7 +479,7 @@ function ImageEditor({
       </div>
 
       <div>
-        <p className="mb-2 text-[0.6875rem] text-[var(--fg-subtle)]">تصاویر فنی آماده:</p>
+        <p className="mb-2 text-micro text-[var(--fg-subtle)]">تصاویر فنی آماده:</p>
         <div className="flex flex-wrap gap-2">
           {PLACEHOLDER_IMAGES.map((path) => (
             <button
@@ -503,7 +503,7 @@ function ImageEditor({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={image.url} alt={image.alt ?? ""} className="size-full object-contain p-2" />
                 {index === 0 && (
-                  <span className="absolute start-2 top-2 rounded-full bg-[var(--brand)] px-2 py-0.5 text-[0.625rem] font-medium text-[var(--fg-on-brand)]">
+                  <span className="absolute start-2 top-2 rounded-full bg-[var(--brand)] px-2 py-0.5 text-micro font-medium text-[var(--fg-on-brand)]">
                     تصویر اصلی
                   </span>
                 )}
@@ -515,7 +515,7 @@ function ImageEditor({
                     onChange(images.map((img, i) => (i === index ? { ...img, alt: e.target.value } : img)))
                   }
                   placeholder="متن جایگزین (alt)"
-                  className="h-8 min-w-0 flex-1 rounded-md border border-[var(--border-hairline)] bg-[var(--bg-inset)] px-2 text-[0.6875rem] outline-none focus:border-[var(--brand)]"
+                  className="h-8 min-w-0 flex-1 rounded-md border border-[var(--border-hairline)] bg-[var(--bg-inset)] px-2 text-micro outline-none focus:border-[var(--brand)]"
                 />
                 {index > 0 && (
                   <button

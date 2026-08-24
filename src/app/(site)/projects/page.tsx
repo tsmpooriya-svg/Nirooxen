@@ -65,7 +65,7 @@ export default async function ProjectsPage() {
                     {project.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full border border-[var(--border-brand)] bg-[var(--bg-glass-strong)] px-2.5 py-1 text-[0.625rem] text-[var(--brand)] backdrop-blur-sm"
+                        className="rounded-full border border-[var(--border-brand)] bg-[var(--bg-glass-strong)] px-2.5 py-1 text-micro text-[var(--brand)] backdrop-blur-sm"
                       >
                         {tag}
                       </span>
@@ -78,7 +78,7 @@ export default async function ProjectsPage() {
                     {project.title}
                   </h2>
                   {project.summary && (
-                    <p className="mt-3 text-[0.8125rem] leading-7 text-[var(--fg-muted)]">{project.summary}</p>
+                    <p className="mt-3 text-meta leading-7 text-[var(--fg-muted)]">{project.summary}</p>
                   )}
 
                   <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-[var(--border-hairline)] pt-4 text-xs sm:grid-cols-4">
@@ -101,7 +101,7 @@ export default async function ProjectsPage() {
 function Meta({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0">
-      <dt className="text-[0.6875rem] text-[var(--fg-subtle)]">{label}</dt>
+      <dt className="text-micro text-[var(--fg-subtle)]">{label}</dt>
       <dd className="mt-1 truncate font-medium text-[var(--fg-secondary)]">{value}</dd>
     </div>
   );

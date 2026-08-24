@@ -28,11 +28,11 @@ export default async function AdminUsersPage() {
             <Tr key={user.id}>
               <Td>
                 <span className="block font-medium">{user.name}</span>
-                <span className="mt-0.5 block font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">{user.email}</span>
+                <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">{user.email}</span>
               </Td>
               <Td>
                 <StatusBadge map={USER_ROLE} value={user.role} />
-                <span className="mt-1 block text-[0.625rem] text-[var(--fg-subtle)]">{USER_ROLE[user.role].description}</span>
+                <span className="mt-1 block text-micro text-[var(--fg-subtle)]">{USER_ROLE[user.role].description}</span>
               </Td>
               <Td>
                 <StatusBadge
@@ -40,7 +40,7 @@ export default async function AdminUsersPage() {
                   value={user.isActive ? "on" : "off"}
                 />
               </Td>
-              <Td className="whitespace-nowrap text-[0.6875rem] text-[var(--fg-subtle)]">
+              <Td className="whitespace-nowrap text-micro text-[var(--fg-subtle)]">
                 {user.lastLoginAt ? (
                   <>
                     <span className="block">{formatRelative(user.lastLoginAt)}</span>

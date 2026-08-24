@@ -42,17 +42,17 @@ export default async function AdminLogsPage({ searchParams }: { searchParams: Se
           {items.map((log) => (
             <Tr key={log.id}>
               <Td>
-                <span className="rounded-full bg-[var(--bg-elev-3)] px-2.5 py-1 text-[0.625rem] text-[var(--fg-secondary)]">
+                <span className="rounded-full bg-[var(--bg-elev-3)] px-2.5 py-1 text-micro text-[var(--fg-secondary)]">
                   {ACTION_LABEL[log.action] ?? log.action}
                 </span>
-                <span className="mt-1 block font-mono text-[0.5625rem] text-[var(--fg-subtle)]">{log.entity}</span>
+                <span className="mt-1 block font-mono text-label text-[var(--fg-subtle)]">{log.entity}</span>
               </Td>
-              <Td className="text-[0.8125rem]">{log.summary}</Td>
+              <Td className="text-meta">{log.summary}</Td>
               <Td className="text-xs">{log.userName ?? "سیستم"}</Td>
-              <Td className="font-mono text-[0.625rem] text-[var(--fg-subtle)]" dir="ltr">{log.ip ?? "—"}</Td>
+              <Td className="font-mono text-micro text-[var(--fg-subtle)]" dir="ltr">{log.ip ?? "—"}</Td>
               <Td className="whitespace-nowrap">
-                <span className="block text-[0.6875rem] text-[var(--fg-secondary)]">{formatRelative(log.createdAt)}</span>
-                <span className="mt-0.5 block text-[0.625rem] text-[var(--fg-subtle)]">{formatDateTime(log.createdAt)}</span>
+                <span className="block text-micro text-[var(--fg-secondary)]">{formatRelative(log.createdAt)}</span>
+                <span className="mt-0.5 block text-micro text-[var(--fg-subtle)]">{formatDateTime(log.createdAt)}</span>
               </Td>
             </Tr>
           ))}
@@ -69,7 +69,7 @@ function Chip({ href, active, children }: { href: string; active: boolean; child
     <Link
       href={href}
       className={
-        "rounded-full border px-3 py-1.5 font-mono text-[0.625rem] transition-all " +
+        "rounded-full border px-3 py-1.5 font-mono text-micro transition-all " +
         (active
           ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand)]"
           : "border-[var(--border-subtle)] text-[var(--fg-muted)] hover:border-[var(--border-brand)] hover:text-[var(--brand)]")

@@ -45,7 +45,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
             <Logomark className="size-10 text-[var(--brand)]" />
             <span className="flex flex-col leading-none">
               <span className="font-display text-lg font-extrabold">{settings.name}</span>
-              <span className="mt-1 font-mono text-[0.5625rem] tracking-[0.22em] text-[var(--fg-subtle)]">
+              <span className="mt-1 font-mono text-label tracking-[0.22em] text-[var(--fg-subtle)]">
                 {siteConfig.latinName}
               </span>
             </span>
@@ -119,7 +119,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="group inline-flex items-center gap-1.5 text-[0.8125rem] text-[var(--fg-muted)] transition-colors hover:text-[var(--brand)]"
+                    className="group inline-flex items-center gap-1.5 text-meta text-[var(--fg-muted)] transition-colors hover:text-[var(--brand)]"
                   >
                     <span className="h-px w-0 bg-[var(--brand)] transition-all duration-300 group-hover:w-3" aria-hidden />
                     {link.title}
@@ -136,7 +136,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
           <p>
             © {toFaDigits(year)} — تمام حقوق برای {siteConfig.legalName} محفوظ است.
           </p>
-          <p className="font-mono text-[0.6875rem] tracking-wider">
+          <p className="font-mono text-micro tracking-wider">
             {siteConfig.latinName} · ENGINEERED WATER SYSTEMS
           </p>
         </div>

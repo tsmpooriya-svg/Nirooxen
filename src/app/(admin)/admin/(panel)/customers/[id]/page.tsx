@@ -48,14 +48,14 @@ export default async function CustomerDetailPage({ params }: { params: Params })
                 <Td className="whitespace-nowrap font-mono text-xs">
                   {order.total > 0 ? formatPrice(order.total, { withUnit: false }) : "—"}
                 </Td>
-                <Td className="whitespace-nowrap text-[0.6875rem] text-[var(--fg-subtle)]">{formatDateTime(order.createdAt)}</Td>
+                <Td className="whitespace-nowrap text-micro text-[var(--fg-subtle)]">{formatDateTime(order.createdAt)}</Td>
               </Tr>
             ))}
           </DataTable>
         </Panel>
 
         <Panel title="اطلاعات مشتری">
-          <dl className="space-y-3 text-[0.8125rem]">
+          <dl className="space-y-3 text-meta">
             {[
               ["نام", customer.fullName],
               ["تلفن", customer.phone],
@@ -71,7 +71,7 @@ export default async function CustomerDetailPage({ params }: { params: Params })
               .filter(([, value]) => value)
               .map(([label, value]) => (
                 <div key={label as string} className="flex items-start justify-between gap-3">
-                  <dt className="shrink-0 text-[0.6875rem] text-[var(--fg-subtle)]">{label}</dt>
+                  <dt className="shrink-0 text-micro text-[var(--fg-subtle)]">{label}</dt>
                   <dd className="text-end text-[var(--fg-secondary)]">{value}</dd>
                 </div>
               ))}
