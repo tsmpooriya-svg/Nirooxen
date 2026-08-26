@@ -1,0 +1,1288 @@
+[
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/booklike/%d9%85%d8%ae%d8%b2%d9%86-1000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%da%a9%d8%aa%d8%a7%d8%a8%db%8c/",
+  "family": "booklike",
+  "familyFa": "کتابی",
+  "name": "مخزن ۱۰۰۰ لیتری کتابی",
+  "capacityL": 1000,
+  "code": "5350-5150",
+  "dims": {
+   "height": 140.0,
+   "width": 62.0,
+   "length": 163.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/1000-slime.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/1000-کتابی-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/booklike-1000-slime-e83078.webp",
+   "/images/products/watertanks/booklike-1000-copy-262dae.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/booklike/%d9%85%d8%ae%d8%b2%d9%86-1000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%da%a9%d8%aa%d8%a7%d8%a8%db%8c-%d8%a7%d8%b3%d8%aa%d9%88%d8%a7%d9%86%d9%87%d8%a7%db%8c/",
+  "family": "booklike",
+  "familyFa": "کتابی",
+  "name": "مخزن ۱۰۰۰ لیتری کتابی استوانه‌ای",
+  "capacityL": 1000,
+  "code": null,
+  "dims": {
+   "height": 160.0,
+   "width": 61.0,
+   "length": 167.0,
+   "lid_diameter": 46.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2025/10/70لیتر-سه-لایه.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/booklike-70-f79e7b.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/booklike/%d9%85%d8%ae%d8%b2%d9%86-1400-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%da%a9%d8%aa%d8%a7%d8%a8%db%8c/",
+  "family": "booklike",
+  "familyFa": "کتابی",
+  "name": "مخزن ۱۴۰۰ لیتری کتابی",
+  "capacityL": 1400,
+  "code": "5358-5158",
+  "dims": {
+   "height": 187.0,
+   "width": 69.0,
+   "length": 172.0,
+   "lid_diameter": 51.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/1400-2.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/1400-کتابی-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/booklike-1400-2-21608c.webp",
+   "/images/products/watertanks/booklike-1400-copy-2a7c84.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/booklike/%d9%85%d8%ae%d8%b2%d9%86-2000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%da%a9%d8%aa%d8%a7%d8%a8%db%8c-%da%a9%d9%be%db%8c/",
+  "family": "booklike",
+  "familyFa": "کتابی",
+  "name": "مخزن ۵۰۰ لیتری کتابی",
+  "capacityL": 500,
+  "code": "5324-5124",
+  "dims": {
+   "height": 110.0,
+   "width": 50.0,
+   "length": 142.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/500slim.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/500-کتابی-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/booklike-500slim-8054f8.webp",
+   "/images/products/watertanks/booklike-500-copy-180615.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/booklike/2000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-6/",
+  "family": "booklike",
+  "familyFa": "کتابی",
+  "name": "مخزن ۲۰۰۰ لیتری کتابی",
+  "capacityL": 2000,
+  "code": "5364-5164",
+  "dims": {
+   "height": 200.0,
+   "width": 73.0,
+   "length": 215.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/2000-1.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/2000-کتابی-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/booklike-2000-1-1a4c06.webp",
+   "/images/products/watertanks/booklike-2000-copy-1d02a1.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/cubic/%d9%85%d8%ae%d8%b2%d9%86-2000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d9%85%da%a9%d8%b9%d8%a8%db%8c/",
+  "family": "cubic",
+  "familyFa": "مکعبی",
+  "name": "مخزن ۲۰۰۰ لیتری مکعبی",
+  "capacityL": 2000,
+  "code": "5365-5165",
+  "dims": {
+   "height": 87.0,
+   "width": 129.0,
+   "length": 239.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/2000-l-hori.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/مکعبی-2000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/cubic-2000-l-hori-838a23.webp",
+   "/images/products/watertanks/cubic-2000-copy-652a04.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/cubic/%d9%85%d8%ae%d8%b2%d9%86-300-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d9%85%da%a9%d8%b9%d8%a8%db%8c/",
+  "family": "cubic",
+  "familyFa": "مکعبی",
+  "name": "مخزن ۳۰۰ لیتری مکعبی",
+  "capacityL": 300,
+  "code": null,
+  "dims": {},
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/09/300-L-vertical-rectangular-Plastonic-PMS-507-1-assembly-product-43-cm-Lid-render.webp",
+   "https://plastonic.com/wp-content/uploads/2024/09/300vertical.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/cubic-300-l-vertical-rectangular-plastonic-pms-a7c4f2.webp",
+   "/images/products/watertanks/cubic-300vertical-963945.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/cubic/230-%d9%84%db%8c%d8%aa%d8%b1%db%8c/",
+  "family": "cubic",
+  "familyFa": "مکعبی",
+  "name": "مخزن ۲۳۰ لیتری مکعبی",
+  "capacityL": 230,
+  "code": "5305-5105",
+  "dims": {
+   "height": 132.0,
+   "width": 40.0,
+   "length": 60.0,
+   "lid_diameter": 32.0,
+   "hatch_diameter": 28.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/230.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/مکعبی-230-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/cubic-230-85b9f9.webp",
+   "/images/products/watertanks/cubic-230-copy-10c9ac.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/cubic/800-%d9%84%db%8c%d8%aa%d8%b1%db%8c/",
+  "family": "cubic",
+  "familyFa": "مکعبی",
+  "name": "مخزن ۸۰۰ لیتری مکعبی",
+  "capacityL": 800,
+  "code": "5340-5140",
+  "dims": {
+   "height": 70.0,
+   "width": 90.0,
+   "length": 170.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/800.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/مکعبی-800-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/cubic-800-c7d817.webp",
+   "/images/products/watertanks/cubic-800-copy-8936f6.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-100-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۱۰۰ لیتری افقی",
+  "capacityL": 100,
+  "code": "7302-7102",
+  "dims": {
+   "length": 73.0,
+   "width": 54.0,
+   "height": 58.0,
+   "lid_diameter": 20.0,
+   "hatch_diameter": 16.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/100-1.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/100-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-100-1-049af2.webp",
+   "/images/products/watertanks/horizontal-100-copy-12a8aa.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-1000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۱۰۰۰ لیتری افقی",
+  "capacityL": 1000,
+  "code": "7351-7151",
+  "dims": {
+   "length": 168.0,
+   "width": 100.0,
+   "height": 110.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/1000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/1000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-1000-37b1b3.webp",
+   "/images/products/watertanks/horizontal-1000-copy-66c113.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-1500-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۱۵۰۰ لیتری افقی",
+  "capacityL": 1500,
+  "code": "7358-7158",
+  "dims": {
+   "length": 202.0,
+   "width": 114.0,
+   "height": 116.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/1500-L.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/1500-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-1500-l-7f89a1.webp",
+   "/images/products/watertanks/horizontal-1500-copy-e7ba0f.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-200-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۲۰۰ لیتری افقی",
+  "capacityL": 200,
+  "code": "7305-7105",
+  "dims": {
+   "length": 99.0,
+   "width": 60.0,
+   "height": 68.0,
+   "lid_diameter": 32.0,
+   "hatch_diameter": 28.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/200.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/200-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-200-67cb9c.webp",
+   "/images/products/watertanks/horizontal-200-copy-95267d.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-2000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۲۰۰۰ لیتری افقی",
+  "capacityL": 2000,
+  "code": "7364-7164",
+  "dims": {
+   "length": 202.0,
+   "width": 124.0,
+   "height": 135.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/2000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/2000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-2000-e6b841.webp",
+   "/images/products/watertanks/horizontal-2000-copy-57e2de.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-250-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۲۵۰ لیتری افقی",
+  "capacityL": 250,
+  "code": "7308-7108",
+  "dims": {
+   "length": 112.0,
+   "width": 62.0,
+   "height": 70.0,
+   "lid_diameter": 32.0,
+   "hatch_diameter": 28.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/250.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/250-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-250-150412.webp",
+   "/images/products/watertanks/horizontal-250-copy-21cd57.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-300-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۳۰۰ لیتری افقی",
+  "capacityL": 300,
+  "code": "7312-7112",
+  "dims": {
+   "length": 105.0,
+   "width": 70.0,
+   "height": 77.0,
+   "lid_diameter": 32.0,
+   "hatch_diameter": 28.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/300.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/300-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-300-01d63b.webp",
+   "/images/products/watertanks/horizontal-300-copy-08aa99.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-3000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۳۰۰۰ لیتری افقی",
+  "capacityL": 3000,
+  "code": "7374-7174",
+  "dims": {
+   "length": 240.0,
+   "width": 140.0,
+   "height": 152.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/3000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/3000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-3000-dd024c.webp",
+   "/images/products/watertanks/horizontal-3000-copy-430371.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-400-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۴۰۰ لیتری افقی",
+  "capacityL": 400,
+  "code": "7320-7118",
+  "dims": {
+   "length": 124.0,
+   "width": 70.0,
+   "height": 77.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/400.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/400-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-400-795cff.webp",
+   "/images/products/watertanks/horizontal-400-copy-f249d5.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-4000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۴۰۰۰ لیتری افقی",
+  "capacityL": 4000,
+  "code": "7380-7180",
+  "dims": {
+   "length": 250.0,
+   "width": 159.0,
+   "height": 170.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/4000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/4000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-4000-f55c88.webp",
+   "/images/products/watertanks/horizontal-4000-copy-0ab9d6.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-500-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۵۰۰ لیتری افقی",
+  "capacityL": 500,
+  "code": "7324-7124",
+  "dims": {
+   "length": 136.0,
+   "width": 79.0,
+   "height": 88.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/500.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/500-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-500-12644d.webp",
+   "/images/products/watertanks/horizontal-500-copy-825f3f.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-5000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۵۰۰۰ لیتری افقی",
+  "capacityL": 5000,
+  "code": "7383-7183",
+  "dims": {
+   "length": 250.0,
+   "width": 180.0,
+   "height": 190.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/5000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/5000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-5000-bbd388.webp",
+   "/images/products/watertanks/horizontal-5000-copy-04565f.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-700-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۷۰۰ لیتری افقی",
+  "capacityL": 700,
+  "code": "7335-7135",
+  "dims": {
+   "length": 171.0,
+   "width": 81.0,
+   "height": 91.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/700.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/700-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-700-563c46.webp",
+   "/images/products/watertanks/horizontal-700-copy-4d46ad.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/%d9%85%d8%ae%d8%b2%d9%86-750-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%a7%d9%81%d9%82%db%8c/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۷۵۰ لیتری افقی",
+  "capacityL": 750,
+  "code": "7337-7137",
+  "dims": {
+   "length": 155.0,
+   "width": 90.0,
+   "height": 98.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/750.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/750-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-750-318657.webp",
+   "/images/products/watertanks/horizontal-750-copy-2859dd.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/horizontal/70-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b3%d9%87-%d9%84%d8%a7%db%8c%d9%87/",
+  "family": "horizontal",
+  "familyFa": "افقی",
+  "name": "مخزن ۷۰ لیتری افقی",
+  "capacityL": 70,
+  "code": "7301-7101",
+  "dims": {
+   "length": 71.0,
+   "width": 44.0,
+   "height": 48.0,
+   "lid_diameter": 20.0,
+   "hatch_diameter": 16.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/70.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/70-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/horizontal-70-075c30.webp",
+   "/images/products/watertanks/horizontal-70-copy-f8fcd1.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/spherical/900-%d9%84%db%8c%d8%aa%d8%b1%db%8c/",
+  "family": "spherical",
+  "familyFa": "کروی",
+  "name": "مخزن ۹۰۰ لیتری کروی",
+  "capacityL": 900,
+  "code": "6345-6145",
+  "dims": {
+   "height": 132.0,
+   "diameter": 133.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/900.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/کروی900-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/spherical-900-1797e4.webp",
+   "/images/products/watertanks/spherical-900-copy-070345.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/underthestairs/%d9%85%d8%ae%d8%b2%d9%86-1000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b2%db%8c%d8%b1-%d9%be%d9%84%d9%87/",
+  "family": "underthestairs",
+  "familyFa": "زیرپله",
+  "name": "مخزن ۱۰۰۰ لیتری زیر پله",
+  "capacityL": 1000,
+  "code": "5352-5152",
+  "dims": {
+   "height": 105.0,
+   "length": 190.0,
+   "width": 90.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/1000-under.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/1000-زیرپله-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/underthestairs-1000-under-d85ece.webp",
+   "/images/products/watertanks/underthestairs-1000-copy-d687ce.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/underthestairs/%d9%85%d8%ae%d8%b2%d9%86-1500-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b2%db%8c%d8%b1%d9%be%d9%84%d9%87/",
+  "family": "underthestairs",
+  "familyFa": "زیرپله",
+  "name": "مخزن ۱۵۰۰ لیتری زیرپله",
+  "capacityL": 1500,
+  "code": "5357-5157",
+  "dims": {
+   "height": 120.0,
+   "length": 204.0,
+   "width": 98.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/1500-under.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/1500-زیرپله-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/underthestairs-1500-under-bb2804.webp",
+   "/images/products/watertanks/underthestairs-1500-copy-6cea37.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/underthestairs/500-%d9%84%db%8c%d8%aa%d8%b1%db%8c-5/",
+  "family": "underthestairs",
+  "familyFa": "زیرپله",
+  "name": "مخزن ۵۰۰ لیتری زیر پله",
+  "capacityL": 500,
+  "code": "5323-5123",
+  "dims": {
+   "height": 79.0,
+   "length": 131.0,
+   "width": 83.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/500under.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/500-زیرپله-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/underthestairs-500under-ff20eb.webp",
+   "/images/products/watertanks/underthestairs-500-copy-c23a62.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-%db%b5%db%b0%db%b0%db%b0-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c-%d8%af%d9%88-%d8%af%d8%b1%d8%a8/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۵۰۰۰ لیتری عمودی دو درب",
+  "capacityL": 5000,
+  "code": null,
+  "dims": {
+   "height": 225.0,
+   "diameter": 188.0,
+   "lid_diameter": 55.0,
+   "lid_diameter_2": 32.0,
+   "hatch_diameter": 46.0,
+   "hatch_diameter_2": 28.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [],
+  "localImages": []
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-100-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۱۰۰ لیتری عمودی",
+  "capacityL": 100,
+  "code": "6301-6101",
+  "dims": {
+   "height": 75.0,
+   "diameter": 52.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/100.jpg",
+   "https://plastonic.com/wp-content/uploads/2024/06/100.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/100-amoodi.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-100-a84449.jpg",
+   "/images/products/watertanks/vertical-100-cceee5.webp",
+   "/images/products/watertanks/vertical-100-amoodi-99fa5e.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-1000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c-%d8%a8%d9%84%d9%86%d8%af/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۱۰۰۰ لیتری عمودی بلند",
+  "capacityL": 1000,
+  "code": "6350-6150",
+  "dims": {
+   "height": 212.0,
+   "diameter": 88.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/1000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/1000L-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-1000-7febd1.webp",
+   "/images/products/watertanks/vertical-1000l-copy-08d70f.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-1000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c-%da%a9%d9%88%d8%aa%d8%a7%d9%87/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۱۰۰۰ لیتری عمودی کوتاه",
+  "capacityL": 1000,
+  "code": "6351-6151",
+  "dims": {
+   "height": 145.0,
+   "diameter": 109.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/1000SH.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/1000sh-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-1000sh-5989e8.webp",
+   "/images/products/watertanks/vertical-1000sh-copy-ff72c1.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-10000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۱۰۰۰۰ لیتری عمودی",
+  "capacityL": 10000,
+  "code": "6396-6196",
+  "dims": {
+   "height": 235.0,
+   "diameter": 255.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/10000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/10000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-10000-700ebe.webp",
+   "/images/products/watertanks/vertical-10000-copy-24db3b.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-150-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۱۵۰ لیتری عمودی",
+  "capacityL": 150,
+  "code": "6305-6105",
+  "dims": {
+   "height": 85.0,
+   "diameter": 55.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/150.jpg",
+   "https://plastonic.com/wp-content/uploads/2024/06/150.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-150-dc2818.jpg",
+   "/images/products/watertanks/vertical-150-342f12.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-1500-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۱۵۰۰ لیتری عمودی",
+  "capacityL": 1500,
+  "code": "6358-6158",
+  "dims": {
+   "height": 172.0,
+   "diameter": 121.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/1500SH.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/1500sh-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-1500sh-48d8cf.webp",
+   "/images/products/watertanks/vertical-1500sh-copy-3a69aa.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-1500-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c-%d8%a8%d9%84%d9%86%d8%af/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۱۵۰۰ لیتری عمودی بلند",
+  "capacityL": 1500,
+  "code": "6359-6159",
+  "dims": {
+   "height": 200.0,
+   "diameter": 108.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/1500.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/1500L-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-1500-b3a136.webp",
+   "/images/products/watertanks/vertical-1500l-copy-2f1484.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-15000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۱۵۰۰۰ لیتری عمودی",
+  "capacityL": 15000,
+  "code": "6398-6198",
+  "dims": {
+   "height": 325.0,
+   "diameter": 255.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/15000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/15000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-15000-a39ad3.webp",
+   "/images/products/watertanks/vertical-15000-copy-57b6de.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-2000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۲۰۰۰ لیتری عمودی",
+  "capacityL": 2000,
+  "code": "6367-6167",
+  "dims": {
+   "height": 190.0,
+   "diameter": 134.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/2000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/2000-amoodi.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-2000-dd8a7b.webp",
+   "/images/products/watertanks/vertical-2000-amoodi-482be5.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-2000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c-%d8%a8%d9%84%d9%86%d8%af/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۲۰۰۰ لیتری عمودی بلند",
+  "capacityL": 2000,
+  "code": "6365-6165",
+  "dims": {
+   "height": 237.0,
+   "diameter": 113.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/2000-L.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-2000-l-90cf6b.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-20000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۲۰۰۰۰ لیتری عمودی",
+  "capacityL": 20000,
+  "code": "6399-6199",
+  "dims": {
+   "height": 335.0,
+   "diameter": 300.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/20000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/20000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-20000-ac79d6.webp",
+   "/images/products/watertanks/vertical-20000-copy-299d77.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-220-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۲۲۰ لیتری عمودی",
+  "capacityL": 220,
+  "code": "6307-6107",
+  "dims": {
+   "height": 102.0,
+   "diameter": 60.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/220.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/220-amoodi.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-220-e2b528.webp",
+   "/images/products/watertanks/vertical-220-amoodi-015104.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-3000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۳۰۰۰ لیتری عمودی",
+  "capacityL": 3000,
+  "code": "6374-6174",
+  "dims": {
+   "height": 208.0,
+   "diameter": 153.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/3000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/3000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-3000-dbca15.webp",
+   "/images/products/watertanks/vertical-3000-copy-fb5969.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-3000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c-%d8%a8%d9%84%d9%86%d8%af/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۳۰۰۰ لیتری عمودی بلند",
+  "capacityL": 3000,
+  "code": "6375-6175",
+  "dims": {
+   "height": 249.0,
+   "diameter": 133.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/3000-L.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/3000-long-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-3000-l-25fbb1.webp",
+   "/images/products/watertanks/vertical-3000-long-copy-3ba1df.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-350-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۳۵۰ لیتری عمودی",
+  "capacityL": 350,
+  "code": "6315-6115",
+  "dims": {
+   "height": 132.0,
+   "diameter": 69.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/350.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/350-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-350-08df8c.webp",
+   "/images/products/watertanks/vertical-350-copy-84b8cf.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-4000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۴۰۰۰ لیتری عمودی",
+  "capacityL": 4000,
+  "code": "6380-6180",
+  "dims": {
+   "height": 182.0,
+   "diameter": 183.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/4000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/4000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-4000-e6521e.webp",
+   "/images/products/watertanks/vertical-4000-copy-bb0ffb.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-500-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۵۰۰ لیتری عمودی",
+  "capacityL": 500,
+  "code": "6323-6123",
+  "dims": {
+   "height": 119.0,
+   "diameter": 85.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/500.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/500n-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-500-91a987.webp",
+   "/images/products/watertanks/vertical-500n-copy-c15caf.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-5000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۵۰۰۰ لیتری عمودی",
+  "capacityL": 5000,
+  "code": "6384-6184",
+  "dims": {
+   "height": 225.0,
+   "diameter": 190.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/5000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/5000-copy-1.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-5000-6e3b5c.webp",
+   "/images/products/watertanks/vertical-5000-copy-1-a78780.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-5000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c-%da%a9%d9%88%d8%aa%d8%a7%d9%87/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۵۰۰۰ لیتری عمودی کوتاه",
+  "capacityL": 5000,
+  "code": "6383-6183",
+  "dims": {
+   "height": 160.0,
+   "diameter": 222.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/5000-SH.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/5000-sh-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-5000-sh-0b0fc6.webp",
+   "/images/products/watertanks/vertical-5000-sh-copy-d09e5e.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-550-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۵۵۰ لیتری عمودی",
+  "capacityL": 550,
+  "code": "6327-6127",
+  "dims": {
+   "height": 170.0,
+   "diameter": 72.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/550.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/550-amoodi.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-550-8a4d42.webp",
+   "/images/products/watertanks/vertical-550-amoodi-6f049c.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-6000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c-%da%a9%d9%88%d8%aa%d8%a7%d9%87/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۶۰۰۰ لیتری عمودی کوتاه",
+  "capacityL": 6000,
+  "code": "6387-6187",
+  "dims": {
+   "height": 190.0,
+   "diameter": 222.0,
+   "lid_diameter": 55.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/6000-SH.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/6000-amoodi.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-6000-sh-89db5e.webp",
+   "/images/products/watertanks/vertical-6000-amoodi-dab9e8.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-800-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c-%d8%a8%d9%84%d9%86%d8%af/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۸۰۰ لیتری عمودی بلند",
+  "capacityL": 800,
+  "code": "6340-6140",
+  "dims": {
+   "height": 194.0,
+   "diameter": 80.0,
+   "lid_diameter": 42.0,
+   "hatch_diameter": 36.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/800.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/800-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-800-d2d02c.webp",
+   "/images/products/watertanks/vertical-800-copy-3a0324.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/%d9%85%d8%ae%d8%b2%d9%86-8000-%d9%84%db%8c%d8%aa%d8%b1%db%8c-%d8%b9%d9%85%d9%88%d8%af%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۸۰۰۰ لیتری عمودی",
+  "capacityL": 8000,
+  "code": "6392-6192",
+  "dims": {
+   "height": 300.0,
+   "diameter": 195.0,
+   "lid_diameter": 53.0,
+   "hatch_diameter": 47.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/06/8000.webp",
+   "https://plastonic.com/wp-content/uploads/2024/06/8000-copy.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-8000-a04364.webp",
+   "/images/products/watertanks/vertical-8000-copy-7ad8b0.webp"
+  ]
+ },
+ {
+  "sourceUrl": "https://plastonic.com/product/watertanks/vertical/80-%d9%84%db%8c%d8%aa%d8%b1%db%8c/",
+  "family": "vertical",
+  "familyFa": "عمودی",
+  "name": "مخزن ۸۰ لیتری عمودی",
+  "capacityL": 80,
+  "code": "6304-6104",
+  "dims": {
+   "height": 58.0,
+   "diameter": 50.0,
+   "lid_diameter": 20.0,
+   "hatch_diameter": 16.0
+  },
+  "layers": 3,
+  "material": "پلی‌اتیلن",
+  "images": [
+   "https://plastonic.com/wp-content/uploads/2024/05/80-2.jpg",
+   "https://plastonic.com/wp-content/uploads/2024/05/80-amoodi.webp",
+   "https://plastonic.com/wp-content/uploads/2024/05/80-2.webp"
+  ],
+  "localImages": [
+   "/images/products/watertanks/vertical-80-2-adf685.jpg",
+   "/images/products/watertanks/vertical-80-amoodi-8dff48.webp",
+   "/images/products/watertanks/vertical-80-2-b90721.webp"
+  ]
+ }
+]
