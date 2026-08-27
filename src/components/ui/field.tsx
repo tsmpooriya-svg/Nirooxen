@@ -36,7 +36,7 @@ export function Field({ label, htmlFor, hint, error, required, className, childr
       )}
       {children}
       {error ? (
-        <p className="flex items-start gap-1.5 text-xs text-[var(--danger-text)]" role="alert">
+        <p className="flex items-start gap-1.5 text-meta text-[var(--danger-text)]" role="alert">
           <svg viewBox="0 0 16 16" className="mt-0.5 size-3.5 shrink-0" fill="currentColor" aria-hidden>
             <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM7.25 4.5h1.5v5h-1.5v-5Zm0 6.25h1.5v1.5h-1.5v-1.5Z" />
           </svg>

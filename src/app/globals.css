@@ -404,19 +404,41 @@
   --text-lead--line-height: 1.95;
 
   /* ---- Metadata scale ---------------------------------------------------
-     Floor of 12px. Persian glyphs carry more internal detail than Latin at
-     the same nominal size, and the 10px mono labels used across the product
-     cards were below the point where that detail survives. */
-  --text-meta: 0.8125rem;
+     Floor of 13px. The previous 12px floor was set against Latin reference
+     text; measured against the Persian the site actually ships — brand
+     lockups, key-spec values, facet counts, prices — 12px is the size at
+     which the dots of ب/پ/ت/ث and the ی/ژ descenders start merging into the
+     stroke. Every metadata step moved up one rung.
+
+     This scale and Tailwind's own text-xs/text-sm are now pinned to the same
+     rungs (13/15). They used to disagree — --text-micro and text-xs both
+     resolved to 12px while meaning different things, so a <dt>/<dd> pair
+     built from one of each had no size hierarchy at all. */
+  --text-meta: 0.875rem;
   --text-meta--line-height: 1.7;
-  --text-micro: 0.75rem;
+  --text-micro: 0.8125rem;
   --text-micro--line-height: 1.6;
   /* 11px, and ONLY for all-caps Latin mono lockups (the logo sub-label,
      "PRODUCT CATEGORIES", entity ids). Latin at 11px stays legible because
      the letterforms are simple and widely tracked; Persian at the same size
-     loses its dots and diacritics, so Persian never uses this step. */
+     loses its dots and diacritics, so Persian never uses this step. Audited:
+     the four call sites are the latin wordmark, "ADMIN CONSOLE" and log
+     entity ids — all Latin all-caps mono. The step stays. */
   --text-label: 0.6875rem;
   --text-label--line-height: 1.5;
+
+  /* ---- Tailwind's own steps, re-pinned ----------------------------------
+     Defaults are 12px/1.333 and 14px/1.429 — both sized and led for Latin.
+     Persian needs the extra pixel and noticeably more leading, and the
+     codebase had already voted: text-[0.9375rem] (15px) appeared 30 times
+     as a hand-written escape hatch from a 14px text-sm. That rung is now
+     the token, so the escape hatch is no longer needed. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.6;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.7;
+  --text-base: 1rem;
+  --text-base--line-height: 1.75;
 
   --radius-xs: 4px;
   --radius-sm: 6px;
@@ -703,9 +725,9 @@
 
   .eyebrow {
     font-family: var(--font-mono);
-    /* 12px, not 11px: most eyebrows are Persian («چرا ما», «فرآیند خرید»)
-       and the mono fallback renders Persian without the tracking benefit
-       Latin gets, so the extra pixel matters here. */
+    /* --text-micro (13px), not --text-label (11px): most eyebrows are Persian
+       («چرا ما», «فرآیند خرید») and the mono fallback renders Persian without
+       the tracking benefit Latin gets, so the extra pixels matter here. */
     font-size: var(--text-micro);
     line-height: 1.6;
     font-weight: 500;

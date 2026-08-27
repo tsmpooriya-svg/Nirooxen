@@ -180,7 +180,7 @@ export function SolutionsSection({ summaries }: { summaries: SolutionSummary[] }
                       <span className="block text-sm font-semibold transition-colors group-hover:text-[var(--brand)]">
                         {summary.solution.name}
                       </span>
-                      <span className="clamp-2 mt-1.5 block text-[0.75rem] leading-6 text-[var(--fg-muted)]">
+                      <span className="clamp-2 mt-1.5 block text-meta leading-6 text-[var(--fg-muted)]">
                         {summary.solution.question}
                       </span>
                     </span>
@@ -540,7 +540,7 @@ export function NewsSection({
                     <span>{toFaDigits(post.readingMinutes)} دقیقه</span>
                   </div>
 
-                  <h3 className="mb-2 clamp-2 font-display text-[0.9375rem] font-bold leading-7 transition-colors group-hover:text-[var(--brand)]">
+                  <h3 className="mb-2 clamp-2 font-display text-sm font-bold leading-7 transition-colors group-hover:text-[var(--brand)]">
                     {post.title}
                   </h3>
 
@@ -579,7 +579,7 @@ export function CtaSection({ settings }: { settings: SiteSettings }) {
             <h2 className="mx-auto max-w-2xl font-display text-[1.75rem] font-extrabold leading-tight sm:text-[2.25rem]">
               مشخصات پروژه‌تان را بفرستید، بقیه‌اش با ما
             </h2>
-            <p className="mx-auto mt-5 max-w-xl text-[0.9375rem] leading-8 text-[var(--fg-muted)]">
+            <p className="mx-auto mt-5 max-w-xl text-sm leading-8 text-[var(--fg-muted)]">
               فرقی نمی‌کند یک پمپ خانگی می‌خواهید یا یک ایستگاه پمپاژ کامل؛ کارشناسان ما گزینه مناسب،
               قیمت و زمان تحویل را برایتان مشخص می‌کنند.
             </p>
@@ -587,13 +587,13 @@ export function CtaSection({ settings }: { settings: SiteSettings }) {
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/contact"
-                className="inline-flex h-[3.25rem] items-center gap-2.5 rounded-md bg-[var(--brand)] px-8 text-[0.9375rem] font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
+                className="inline-flex h-[3.25rem] items-center gap-2.5 rounded-md bg-[var(--brand)] px-8 text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
               >
                 ثبت درخواست مشاوره
               </Link>
               <a
                 href={`tel:${settings.contact.phonesRaw[0]}`}
-                className="inline-flex h-[3.25rem] items-center gap-2.5 rounded-md border border-[var(--border-default)] px-7 text-[0.9375rem] font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+                className="inline-flex h-[3.25rem] items-center gap-2.5 rounded-md border border-[var(--border-default)] px-7 text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
               >
                 <span className="num">{settings.contact.phones[0]}</span>
               </a>

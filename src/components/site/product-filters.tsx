@@ -110,7 +110,7 @@ export function ProductFilters({
             router.push(pathname, { scroll: false });
             onNavigate?.();
           }}
-          className="flex w-full items-center justify-center gap-2 rounded-md border border-[var(--border-default)] py-2.5 text-xs font-medium text-[var(--fg-secondary)] transition-colors hover:border-[var(--danger)] hover:text-[var(--danger-text)]"
+          className="flex w-full items-center justify-center gap-2 rounded-md border border-[var(--border-default)] py-2.5 text-meta font-medium text-[var(--fg-secondary)] transition-colors hover:border-[var(--danger)] hover:text-[var(--danger-text)]"
         >
           <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
             <path d="m4 4 8 8M12 4l-8 8" strokeLinecap="round" />
@@ -185,7 +185,7 @@ export function ProductFilters({
                               type="button"
                               onClick={() => setParam("category", child.slug)}
                               className={cn(
-                                "w-full rounded-sm px-2 py-1.5 text-start text-xs transition-colors",
+                                "w-full rounded-sm px-2 py-1.5 text-start text-meta transition-colors",
                                 activeCategory === child.slug
                                   ? "font-medium text-[var(--brand)]"
                                   : "text-[var(--fg-muted)] hover:text-[var(--fg-primary)]",
@@ -311,12 +311,12 @@ export function ProductFilters({
       )}
 
       <div className="rounded-lg border border-[var(--border-brand)] bg-[var(--brand-soft)] p-4">
-        <p className="text-xs leading-7 text-[var(--fg-secondary)]">
+        <p className="text-meta leading-7 text-[var(--fg-secondary)]">
           محصول موردنظرتان در فهرست نیست؟ درخواست تأمین ثبت کنید؛ کارشناسان ما آن را پیدا می‌کنند.
         </p>
         <Link
           href="/contact"
-          className="mt-3 flex h-9 items-center justify-center rounded-md bg-[var(--brand)] text-xs font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
+          className="mt-3 flex h-9 items-center justify-center rounded-md bg-[var(--brand)] text-meta font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
         >
           درخواست تأمین کالا
         </Link>
@@ -380,10 +380,10 @@ function SpecRangeFilter({
             onChange={(e) => setMin(e.target.value)}
             placeholder={facet.min !== null ? String(round(facet.min)) : "از"}
             dir="ltr"
-            className="h-9 w-full rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-2.5 text-center font-mono text-xs outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
+            className="h-10 w-full rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-2.5 text-center font-mono text-meta outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
           />
         </label>
-        <span className="text-xs text-[var(--fg-subtle)]" aria-hidden>
+        <span className="text-meta text-[var(--fg-subtle)]" aria-hidden>
           تا
         </span>
         <label className="flex-1">
@@ -395,7 +395,7 @@ function SpecRangeFilter({
             onChange={(e) => setMax(e.target.value)}
             placeholder={facet.max !== null ? String(round(facet.max)) : "تا"}
             dir="ltr"
-            className="h-9 w-full rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-2.5 text-center font-mono text-xs outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
+            className="h-10 w-full rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-2.5 text-center font-mono text-meta outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
           />
         </label>
       </div>
@@ -406,7 +406,7 @@ function SpecRangeFilter({
         <button
           type="button"
           onClick={() => onApply(facet.key, min, max)}
-          className="mt-3 h-8 w-full rounded-md bg-[var(--brand)] text-xs font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
+          className="mt-3 h-8 w-full rounded-md bg-[var(--brand)] text-meta font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
         >
           اعمال
         </button>
@@ -521,7 +521,7 @@ export function ProductToolbar({
   return (
     <>
       <div className="mb-6 flex items-center justify-between gap-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-3">
-        <p className="text-xs text-[var(--fg-muted)]">
+        <p className="text-meta text-[var(--fg-muted)]">
           <span className="font-mono text-[var(--fg-primary)]">{toFaDigits(total)}</span> کالا یافت شد
         </p>
 
@@ -529,7 +529,7 @@ export function ProductToolbar({
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
-            className="flex h-9 items-center gap-2 rounded-md border border-[var(--border-subtle)] px-3 text-xs text-[var(--fg-secondary)] transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)] lg:hidden"
+            className="flex h-10 items-center gap-2 rounded-md border border-[var(--border-subtle)] px-3 text-meta text-[var(--fg-secondary)] transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)] lg:hidden"
           >
             <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
               <path d="M2 4h12M4 8h8M6.5 12h3" strokeLinecap="round" />
@@ -542,7 +542,7 @@ export function ProductToolbar({
             <select
               value={sort}
               onChange={(e) => onSortChange(e.target.value)}
-              className="h-9 cursor-pointer rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-3 text-xs outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
+              className="h-10 cursor-pointer rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-3 text-meta outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
             >
               {SORT_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>

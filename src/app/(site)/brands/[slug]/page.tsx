@@ -46,7 +46,7 @@ export default async function BrandPage({ params }: { params: Params }) {
           { name: brand.name, href: `/brands/${brand.slug}` },
         ]}
       >
-        <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-xs">
+        <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-meta">
           {brand.latinName && (
             <div>
               <dt className="text-[var(--fg-subtle)]">نام لاتین</dt>

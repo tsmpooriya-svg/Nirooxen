@@ -391,7 +391,7 @@ export function OrderTimeline({
   return (
     <div>
       <div className="mb-5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-2)] p-4">
-        <label htmlFor="order-note" className="mb-2 block text-[0.75rem] font-medium text-[var(--fg-secondary)]">
+        <label htmlFor="order-note" className="mb-2 block text-meta font-medium text-[var(--fg-secondary)]">
           ثبت یادداشت یا نتیجه تماس
         </label>
         <textarea

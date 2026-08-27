@@ -91,7 +91,7 @@ export function QuoteClient() {
               <div className="min-w-[12rem] flex-1">
                 <Link
                   href={`/products/${line.slug}`}
-                  className="text-[0.875rem] font-medium leading-7 transition-colors hover:text-[var(--brand)]"
+                  className="text-sm font-medium leading-7 transition-colors hover:text-[var(--brand)]"
                 >
                   {line.name}
                 </Link>

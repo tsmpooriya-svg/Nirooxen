@@ -154,7 +154,7 @@ export function AdminShell({
       <div className="flex h-16 shrink-0 items-center gap-2.5 border-b border-[var(--border-hairline)] px-5">
         <Logomark className="size-8 text-[var(--brand)]" />
         <div className="min-w-0 leading-none">
-          <p className="truncate font-display text-[0.9375rem] font-bold">{siteConfig.name}</p>
+          <p className="truncate font-display text-sm font-bold">{siteConfig.name}</p>
           <p className="mt-1 font-mono text-label tracking-[0.2em] text-[var(--fg-subtle)]">
             ADMIN CONSOLE
           </p>

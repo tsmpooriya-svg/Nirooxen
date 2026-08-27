@@ -78,7 +78,7 @@ export function OrderForm({
           </p>
           <ul className="space-y-2.5">
             {lines.map((line, index) => (
-              <li key={`${line.productId ?? index}`} className="flex items-start justify-between gap-3 text-xs">
+              <li key={`${line.productId ?? index}`} className="flex items-start justify-between gap-3 text-meta">
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[var(--fg-primary)]">{line.productName}</span>
                   <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]">
@@ -93,8 +93,8 @@ export function OrderForm({
           </ul>
           {subtotal > 0 && (
             <div className="mt-4 flex items-center justify-between border-t border-[var(--border-hairline)] pt-3">
-              <span className="text-xs text-[var(--fg-muted)]">جمع اقلام قیمت‌دار</span>
-              <span className="font-display text-sm font-bold">{formatPrice(subtotal)}</span>
+              <span className="text-meta text-[var(--fg-muted)]">جمع اقلام قیمت‌دار</span>
+              <span className="font-display text-base font-bold">{formatPrice(subtotal)}</span>
             </div>
           )}
           {hasUnpriced && (

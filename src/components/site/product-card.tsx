@@ -133,19 +133,23 @@ export function ProductCard({
           {product.brandName && (
             <Link
               href={`/brands/${product.brandSlug}`}
-              className="uppercase transition-colors hover:text-[var(--brand)]"
+              className="shrink-0 uppercase transition-colors hover:text-[var(--brand)]"
             >
               {product.brandName}
             </Link>
           )}
-          {product.brandName && product.model && <span aria-hidden>·</span>}
-          {product.model && <span dir="ltr">{product.model}</span>}
+          {product.brandName && product.model && <span className="shrink-0" aria-hidden>·</span>}
+          {product.model && (
+            <span dir="ltr" className="min-w-0 truncate" title={product.model}>
+              {product.model}
+            </span>
+          )}
         </div>
 
         <h3 className="mb-2">
           <Link
             href={`/products/${product.slug}`}
-            className="clamp-2 text-[0.9375rem] font-semibold leading-7 text-[var(--fg-primary)] transition-colors group-hover:text-[var(--brand)]"
+            className="clamp-2 text-base font-semibold leading-7 text-[var(--fg-primary)] transition-colors group-hover:text-[var(--brand)]"
           >
             {product.name}
           </Link>
@@ -156,10 +160,13 @@ export function ProductCard({
           <dl className="mb-4 grid grid-cols-2 gap-x-3 gap-y-1.5 border-y border-[var(--border-hairline)] py-3">
             {product.keySpecs.slice(0, 2).map((spec) => (
               <div key={spec.label} className="min-w-0">
+                {/* برچسب ۱۳px و مقدار ۱۴px: پیش‌تر هر دو ۱۲px بودند و جفت
+                    برچسب/مقدار هیچ سلسله‌مراتبی نداشت — درست همان‌جایی که
+                    خریدار صنعتی اول نگاه می‌کند. */}
                 <dt className="truncate text-micro text-[var(--fg-subtle)]">{spec.label}</dt>
-                <dd className="truncate text-xs font-medium text-[var(--fg-secondary)]">
+                <dd className="clamp-2 text-meta font-semibold leading-6 text-[var(--fg-secondary)]">
                   {spec.value}
-                  {spec.unit && <span className="text-[var(--fg-subtle)]"> {spec.unit}</span>}
+                  {spec.unit && <span className="text-micro font-normal text-[var(--fg-subtle)]"> {spec.unit}</span>}
                 </dd>
               </div>
             ))}
@@ -171,11 +178,12 @@ export function ProductCard({
             {hasPrice ? (
               <div>
                 {discount && (
-                  <span className="block text-xs text-[var(--fg-subtle)] line-through">
+                  <span className="block text-meta text-[var(--fg-subtle)] line-through">
                     {formatPrice(product.comparePrice, { withUnit: false })}
                   </span>
                 )}
-                <span className="font-display text-base font-bold text-[var(--fg-primary)]">
+                {/* قیمت اصلی‌ترین عددِ کارت است؛ ۱۸px تا از نام محصول جدا بایستد */}
+                <span className="font-display text-lg font-bold text-[var(--fg-primary)]">
                   {formatPrice(product.price)}
                 </span>
               </div>
@@ -189,7 +197,7 @@ export function ProductCard({
           <div className="flex gap-2">
             <Link
               href={`/products/${product.slug}`}
-              className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md bg-[var(--brand)] text-meta font-medium text-[var(--fg-on-brand)] transition-[background-color,box-shadow] duration-200 group-hover:shadow-[var(--shadow-brand)] group-has-[:focus-visible]:shadow-[var(--shadow-brand)] hover:bg-[var(--brand-hover)]"
+              className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-[background-color,box-shadow] duration-200 group-hover:shadow-[var(--shadow-brand)] group-has-[:focus-visible]:shadow-[var(--shadow-brand)] hover:bg-[var(--brand-hover)]"
             >
               {product.priceMode === "PUBLIC" ? "ثبت سفارش" : "استعلام قیمت"}
             </Link>

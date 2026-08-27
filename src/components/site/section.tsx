@@ -44,7 +44,7 @@ export function SectionHeading({
         )}
         <h2 className="font-display text-section font-bold">{title}</h2>
         {description && (
-          <p className="mt-4 text-[0.9375rem] leading-8 text-[var(--fg-muted)]">{description}</p>
+          <p className="mt-4 text-sm leading-8 text-[var(--fg-muted)]">{description}</p>
         )}
       </Reveal>
 

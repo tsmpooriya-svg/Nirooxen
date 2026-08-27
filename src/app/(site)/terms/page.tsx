@@ -137,7 +137,7 @@ export default async function TermsPage() {
                     <h2 className="font-display text-lg font-bold">{clause.title}</h2>
                     <div className="mt-3 space-y-3">
                       {clause.body.map((paragraph) => (
-                        <p key={paragraph} className="text-[0.9375rem] leading-9 text-[var(--fg-muted)]">
+                        <p key={paragraph} className="text-sm leading-9 text-[var(--fg-muted)]">
                           {paragraph}
                         </p>
                       ))}

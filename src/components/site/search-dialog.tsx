@@ -137,7 +137,7 @@ export function SearchDialog() {
                 }}
                 placeholder="نام محصول، مدل یا کد کالا…"
                 aria-label="جستجو"
-                className="h-16 flex-1 bg-transparent text-[0.9375rem] outline-none placeholder:text-[var(--fg-subtle)]"
+                className="h-16 flex-1 bg-transparent text-base outline-none placeholder:text-[var(--fg-subtle)]"
               />
               {loading && (
                 <span className="anim-spin size-4 shrink-0 rounded-full border-2 border-[var(--brand)] border-t-transparent" />
@@ -155,7 +155,7 @@ export function SearchDialog() {
               {query.trim() && !loading && hits.length === 0 && (
                 <div className="px-5 py-12 text-center">
                   <p className="text-sm text-[var(--fg-muted)]">نتیجه‌ای برای «{query}» پیدا نشد.</p>
-                  <p className="mt-2 text-xs text-[var(--fg-subtle)]">
+                  <p className="mt-2 text-meta text-[var(--fg-subtle)]">
                     می‌توانید درخواست تأمین کالا ثبت کنید؛ کارشناسان ما پیگیری می‌کنند.
                   </p>
                 </div>
@@ -189,7 +189,7 @@ export function SearchDialog() {
                       {[hit.brandName, hit.model, hit.categoryName].filter(Boolean).join(" · ")}
                     </span>
                   </span>
-                  <span className="shrink-0 text-xs text-[var(--fg-muted)]">
+                  <span className="shrink-0 text-meta text-[var(--fg-muted)]">
                     {hit.priceMode === "PUBLIC" && hit.price
                       ? formatPrice(hit.price)
                       : "استعلام قیمت"}
@@ -207,7 +207,7 @@ export function SearchDialog() {
                           key={term}
                           type="button"
                           onClick={() => setQuery(term)}
-                          className="rounded-full border border-[var(--border-subtle)] px-3 py-1.5 text-xs text-[var(--fg-muted)] transition-all duration-200 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+                          className="rounded-full border border-[var(--border-subtle)] px-3 py-1.5 text-meta text-[var(--fg-muted)] transition-all duration-200 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
                         >
                           {term}
                         </button>

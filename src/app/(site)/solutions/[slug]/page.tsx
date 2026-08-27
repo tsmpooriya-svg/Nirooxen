@@ -92,7 +92,7 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
             <Reveal className="lg:col-span-5">
               <div className="h-full rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-7 sm:p-8">
                 <p className="eyebrow mb-4">وضعیت شما</p>
-                <p className="text-[0.9375rem] leading-9 text-[var(--fg-secondary)]">
+                <p className="text-sm leading-9 text-[var(--fg-secondary)]">
                   {solution.situation}
                 </p>
               </div>
@@ -101,7 +101,7 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
             <Reveal className="lg:col-span-7" delay={90}>
               <div className="edge-lit relative h-full overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-2)] p-7 sm:p-8">
                 <p className="eyebrow mb-4">راهکار نیروژن</p>
-                <p className="text-[0.9375rem] leading-9 text-[var(--fg-primary)]">
+                <p className="text-sm leading-9 text-[var(--fg-primary)]">
                   {solution.resolution}
                 </p>
 
@@ -249,7 +249,7 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
                 <h2 className="font-display text-[1.375rem] font-bold leading-[1.6] tracking-tight sm:text-[1.625rem]">
                   برای انتخاب دقیق تجهیزات این کاربری مشاوره می‌خواهید؟
                 </h2>
-                <p className="mt-4 text-[0.9375rem] leading-8 text-[var(--fg-muted)]">
+                <p className="mt-4 text-sm leading-8 text-[var(--fg-muted)]">
                   مشخصات پروژه را بفرستید تا هد و دبی موردنیاز محاسبه و گزینه مناسب به شما پیشنهاد
                   شود.
                 </p>
@@ -292,7 +292,7 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
                       <span className="text-sm font-semibold transition-colors group-hover:text-[var(--brand)]">
                         {other.name}
                       </span>
-                      <span className="clamp-2 mt-2 text-[0.75rem] leading-6 text-[var(--fg-muted)]">
+                      <span className="clamp-2 mt-2 text-meta leading-6 text-[var(--fg-muted)]">
                         {other.summary}
                       </span>
                     </Link>

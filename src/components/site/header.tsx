@@ -146,7 +146,7 @@ export function SiteHeader({
     <>
       {/* نوار اطلاعات تماس — روی موبایل مخفی است */}
       <div className="relative z-50 hidden border-b border-[var(--border-hairline)] bg-[var(--bg-sunken)] lg:block">
-        <div className="shell flex h-10 items-center justify-between text-xs text-[var(--fg-muted)]">
+        <div className="shell flex h-10 items-center justify-between text-meta text-[var(--fg-muted)]">
           <div className="flex items-center gap-5">
             <span className="flex items-center gap-2">
               <span className="inline-block h-3 w-px bg-[var(--brand)]" aria-hidden />
@@ -266,7 +266,7 @@ export function SiteHeader({
                   aria-expanded={moreOpen}
                   aria-haspopup="true"
                   className={cn(
-                    "relative flex items-center gap-1 whitespace-nowrap px-3.5 py-2 text-[0.875rem] font-medium transition-colors duration-200",
+                    "relative flex items-center gap-1 whitespace-nowrap px-3.5 py-2 text-sm font-medium transition-colors duration-200",
                     hasActiveCollapsed || moreOpen
                       ? "text-[var(--brand)]"
                       : "text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]",
@@ -314,7 +314,7 @@ export function SiteHeader({
                           <Link
                             href={item.href}
                             className={cn(
-                              "block whitespace-nowrap px-4 py-2.5 text-[0.875rem] font-medium transition-colors duration-200",
+                              "block whitespace-nowrap px-4 py-2.5 text-sm font-medium transition-colors duration-200",
                               active
                                 ? "bg-[var(--brand-soft)] text-[var(--brand)]"
                                 : "text-[var(--fg-secondary)] hover:bg-[var(--bg-elev-3)] hover:text-[var(--fg-primary)]",
@@ -417,7 +417,7 @@ export function SiteHeader({
                     <span className="block text-sm font-semibold text-[var(--fg-primary)] transition-colors group-hover:text-[var(--brand)]">
                       {category.name}
                     </span>
-                    <span className="block font-mono text-micro text-[var(--fg-subtle)]">
+                    <span className="block font-mono text-micro tracking-wide text-[var(--fg-subtle)]">
                       {toFaDigits(category.productCount)} کالا
                     </span>
                   </span>
@@ -438,7 +438,7 @@ export function SiteHeader({
             ))}
           </div>
           <div className="border-t border-[var(--border-hairline)] bg-[var(--bg-sunken)]/60">
-            <div className="shell flex items-center justify-between py-3.5 text-xs">
+            <div className="shell flex items-center justify-between py-3.5 text-meta">
               <span className="text-[var(--fg-muted)]">
                 محصول موردنظرتان را پیدا نکردید؟ کارشناسان ما آن را برایتان تأمین می‌کنند.
               </span>
@@ -498,7 +498,7 @@ export function SiteHeader({
                 >
                   <Link
                     href={item.href}
-                    className="flex items-center justify-between rounded-md px-3 py-3 text-[0.9375rem] font-medium text-[var(--fg-secondary)] transition-colors hover:bg-[var(--bg-elev-3)] hover:text-[var(--brand)]"
+                    className="flex items-center justify-between rounded-md px-3 py-3 text-sm font-medium text-[var(--fg-secondary)] transition-colors hover:bg-[var(--bg-elev-3)] hover:text-[var(--brand)]"
                   >
                     {item.title}
                     <svg viewBox="0 0 16 16" className="size-3.5 opacity-40" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -516,7 +516,7 @@ export function SiteHeader({
                   <li key={category.id}>
                     <Link
                       href={`/products?category=${category.slug}`}
-                      className="flex items-center gap-2 rounded-md border border-[var(--border-hairline)] p-2.5 text-xs text-[var(--fg-muted)] transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)]"
+                      className="flex items-center gap-2 rounded-md border border-[var(--border-hairline)] p-2.5 text-meta text-[var(--fg-muted)] transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)]"
                     >
                       <DomainIcon name={category.icon} className="size-4 shrink-0 text-[var(--brand)]" />
                       <span className="truncate">{category.name}</span>
@@ -570,7 +570,7 @@ function NavLink({
     <Link
       href={item.href}
       className={cn(
-        "relative flex items-center gap-1 whitespace-nowrap px-3.5 py-2 text-[0.875rem] font-medium transition-colors duration-200",
+        "relative flex items-center gap-1 whitespace-nowrap px-3.5 py-2 text-sm font-medium transition-colors duration-200",
         active ? "text-[var(--brand)]" : "text-[var(--fg-secondary)] hover:text-[var(--fg-primary)]",
       )}
       aria-current={active ? "page" : undefined}

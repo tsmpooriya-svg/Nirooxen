@@ -43,7 +43,7 @@ export default async function ContactPage() {
                     <li key={phone}>
                       <a
                         href={`tel:${settings.contact.phonesRaw[i]}`}
-                        className="num text-[0.9375rem] font-medium text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
+                        className="num text-sm font-medium text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
                       >
                         {phone}
                       </a>
@@ -61,7 +61,7 @@ export default async function ContactPage() {
               >
                 <a
                   href={`tel:${settings.contact.mobileRaw}`}
-                  className="num text-[0.9375rem] font-medium text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
+                  className="num text-sm font-medium text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
                 >
                   {settings.contact.mobile}
                 </a>
@@ -79,7 +79,7 @@ export default async function ContactPage() {
                   </>
                 }
               >
-                <ul className="space-y-1.5 text-[0.875rem]">
+                <ul className="space-y-1.5 text-sm">
                   <li>
                     <a
                       href={`mailto:${settings.contact.email}`}
@@ -107,10 +107,10 @@ export default async function ContactPage() {
                 title="دفتر مرکزی"
                 icon={<path d="M10 2.5c3 3.3 5 6 5 8.2a5 5 0 0 1-10 0c0-2.2 2-4.9 5-8.2Z" />}
               >
-                <p className="text-[0.875rem] leading-8 text-[var(--fg-primary)]">
+                <p className="text-sm leading-8 text-[var(--fg-primary)]">
                   {settings.contact.address}
                 </p>
-                <p className="mt-2 text-xs text-[var(--fg-subtle)]">
+                <p className="mt-2 text-meta text-[var(--fg-subtle)]">
                   کد پستی: <span className="num">{settings.contact.postalCode}</span>
                 </p>
               </ContactCard>

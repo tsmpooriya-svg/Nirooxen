@@ -155,7 +155,7 @@ export function CartPanel() {
                             <path d="M3.5 8h9" strokeLinecap="round" />
                           </svg>
                         </button>
-                        <span className="min-w-8 text-center font-mono text-xs">{toFaDigits(line.quantity)}</span>
+                        <span className="min-w-8 text-center font-mono text-meta font-medium">{toFaDigits(line.quantity)}</span>
                         <button
                           type="button"
                           onClick={() => setQuantity(line.productId, line.quantity + 1)}
@@ -168,7 +168,7 @@ export function CartPanel() {
                         </button>
                       </div>
 
-                      <span className="text-xs text-[var(--fg-muted)]">
+                      <span className="text-meta text-[var(--fg-muted)]">
                         {line.priceMode === "PUBLIC" && line.unitPrice
                           ? formatPrice(line.unitPrice * line.quantity)
                           : "استعلامی"}

@@ -12,7 +12,7 @@ export function Breadcrumb({ items, className }: { items: Crumb[]; className?: s
     <>
       <JsonLd data={breadcrumbJsonLd(all)} />
       <nav aria-label="مسیر صفحه" className={cn("py-4", className)}>
-        <ol className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--fg-muted)]">
+        <ol className="flex flex-wrap items-center gap-1.5 text-meta text-[var(--fg-muted)]">
           {all.map((item, index) => {
             const last = index === all.length - 1;
             return (
@@ -65,7 +65,7 @@ export function PageHeader({
           {title}
         </h1>
         {description && (
-          <p className="mt-3 max-w-2xl text-[0.9375rem] leading-8 text-[var(--fg-muted)]">
+          <p className="mt-3 max-w-2xl text-sm leading-8 text-[var(--fg-muted)]">
             {description}
           </p>
         )}

@@ -223,14 +223,14 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
                       return (
                         <blockquote
                           key={index}
-                          className="my-6 border-s-2 border-[var(--brand)] bg-[var(--brand-soft)] px-5 py-4 text-[0.875rem] leading-8 text-[var(--fg-secondary)]"
+                          className="my-6 border-s-2 border-[var(--brand)] bg-[var(--brand-soft)] px-5 py-4 text-sm leading-8 text-[var(--fg-secondary)]"
                         >
                           {paragraph.replace("> ", "")}
                         </blockquote>
                       );
                     }
                     return (
-                      <p key={index} className="mb-4 text-[0.9375rem] leading-9 text-[var(--fg-secondary)]">
+                      <p key={index} className="mb-4 text-sm leading-9 text-[var(--fg-secondary)]">
                         {paragraph}
                       </p>
                     );
@@ -258,10 +258,10 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
               )}
             </div>
 
-            <h1 className="font-display text-[1.375rem] font-bold leading-9">{product.name}</h1>
+            <h1 className="font-display text-2xl font-bold leading-9">{product.name}</h1>
 
             {product.shortDescription && (
-              <p className="mt-3 text-meta leading-7 text-[var(--fg-muted)]">
+              <p className="mt-3 text-sm leading-8 text-[var(--fg-muted)]">
                 {product.shortDescription}
               </p>
             )}
@@ -271,10 +271,13 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
               <dl className="mt-5 grid grid-cols-2 gap-3 border-y border-[var(--border-hairline)] py-4">
                 {keySpecs.map((spec) => (
                   <div key={spec.id}>
+                    {/* «حداکثر دبی: ۱۸»، «توان مصرفی: ۵۵۰ وات» — عددهایی که
+                        تصمیم خرید را می‌سازند. مقدار ۱۶px، واحد یک پله پایین‌تر
+                        تا عدد جلو بیفتد بدون اینکه واحد گم شود. */}
                     <dt className="text-micro text-[var(--fg-subtle)]">{spec.label}</dt>
-                    <dd className="mt-1 text-meta font-semibold text-[var(--fg-primary)]">
+                    <dd className="mt-1 text-base font-semibold text-[var(--fg-primary)]">
                       {spec.value}
-                      {spec.unit && <span className="ms-1 font-normal text-[var(--fg-muted)]">{spec.unit}</span>}
+                      {spec.unit && <span className="ms-1 text-meta font-normal text-[var(--fg-muted)]">{spec.unit}</span>}
                     </dd>
                   </div>
                 ))}
@@ -293,7 +296,7 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
                   <p className="font-display text-[1.625rem] font-extrabold text-[var(--fg-primary)]">
                     {formatPrice(product.price)}
                   </p>
-                  <p className="mt-1 text-micro text-[var(--fg-subtle)]">
+                  <p className="mt-1 text-meta text-[var(--fg-subtle)]">
                     قیمت برای هر {product.unit} — امکان تخفیف در تعداد بالا
                   </p>
                 </>
@@ -302,7 +305,7 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
                   <p className="text-sm font-semibold text-[var(--brand)]">
                     {product.priceMode === "CALL" ? "قیمت تلفنی اعلام می‌شود" : "قیمت با استعلام"}
                   </p>
-                  <p className="mt-1.5 text-micro leading-6 text-[var(--fg-secondary)]">
+                  <p className="mt-1.5 text-meta leading-7 text-[var(--fg-secondary)]">
                     قیمت این کالا به مشخصات دقیق و تعداد سفارش بستگی دارد. درخواست خود را ثبت کنید تا
                     کارشناس با شما تماس بگیرد.
                   </p>
@@ -325,7 +328,7 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
                       <path d="M3.5 8h9" strokeLinecap="round" />
                     </svg>
                   </button>
-                  <span className="min-w-10 text-center font-mono text-sm">{toFaDigits(quantity)}</span>
+                  <span className="min-w-10 text-center font-mono text-base font-medium">{toFaDigits(quantity)}</span>
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.min(999, q + 1))}
@@ -337,7 +340,7 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
                     </svg>
                   </button>
                 </div>
-                <span className="text-micro text-[var(--fg-subtle)]">{product.unit}</span>
+                <span className="text-meta text-[var(--fg-subtle)]">{product.unit}</span>
               </div>
             )}
 
@@ -366,7 +369,7 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
               <button
                 type="button"
                 onClick={addToCart}
-                className="flex h-11 w-full items-center justify-center gap-2 rounded-md border border-[var(--border-default)] text-meta font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-md border border-[var(--border-default)] text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
               >
                 <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M3 3h2l1.6 8.4a1.5 1.5 0 0 0 1.5 1.2h6.3a1.5 1.5 0 0 0 1.5-1.2L17 6H5.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -378,7 +381,7 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
             </div>
 
             {/* اطلاعات تکمیلی */}
-            <ul className="mt-6 space-y-3 border-t border-[var(--border-hairline)] pt-5 text-[0.75rem]">
+            <ul className="mt-6 space-y-3 border-t border-[var(--border-hairline)] pt-5 text-meta">
               {product.warrantyMonths && (
                 <InfoRow label="گارانتی" value={`${toFaDigits(product.warrantyMonths)} ماه`} />
               )}
@@ -513,7 +516,7 @@ function TabButton({
       aria-selected={active}
       onClick={onClick}
       className={cn(
-        "relative px-5 py-3 text-[0.875rem] font-medium transition-colors duration-200",
+        "relative px-5 py-3 text-sm font-medium transition-colors duration-200",
         active ? "text-[var(--brand)]" : "text-[var(--fg-muted)] hover:text-[var(--fg-primary)]",
       )}
     >
