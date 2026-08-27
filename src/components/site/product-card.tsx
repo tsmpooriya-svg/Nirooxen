@@ -55,8 +55,17 @@ export function ProductCard({
     <article
       className={cn(
         "brackets group relative flex h-full flex-col overflow-hidden rounded-lg border border-[var(--border-subtle)]",
-        "bg-[var(--bg-elev-1)] transition-all duration-400 [transition-timing-function:var(--ease-out-expo)]",
+        "bg-[var(--bg-elev-1)]",
+        // فهرست صریح به‌جای transition-all: فقط همین سه ویژگی حرکت می‌کنند
+        "transition-[transform,border-color,box-shadow] duration-200",
+        "[transition-timing-function:var(--ease-out-expo)]",
         "hover:-translate-y-1 hover:border-[var(--border-brand)] hover:shadow-[var(--shadow-lg)]",
+        // فوکوس کیبورد دقیقاً همان حسِ هاور را می‌گیرد، نه کمتر
+        "has-[:focus-visible]:-translate-y-1 has-[:focus-visible]:border-[var(--border-brand)]",
+        "has-[:focus-visible]:shadow-[var(--shadow-lg)]",
+        // حرکت‌کاهش‌یافته: بالا آمدن حذف می‌شود، ولی حاشیه و سایه — که حرکت
+        // نیستند — می‌مانند تا بازخورد هاور/فوکوس از بین نرود
+        "motion-reduce:translate-y-0!",
         className,
       )}
     >
@@ -73,7 +82,7 @@ export function ProductCard({
             alt=""
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover transition-transform duration-700 [transition-timing-function:var(--ease-out-expo)] group-hover:scale-[1.06]"
+            className="object-cover transition-transform duration-[450ms] [transition-timing-function:var(--ease-out-expo)] group-hover:scale-[1.02] group-has-[:focus-visible]:scale-[1.02] motion-reduce:scale-100!"
           />
         ) : (
           <span className="absolute inset-0 grid place-items-center text-[var(--fg-subtle)]">
@@ -86,29 +95,37 @@ export function ProductCard({
 
         {/* درخشش نرم هنگام هاور */}
         <span
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--bg-base)]/70 via-transparent to-transparent opacity-70 transition-opacity duration-500 group-hover:opacity-40"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--bg-base)]/70 via-transparent to-transparent opacity-70 transition-opacity duration-[450ms] group-hover:opacity-45 group-has-[:focus-visible]:opacity-45"
           aria-hidden
         />
 
-        <span className="absolute start-3 top-3 flex flex-col gap-1.5">
-          {product.isNew && (
-            <Badge tone="brand" size="sm">
-              جدید
-            </Badge>
-          )}
-          {discount && (
-            <Badge tone="signal" size="sm">
-              {toFaDigits(discount)}٪ تخفیف
-            </Badge>
-          )}
-        </span>
-
-        <span className="absolute end-3 top-3">
-          <Badge tone={stock.tone} size="sm" dot>
-            {stock.label}
-          </Badge>
-        </span>
       </Link>
+
+      {/*
+        نشان‌ها بیرون از لینک تصویر هستند.
+        آن لینک aria-hidden است تا مقصدش دوباره برای صفحه‌خوان خوانده نشود؛
+        وقتی نشان‌ها داخلش بودند، «جدید»، «٪ تخفیف» و وضعیت موجودی هم با آن
+        پنهان می‌شدند — یعنی اطلاعات معنادار از دسترس صفحه‌خوان خارج بود.
+        عمداً بی‌حرکت‌اند: خوانایی مهم‌تر از واکنش نشان‌دادن است.
+      */}
+      <span className="pointer-events-none absolute start-3 top-3 flex flex-col gap-1.5">
+        {product.isNew && (
+          <Badge tone="brand" size="sm">
+            جدید
+          </Badge>
+        )}
+        {discount && (
+          <Badge tone="signal" size="sm">
+            {toFaDigits(discount)}٪ تخفیف
+          </Badge>
+        )}
+      </span>
+
+      <span className="pointer-events-none absolute end-3 top-3">
+        <Badge tone={stock.tone} size="sm" dot>
+          {stock.label}
+        </Badge>
+      </span>
 
       {/* محتوا */}
       <div className={cn("flex flex-1 flex-col p-4", !compact && "sm:p-5")}>
@@ -172,7 +189,7 @@ export function ProductCard({
           <div className="flex gap-2">
             <Link
               href={`/products/${product.slug}`}
-              className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md bg-[var(--brand)] text-meta font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
+              className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md bg-[var(--brand)] text-meta font-medium text-[var(--fg-on-brand)] transition-[background-color,box-shadow] duration-200 group-hover:shadow-[var(--shadow-brand)] group-has-[:focus-visible]:shadow-[var(--shadow-brand)] hover:bg-[var(--brand-hover)]"
             >
               {product.priceMode === "PUBLIC" ? "ثبت سفارش" : "استعلام قیمت"}
             </Link>
@@ -182,7 +199,7 @@ export function ProductCard({
               onClick={onAdd}
               aria-label={`افزودن ${product.name} به سبد استعلام`}
               title="افزودن به سبد استعلام"
-              className="grid size-10 shrink-0 place-items-center rounded-md border border-[var(--border-subtle)] text-[var(--fg-muted)] transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+              className="grid size-10 shrink-0 place-items-center rounded-md border border-[var(--border-subtle)] text-[var(--fg-muted)] transition-[color,border-color,background-color] duration-200 group-hover:border-[var(--border-default)] hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
             >
               <svg viewBox="0 0 20 20" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M3 3h2l1.6 8.4a1.5 1.5 0 0 0 1.5 1.2h6.3a1.5 1.5 0 0 0 1.5-1.2L17 6H5.4" strokeLinecap="round" strokeLinejoin="round" />

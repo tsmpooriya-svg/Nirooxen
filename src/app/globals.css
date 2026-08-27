@@ -675,10 +675,17 @@
     border-inline-start: 0;
     border-block-start: 0;
   }
-  .brackets:hover::before,
-  .brackets:hover::after {
-    width: 22px;
-    height: 22px;
+  /*
+    فقط روی دستگاه‌های دارای نشانگر واقعی. تیلویند خودش variant مربوط به
+    hover را داخل @media (hover: hover) می‌گذارد، ولی این قانون دست‌نویس
+    این‌طور نبود و روی لمسی بعد از هر تپ، حالت هاور گیر می‌کرد.
+  */
+  @media (hover: hover) and (pointer: fine) {
+    .brackets:hover::before,
+    .brackets:hover::after {
+      width: 22px;
+      height: 22px;
+    }
   }
 
   .text-gradient-brand {
@@ -843,6 +850,20 @@
     transform: none !important;
     filter: none !important;
   }
+  /*
+    کارت محصول: حذف حرکت با variant خودِ تیلویند (`motion-reduce:`) در همان
+    کامپوننت انجام می‌شود، نه اینجا.
+    چرا؟ چون تیلویند ۴ از ویژگی‌های مستقل translate/scale استفاده می‌کند و
+    Lightning CSS اعلان‌های دست‌نویسِ `translate: none !important` را در خروجی
+    حذف می‌کرد — قانون بی‌اثر می‌ماند. عبور از همان خط لوله، این ریسک را ندارد.
+    گوشه‌های تزئینی اما قانون دست‌نویس‌اند و همین‌جا خنثی می‌شوند:
+  */
+  .brackets:hover::before,
+  .brackets:hover::after {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
   /* مگامنو: فقط ظاهر/ناپدید شدن. بدون جابه‌جایی، بدون مقیاس، بدون تاری. */
   [data-mega-panel] {
     transform: none !important;
