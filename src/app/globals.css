@@ -127,6 +127,9 @@
   --bg-glass: rgb(11 18 32 / 0.72);
   --bg-glass-strong: rgb(8 13 23 / 0.9);
   --bg-scrim: rgb(3 6 12 / 0.72);
+  /* لایه تمرکز مگامنو. از --bg-scrim سبک‌تر است چون قرار نیست صفحه را پنهان
+     کند — فقط سلسله‌مراتب بسازد و هیرو همچنان قابل تشخیص بماند. */
+  --bg-scrim-soft: rgb(3 6 12 / 0.45);
 
   --fg-primary: var(--slate-100);
   --fg-secondary: var(--slate-300);
@@ -219,6 +222,7 @@
   --bg-glass: rgb(255 255 255 / 0.82);
   --bg-glass-strong: rgb(255 255 255 / 0.95);
   --bg-scrim: rgb(10 20 35 / 0.45);
+  --bg-scrim-soft: rgb(10 20 35 / 0.28);
 
   --fg-primary: #0a1424;
   --fg-secondary: #2c3e57;
@@ -329,6 +333,7 @@
   --color-inset: var(--bg-inset);
   --color-glass: var(--bg-glass);
   --color-scrim: var(--bg-scrim);
+  --color-scrim-soft: var(--bg-scrim-soft);
 
   --color-fg: var(--fg-primary);
   --color-fg-secondary: var(--fg-secondary);
@@ -838,6 +843,20 @@
     transform: none !important;
     filter: none !important;
   }
+  /* مگامنو: فقط ظاهر/ناپدید شدن. بدون جابه‌جایی، بدون مقیاس، بدون تاری. */
+  [data-mega-panel] {
+    transform: none !important;
+  }
+  [data-mega-panel] > * > * {
+    transform: none !important;
+    transition-delay: 0ms !important;
+  }
+  /*
+    تاری لایه تمرکز عمداً باقی می‌ماند: خودش حرکت نیست، و قانون سراسری بالا
+    مدت ترنزیشن را عملاً صفر کرده، پس بدون هیچ گذاری ظاهر می‌شود — یعنی همان
+    «تغییر آنی» که خواسته شده. (تلاش برای خاموش‌کردنش هم بی‌اثر بود، چون
+    یوتیلیتی لایه‌دار تیلویند در کسکید برنده می‌شود.)
+  */
 }
 
 /* --------------------------------------------------------------------------

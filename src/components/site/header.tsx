@@ -30,6 +30,8 @@ export function SiteHeader({
   const closeTimer = React.useRef<number | null>(null);
   const moreTimer = React.useRef<number | null>(null);
   const moreRef = React.useRef<HTMLDivElement>(null);
+  /* هم آیتم ناوبری و هم پنل را در بر می‌گیرد تا کلیک داخل پنل «بیرون» حساب نشود */
+  const megaRef = React.useRef<HTMLElement>(null);
 
   /** موارد قابل جمع‌شدن — هر کدام با بریک‌پوینتی که از آن به بعد در نوار می‌آید */
   const collapsibleNav = React.useMemo(
@@ -67,21 +69,56 @@ export function SiteHeader({
     };
   }, [mobileOpen]);
 
+  /*
+   * تأخیر بستن ۱۳۰ms است تا نشانگر فرصت کند از آیتم ناوبری به داخل پنل برسد
+   * و منو وسط راه بسته نشود. بیشتر از این، رابط کند حس می‌شود.
+   */
+  const CLOSE_DELAY = 130;
+
   const openMega = () => {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    // دو منو هم‌زمان باز نمی‌شوند؛ جابه‌جایی بین آن‌ها پیوسته می‌ماند
+    if (moreTimer.current) window.clearTimeout(moreTimer.current);
+    setMoreOpen(false);
     setMegaOpen(true);
   };
   const scheduleClose = () => {
-    closeTimer.current = window.setTimeout(() => setMegaOpen(false), 160);
+    closeTimer.current = window.setTimeout(() => setMegaOpen(false), CLOSE_DELAY);
   };
 
   const openMore = () => {
     if (moreTimer.current) window.clearTimeout(moreTimer.current);
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    setMegaOpen(false);
     setMoreOpen(true);
   };
   const scheduleMoreClose = () => {
-    moreTimer.current = window.setTimeout(() => setMoreOpen(false), 160);
+    moreTimer.current = window.setTimeout(() => setMoreOpen(false), CLOSE_DELAY);
   };
+
+  /*
+   * دسترسی با کیبورد و بستن با کلیک بیرون — همان الگویی که منوی «بیشتر» از
+   * قبل دارد، نه یک الگوی تازه.
+   *
+   * چرا Enter منو را باز نمی‌کند؟ چون «محصولات» یک لینک واقعی به /products
+   * است و ربودن Enter، مقصد واقعی را از کاربر کیبورد می‌گیرد. در عوض منو با
+   * فوکوس باز می‌شود، با Tab می‌شود داخلش رفت و با Escape بسته می‌شود.
+   */
+  React.useEffect(() => {
+    if (!megaOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!megaRef.current?.contains(event.target as Node)) setMegaOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMegaOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [megaOpen]);
 
   /*
    * کلیک روی «بیشتر» فقط باز می‌کند و هیچ‌وقت نمی‌بندد.
@@ -108,7 +145,7 @@ export function SiteHeader({
   return (
     <>
       {/* نوار اطلاعات تماس — روی موبایل مخفی است */}
-      <div className="hidden border-b border-[var(--border-hairline)] bg-[var(--bg-sunken)] lg:block">
+      <div className="relative z-50 hidden border-b border-[var(--border-hairline)] bg-[var(--bg-sunken)] lg:block">
         <div className="shell flex h-10 items-center justify-between text-xs text-[var(--fg-muted)]">
           <div className="flex items-center gap-5">
             <span className="flex items-center gap-2">
@@ -131,7 +168,25 @@ export function SiteHeader({
         </div>
       </div>
 
+      {/*
+        لایه تمرکز. بالای محتوای صفحه و زیر هدر (z-50) می‌نشیند، پس هدر و
+        خود مگامنو کاملاً واضح می‌مانند و فقط صفحه پشت‌شان عقب می‌رود.
+        فقط دسکتاپ — روی موبایل اصلاً رندر نمی‌شود.
+      */}
+      <div
+        data-mega-backdrop
+        aria-hidden="true"
+        onClick={() => setMegaOpen(false)}
+        className={cn(
+          "fixed inset-0 z-[45] hidden bg-[var(--bg-scrim-soft)] lg:block",
+          "backdrop-blur-[5px] transition-opacity duration-200",
+          "[transition-timing-function:var(--ease-out-quint)]",
+          megaOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
+        )}
+      />
+
       <header
+        ref={megaRef}
         className={cn(
           "sticky top-0 z-50 border-b transition-all duration-500",
           "[transition-timing-function:var(--ease-out-expo)]",
@@ -183,12 +238,15 @@ export function SiteHeader({
                   }
                   onMouseEnter={isProducts ? openMega : undefined}
                   onMouseLeave={isProducts ? scheduleClose : undefined}
+                  // کاربر کیبورد نباید به hover وابسته باشد
+                  onFocus={isProducts ? openMega : undefined}
                 >
                   <NavLink
                     item={item}
                     pathname={pathname}
                     hasCaret={isProducts}
                     caretOpen={isProducts ? megaOpen : undefined}
+                    controls={isProducts ? "mega-products" : undefined}
                   />
                 </div>
               );
@@ -315,25 +373,37 @@ export function SiteHeader({
           </div>
         </div>
 
-        {/* مگا منوی محصولات */}
+        {/*
+          مگامنوی محصولات.
+
+          قبلاً max-height از ۰ تا ۳۲rem انیمیت می‌شد؛ هم layout را در هر فریم
+          دوباره محاسبه می‌کرد و هم پنل «باز می‌شد» به‌جای اینکه سر جایش بنشیند.
+          حالا فقط opacity و transform حرکت می‌کنند — هر دو روی composite.
+        */}
         <div
+          id="mega-products"
+          data-mega-panel
           onMouseEnter={openMega}
           onMouseLeave={scheduleClose}
           className={cn(
-            "absolute inset-x-0 top-full hidden overflow-hidden border-b border-[var(--border-subtle)] lg:block",
-            "glass shadow-[var(--shadow-lg)] transition-all duration-400",
-            "[transition-timing-function:var(--ease-out-expo)]",
-            megaOpen ? "visible max-h-[32rem] opacity-100" : "invisible max-h-0 opacity-0",
+            "absolute inset-x-0 top-full hidden origin-top overflow-hidden lg:block",
+            "border-b border-[var(--border-brand)] glass shadow-[var(--shadow-xl)]",
+            "transition-[opacity,transform,visibility] duration-200",
+            "[transition-timing-function:var(--ease-out-quint)]",
+            megaOpen
+              ? "visible translate-y-0 scale-100 opacity-100"
+              : "invisible -translate-y-1.5 scale-[0.99] opacity-0",
           )}
         >
           <div className="shell grid grid-cols-4 gap-x-8 gap-y-6 py-8">
             {categories.slice(0, 8).map((category, index) => (
               <div
                 key={category.id}
-                style={{ transitionDelay: megaOpen ? `${index * 35}ms` : "0ms" }}
+                style={{ transitionDelay: megaOpen ? `${index * 10}ms` : "0ms" }}
                 className={cn(
-                  "transition-all duration-500 [transition-timing-function:var(--ease-out-expo)]",
-                  megaOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
+                  "transition-[opacity,transform] duration-[160ms]",
+                  "[transition-timing-function:var(--ease-out-quint)]",
+                  megaOpen ? "translate-y-0 opacity-100" : "translate-y-1.5 opacity-0",
                 )}
               >
                 <Link
@@ -485,11 +555,14 @@ function NavLink({
   pathname,
   hasCaret,
   caretOpen,
+  controls,
 }: {
   item: { title: string; href: string };
   pathname: string;
   hasCaret?: boolean;
   caretOpen?: boolean;
+  /** id پنلی که این آیتم بازش می‌کند */
+  controls?: string;
 }) {
   const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
@@ -502,6 +575,7 @@ function NavLink({
       )}
       aria-current={active ? "page" : undefined}
       aria-expanded={hasCaret ? caretOpen : undefined}
+      aria-controls={controls}
     >
       {item.title}
       {hasCaret && (
