@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-label="CUBIC WATER TANK">
+  <defs>
+    <linearGradient id="bg-g13" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#050910"/>
+    </linearGradient>
+    <radialGradient id="glow-g13" cx="50%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#22bcd6" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#22bcd6" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid-g13" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0v24" fill="none" stroke="#ffffff" stroke-opacity=".045" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="480" height="360" fill="url(#bg-g13)"/>
+  <rect width="480" height="360" fill="url(#grid-g13)"/>
+  <rect width="480" height="360" fill="url(#glow-g13)"/>
+  <g fill="none" stroke="#4fd3e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".92">
+    <path d="M150 140h150v152H150z" />
+    <path d="M300 140l40-28v152l-40 28z" opacity=".6" />
+    <path d="M150 140l40-28h150l-40 28z" opacity=".6" />
+    <ellipse cx="228" cy="128" rx="20" ry="7" />
+    <path d="M160 182h130M160 226h130M160 270h130" opacity=".24" />
+    <path d="M162 292v16M288 292v16" opacity=".5" />
+    <path d="M120 140v152M114 140h12M114 292h12" opacity=".45" />
+    <path d="M150 330h190M150 324v12M340 324v12" opacity=".45" />
+  </g>
+  <g fill="none" stroke="#22bcd6" stroke-width="1" opacity=".5">
+    <path d="M18 18h26M18 18v26M462 18h-26M462 18v26M18 342h26M18 342v-26M462 342h-26M462 342v-26"/>
+  </g>
+  <text x="24" y="348" fill="#4fd3e8" fill-opacity=".55" font-family="ui-monospace, monospace" font-size="11" letter-spacing="2">CUBIC WATER TANK</text>
+</svg>

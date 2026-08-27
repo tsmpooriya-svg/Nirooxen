@@ -42,6 +42,16 @@ const SPEC_DEFS = [
   { key: "layers", label: "تعداد لایه", dim: "COUNT", unit: "count", group: "ساختار", filt: true, ui: "CHECKBOX", pos: 46 },
 ];
 
+/** تصویر جانشین هر خانواده — تولیدشده با scripts/generate-placeholders.mjs */
+const PLACEHOLDER_BY_FAMILY = {
+  vertical: "/images/products/tank-vertical.svg",
+  horizontal: "/images/products/tank-horizontal.svg",
+  booklike: "/images/products/tank-booklike.svg",
+  spherical: "/images/products/tank-spherical.svg",
+  cubic: "/images/products/tank-cubic.svg",
+  underthestairs: "/images/products/tank-underthestairs.svg",
+};
+
 const DIM_LABEL = {
   height: "ارتفاع",
   length: "طول",
@@ -270,15 +280,20 @@ try {
       stat.specRows++;
     }
 
-    /* تصاویر */
+    /*
+     * تصاویر — تصویر جانشین «نقشه فنی» خانواده، نه عکس منبع.
+     *
+     * عکس‌های منبع واترمارک شرکت دیگری داشتند و قابل انتشار نبودند؛ حذف شدند.
+     * این اسکریپت عمداً دیگر سراغ عکس منبع نمی‌رود تا اجرای دوباره‌اش
+     * ارجاع‌های حذف‌شده را برنگرداند. با رسیدن عکس واقعی محصولات، تصاویر از
+     * پنل مدیریت جایگزین می‌شوند.
+     */
     await q("delete from product_images where product_id = $1", [productId]);
-    for (const [i, url] of (p.localImages ?? []).entries()) {
-      await q(
-        "insert into product_images (product_id, url, alt, position, is_primary) values ($1, $2, $3, $4, $5)",
-        [productId, url, p.name, i, i === 0],
-      );
-      stat.imageRows++;
-    }
+    await q(
+      "insert into product_images (product_id, url, alt, position, is_primary) values ($1, $2, $3, 0, true)",
+      [productId, PLACEHOLDER_BY_FAMILY[p.family] ?? "/images/products/generic.svg", p.name],
+    );
+    stat.imageRows++;
   }
 
   if (DRY) {

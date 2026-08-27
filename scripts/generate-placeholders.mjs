@@ -96,6 +96,63 @@ const drawings = {
     <circle cx="270" cy="220" r="34" opacity=".6" />
     <path d="M150 140h20" opacity=".6" />
     <path d="M90 110v160M390 110v160" opacity=".4" />`,
+
+  /* ---- مخازن آب پلی‌اتیلن — یکی برای هر خانواده ------------------------ */
+  "tank-vertical": `
+    <path d="M170 108h140v170a14 14 0 0 1-14 14H184a14 14 0 0 1-14-14z" />
+    <ellipse cx="240" cy="108" rx="70" ry="18" />
+    <ellipse cx="240" cy="108" rx="26" ry="7" opacity=".6" />
+    <path d="M214 101h52" opacity=".6" />
+    <path d="M180 150h120M180 190h120M180 230h120" opacity=".28" />
+    <path d="M186 292v14h108v-14" opacity=".55" />
+    <path d="M340 108v184M334 108h12M334 292h12" opacity=".45" />
+    <path d="M170 322h140M170 316v12M310 316v12" opacity=".45" />`,
+  "tank-horizontal": `
+    <path d="M126 150h228v104H126z" />
+    <ellipse cx="126" cy="202" rx="24" ry="52" />
+    <ellipse cx="354" cy="202" rx="24" ry="52" opacity=".55" />
+    <ellipse cx="240" cy="150" rx="24" ry="8" />
+    <path d="M224 143h32" opacity=".6" />
+    <path d="M170 254v34h-26v-34M310 254v34h26v-34" opacity=".7" />
+    <path d="M126 202h228" opacity=".22" />
+    <path d="M102 150v104M96 150h12M96 254h12" opacity=".45" />
+    <path d="M126 316h228M126 310v12M354 310v12" opacity=".45" />`,
+  "tank-booklike": `
+    <path d="M186 104h108v190H186z" />
+    <path d="M294 104l36 22v190l-36-22z" opacity=".6" />
+    <path d="M186 104l36-22h108l-36 22" opacity=".6" />
+    <ellipse cx="240" cy="104" rx="22" ry="7" />
+    <path d="M196 148h88M196 190h88M196 232h88" opacity=".26" />
+    <path d="M196 294v16h88v-16" opacity=".5" />
+    <path d="M156 104v190M150 104h12M150 294h12" opacity=".45" />
+    <path d="M186 330h144M186 324v12M330 324v12" opacity=".45" />`,
+  "tank-spherical": `
+    <circle cx="240" cy="188" r="94" />
+    <ellipse cx="240" cy="188" rx="94" ry="30" opacity=".3" />
+    <ellipse cx="240" cy="188" rx="34" ry="94" opacity=".22" />
+    <ellipse cx="240" cy="96" rx="24" ry="8" />
+    <path d="M224 89h32" opacity=".6" />
+    <path d="M188 274l-14 34h132l-14-34" opacity=".65" />
+    <path d="M174 308h132" opacity=".65" />
+    <path d="M356 94v188M350 94h12M350 282h12" opacity=".45" />`,
+  "tank-cubic": `
+    <path d="M150 140h150v152H150z" />
+    <path d="M300 140l40-28v152l-40 28z" opacity=".6" />
+    <path d="M150 140l40-28h150l-40 28z" opacity=".6" />
+    <ellipse cx="228" cy="128" rx="20" ry="7" />
+    <path d="M160 182h130M160 226h130M160 270h130" opacity=".24" />
+    <path d="M162 292v16M288 292v16" opacity=".5" />
+    <path d="M120 140v152M114 140h12M114 292h12" opacity=".45" />
+    <path d="M150 330h190M150 324v12M340 324v12" opacity=".45" />`,
+  "tank-underthestairs": `
+    <path d="M136 292V208l56-44 56-44 56-44v216z" />
+    <path d="M192 164v128M248 120v172" opacity=".3" />
+    <ellipse cx="300" cy="76" rx="20" ry="7" />
+    <path d="M284 69h32" opacity=".6" />
+    <path d="M136 250h168M136 292h168" opacity=".22" />
+    <path d="M146 292v16h130v-16" opacity=".5" />
+    <path d="M356 76v216M350 76h12M350 292h12" opacity=".45" />
+    <path d="M136 330h168M136 324v12M304 324v12" opacity=".45" />`,
 };
 
 const label = {
@@ -108,6 +165,12 @@ const label = {
   "submersible-pump": "SUBMERSIBLE PUMP",
   "water-filter": "FILTRATION UNIT",
   generic: "EQUIPMENT",
+  "tank-vertical": "VERTICAL WATER TANK",
+  "tank-horizontal": "HORIZONTAL WATER TANK",
+  "tank-booklike": "BOOK-TYPE WATER TANK",
+  "tank-spherical": "SPHERICAL WATER TANK",
+  "tank-cubic": "CUBIC WATER TANK",
+  "tank-underthestairs": "UNDER-STAIR WATER TANK",
 };
 
 function build(key, paths, index) {
