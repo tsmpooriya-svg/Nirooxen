@@ -39,10 +39,57 @@ const MIN_VISIBLE_MS = 1000;
 /** باید با مدت انیمیشن `loader-out` در globals.css یکی باشد */
 const EXIT_MS = 520;
 
+const SEEN_KEY = "nirooxen-loader-seen";
+
+function hasSeen() {
+  try {
+    return sessionStorage.getItem(SEEN_KEY) === "1";
+  } catch {
+    // حالت خصوصی مرورگر یا مسدودبودن ذخیره‌سازی — مثل «ندیده» رفتار می‌کنیم
+    return false;
+  }
+}
+
+function markSeen() {
+  try {
+    sessionStorage.setItem(SEEN_KEY, "1");
+  } catch {
+    /* بی‌اهمیت */
+  }
+}
+
+/**
+ * پیش از اولین رنگ‌آمیزی اجرا می‌شود و اگر لایه در همین نشست قبلاً دیده شده،
+ * روی <html> نشان می‌گذارد تا CSS آن را از همان ابتدا مخفی کند.
+ *
+ * چرا اسکریپت جداگانه و نه فقط بررسی داخل کامپوننت؟ چون نشانه‌گذاری لایه روی
+ * سرور رندر می‌شود؛ اگر تصمیم فقط در effect گرفته می‌شد، بازدیدکننده تکراری
+ * یک فریم لایه را می‌دید و بعد ناپدید می‌شد — یعنی دقیقاً همان پرشی که
+ * قرار بود نباشد.
+ */
+export const loaderGateScript = `(function(){try{if(sessionStorage.getItem("${SEEN_KEY}")==="1"){document.documentElement.setAttribute("data-loader","seen")}}catch(e){}})();`;
+
+/** هیچ‌وقت تغییر نمی‌کند؛ خواندن یک‌باره است و نیازی به اشتراک واقعی ندارد */
+const noopSubscribe = () => () => {};
+
 export function LoadingScreen() {
   const [phase, setPhase] = React.useState<"visible" | "exiting" | "done">("visible");
 
+  /*
+   * آیا لایه در همین نشست قبلاً دیده شده؟
+   *
+   * با useSyncExternalStore خوانده می‌شود، دقیقاً مثل `useMounted` در همین
+   * پروژه: اسنپ‌شات سرور همیشه false است تا HTML سرور لایه را داشته باشد و
+   * رندر اول کلاینت هم با آن یکی باشد؛ بعد از هیدریشن مقدار واقعی می‌نشیند.
+   * این مسیرِ مستندشده و بدون hydration mismatch است و برخلاف setState داخل
+   * effect، رندر آبشاری هم نمی‌سازد.
+   */
+  const seen = React.useSyncExternalStore(noopSubscribe, hasSeen, () => false);
+
   React.useEffect(() => {
+    if (seen) return;
+    markSeen();
+
     const startedAt = performance.now();
     let exitTimer = 0;
     let doneTimer = 0;
@@ -73,22 +120,23 @@ export function LoadingScreen() {
       window.clearTimeout(exitTimer);
       window.clearTimeout(doneTimer);
     };
-  }, []);
+  }, [seen]);
 
   /*
    * قفل اسکرول فقط از سمت جاوااسکریپت اعمال می‌شود و در cleanup حتماً برمی‌گردد.
    * اگر با CSS و از سمت سرور قفل می‌شد، نبودِ JS صفحه را برای همیشه قفل می‌کرد.
    */
   React.useEffect(() => {
-    if (phase === "done") return;
+    // بازدید تکراری هیچ‌وقت اسکرول را قفل نمی‌کند، حتی برای یک فریم
+    if (seen || phase === "done") return;
     const previous = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
     return () => {
       document.documentElement.style.overflow = previous;
     };
-  }, [phase]);
+  }, [seen, phase]);
 
-  if (phase === "done") return null;
+  if (seen || phase === "done") return null;
 
   return (
     <div

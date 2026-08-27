@@ -1,5 +1,5 @@
 import { CartPanel } from "@/components/site/cart-panel";
-import { LoadingScreen } from "@/components/site/loading-screen";
+import { LoadingScreen, loaderGateScript } from "@/components/site/loading-screen";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { SiteSettingsProvider } from "@/components/site/settings-provider";
@@ -17,6 +17,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         فقط روی سایت عمومی، نه پنل مدیریت. روی سرور رندر می‌شود تا در همان
         اولین رنگ‌آمیزی دیده شود و خودش را بعد از آماده‌شدن برمی‌دارد.
       */}
+      {/* پیش از رنگ‌آمیزی تصمیم می‌گیرد که لایه اصلاً نشان داده شود یا نه */}
+      <script dangerouslySetInnerHTML={{ __html: loaderGateScript }} />
       <LoadingScreen />
 
       <JsonLd data={[organizationJsonLd(settings), websiteJsonLd(settings)]} />
