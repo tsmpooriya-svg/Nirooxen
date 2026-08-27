@@ -859,3 +859,246 @@
     display: none !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   10. LOADING SCREEN — «راه‌اندازی سامانه»
+   --------------------------------------------------------------------------
+   کاملاً CSS است و هیچ کتابخانه انیمیشنی اضافه نمی‌کند. نشانه‌گذاری آن روی
+   سرور رندر می‌شود، پس بدون اجرای هیچ جاوااسکریپتی و در همان اولین رنگ‌آمیزی
+   دیده می‌شود؛ نه پرشی هست و نه تأخیری.
+
+   تایم‌لاین (‏۱۴۰۰ms تا حالت «کامل»):
+     0      پس‌زمینه و شبکه بلوپرینت
+     100    نشان برند از مرکز باز می‌شود        (تا ۷۴۰)
+     280    حلقه فشار دور نشان کشیده می‌شود     (تا ۱۰۶۰)
+     400    واژه‌نشان از پایین با clip باز می‌شود (تا ۱۰۰۰)
+     480    جریان نور از روی نشان عبور می‌کند   (تا ۱۱۰۰)
+     520    نشانه‌های اندازه‌گیری                (تا ۱۰۴۰)
+     0-1100 نوار نازک وضعیت پر می‌شود
+
+   کل ترکیب حدود ۱۰۰۰ms کامل می‌شود؛ `MIN_VISIBLE_MS` در کامپوننت هم روی
+   همین عدد است تا لایه وسط حرکت قطع نشود. بعد از آن حلقه یک نفس آرام
+   می‌کشد تا اگر بارگذاری طول کشید، صفحه یخ‌زده به نظر نرسد.
+   -------------------------------------------------------------------------- */
+.loader-root {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--bg-base);
+  /* شبکه فنی، هم‌زبان با بقیه سایت */
+  background-image:
+    linear-gradient(to left, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 72px 72px;
+  animation: loader-failsafe 0s linear 8s forwards;
+}
+
+/* شبکه‌ی محو‌شونده از مرکز */
+.loader-root::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 50% at 50% 50%, var(--glow-brand), transparent 70%);
+  opacity: 0;
+  animation: loader-atmosphere 900ms var(--ease-out-expo) forwards;
+}
+
+/*
+  اگر به هر دلیلی جاوااسکریپت اجرا نشود، لایه بعد از ۸ ثانیه خودش کنار می‌رود.
+  این تنها راه خروجِ بدون JS است و عمداً وجود دارد.
+*/
+@keyframes loader-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+@keyframes loader-atmosphere {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ستون مرکزی — عرضش با صفحه مقیاس می‌گیرد، فقط کوچک نمی‌شود */
+.loader-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: clamp(14rem, 46vw, 22rem);
+  max-width: calc(100vw - 3rem);
+}
+
+.loader-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(9.5rem, 28vw, 13.5rem);
+  aspect-ratio: 1;
+}
+
+/* ---- نشان برند ---- */
+.loader-mark {
+  position: relative;
+  width: clamp(4.5rem, 13vw, 6.5rem);
+  /* بدون این، SVG با size-full ارتفاع صفر می‌گیرد و نشان دیده نمی‌شود */
+  aspect-ratio: 1;
+  color: var(--brand);
+  opacity: 0;
+  transform: scale(0.82);
+  animation: loader-mark-in 640ms var(--ease-out-expo) 100ms forwards;
+}
+@keyframes loader-mark-in {
+  from { opacity: 0; transform: scale(0.82); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* جریان نور که یک‌بار از روی نشان رد می‌شود — حس سیال، نه پاشش آب */
+.loader-mark::after {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  background: linear-gradient(
+    100deg,
+    transparent 42%,
+    color-mix(in oklab, var(--brand) 55%, transparent) 50%,
+    transparent 58%
+  );
+  opacity: 0;
+  animation: loader-flow 620ms var(--ease-in-out-soft) 480ms forwards;
+}
+@keyframes loader-flow {
+  0%   { opacity: 0; transform: translateX(60%); }
+  35%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translateX(-60%); }
+}
+
+/* ---- حلقه فشار ---- */
+.loader-ring {
+  position: absolute;
+  width: clamp(8rem, 24vw, 11.5rem);
+  aspect-ratio: 1;
+  color: var(--brand);
+  transform: rotate(-90deg);
+  /* بعد از کامل‌شدن ردیابی، یک نفس آرام — اگر بارگذاری طول بکشد صفحه
+     ساکن و یخ‌زده به نظر نمی‌رسد. فقط opacity، پس ارزان است. */
+  animation: loader-ring-breathe 2800ms var(--ease-in-out-soft) 1000ms infinite;
+}
+@keyframes loader-ring-breathe {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+.loader-ring circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.6;
+  stroke-dasharray: 302;
+  stroke-dashoffset: 302;
+  opacity: 0.55;
+  animation: loader-trace 700ms var(--ease-out-quint) 260ms forwards;
+}
+@keyframes loader-trace {
+  to { stroke-dashoffset: 0; }
+}
+
+/* نشانه‌های اندازه‌گیری دور حلقه */
+.loader-ticks {
+  position: absolute;
+  width: clamp(9.5rem, 28vw, 13.5rem);
+  aspect-ratio: 1;
+  color: var(--brand);
+  opacity: 0;
+  animation: loader-ticks-in 480ms var(--ease-out-expo) 480ms forwards;
+}
+.loader-ticks line {
+  stroke: currentColor;
+  stroke-width: 0.5;
+  opacity: 0.4;
+}
+@keyframes loader-ticks-in {
+  from { opacity: 0; transform: rotate(-6deg); }
+  to   { opacity: 1; transform: rotate(0deg); }
+}
+
+/* ---- واژه‌نشان ---- */
+.loader-word {
+  margin-top: clamp(1.75rem, 5vw, 2.5rem);
+  text-align: center;
+  /* باز شدن کنترل‌شده از پایین — نه fade ساده روی کل بلوک */
+  clip-path: inset(100% 0 0 0);
+  animation: loader-word-in 600ms var(--ease-out-expo) 400ms forwards;
+}
+@keyframes loader-word-in {
+  from { clip-path: inset(100% 0 0 0); transform: translateY(0.6rem); }
+  to   { clip-path: inset(0 0 0 0);    transform: translateY(0); }
+}
+
+/* ---- نوار وضعیت ---- */
+.loader-bar {
+  position: relative;
+  margin-top: clamp(1.25rem, 3.5vw, 1.75rem);
+  height: 1px;
+  width: 100%;
+  overflow: hidden;
+  background: var(--border-subtle);
+}
+.loader-bar::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 100%;
+  background: linear-gradient(to left, transparent, var(--brand));
+  transform: scaleX(0);
+  transform-origin: right center;   /* RTL: از راست پر می‌شود */
+  animation: loader-bar-fill 980ms var(--ease-out-quint) forwards;
+}
+:root:not([dir="rtl"]) .loader-bar::after { transform-origin: left center; }
+@keyframes loader-bar-fill {
+  to { transform: scaleX(1); }
+}
+
+/* ---- خروج ---- */
+/*
+  خروج یک حرکت پیوسته است: نشان کمی جمع می‌شود، لایه‌ها از هم باز می‌شوند و
+  سایت از زیر بیرون می‌آید — نه «لودر غیب شد، بعد سایت آمد».
+*/
+.loader-root[data-exit="true"] {
+  animation: loader-out 520ms var(--ease-out-expo) forwards;
+}
+.loader-root[data-exit="true"] .loader-stage {
+  animation: loader-stage-out 460ms var(--ease-out-expo) forwards;
+}
+@keyframes loader-out {
+  from { opacity: 1; clip-path: inset(0 0 0 0); }
+  to   { opacity: 0; clip-path: inset(0 0 100% 0); }
+}
+@keyframes loader-stage-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.94); }
+}
+
+/* ---- حرکت کاهش‌یافته ---- */
+/*
+  همه‌چیز به یک ظاهر/محو ساده تقلیل پیدا می‌کند: بدون ردیابی، بدون جریان،
+  بدون جمع‌شدن. محتوا بلافاصله در جای نهایی خودش است.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .loader-root::before,
+  .loader-mark,
+  .loader-word,
+  .loader-ticks {
+    animation: loader-atmosphere 200ms linear forwards;
+  }
+  .loader-mark::after { animation: none; opacity: 0; }
+  .loader-ring { animation: none; }
+  .loader-ring circle { animation: none; stroke-dashoffset: 0; }
+  .loader-bar::after  { animation: none; transform: scaleX(1); }
+  .loader-word        { clip-path: none; }
+  .loader-root[data-exit="true"] { animation: loader-fade-out 200ms linear forwards; }
+  .loader-root[data-exit="true"] .loader-stage { animation: none; }
+  @keyframes loader-fade-out { to { opacity: 0; visibility: hidden; } }
+}
