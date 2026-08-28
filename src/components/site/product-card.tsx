@@ -129,18 +129,18 @@ export function ProductCard({
 
       {/* محتوا */}
       <div className={cn("flex flex-1 flex-col p-4", !compact && "sm:p-5")}>
-        <div className="mb-2 flex items-center gap-2 font-mono text-micro tracking-wider text-[var(--fg-subtle)]">
+        <div className="mb-2 flex items-center gap-2 text-micro text-[var(--fg-subtle)]">
           {product.brandName && (
             <Link
               href={`/brands/${product.brandSlug}`}
-              className="shrink-0 uppercase transition-colors hover:text-[var(--brand)]"
+              className="shrink-0 font-medium transition-colors hover:text-[var(--brand)]"
             >
               {product.brandName}
             </Link>
           )}
           {product.brandName && product.model && <span className="shrink-0" aria-hidden>·</span>}
           {product.model && (
-            <span dir="ltr" className="min-w-0 truncate" title={product.model}>
+            <span dir="ltr" className="min-w-0 truncate font-mono tracking-wider" title={product.model}>
               {product.model}
             </span>
           )}

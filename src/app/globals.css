@@ -381,7 +381,21 @@
 
   --font-display: "Estedad", "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Vazirmatn", "Estedad", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  /* Vazirmatn sits INSIDE the mono stack, immediately after JetBrains Mono.
+     JetBrains Mono is declared for Latin only (its @font-face unicode-range is
+     U+0000-00FF, U+0131, U+2000-206F, U+2122), so every Persian letter and
+     every Persian digit — ۰-۹ at U+06F0-06F9 — fell straight past it to the
+     generic `monospace` keyword. Chrome resolved that to DejaVu Sans Mono;
+     other machines pick Consolas or Menlo. Either way «۶ کالا» was rendering
+     in a system terminal face the project never chose, which is what made the
+     counts and metadata read as debug output.
+
+     Because the fallback is driven by unicode-range, this one line splits the
+     stack by script instead of by component: Latin technical content (SKU,
+     model codes, ESC, PRODUCT CATEGORIES, brand wordmarks) still resolves to
+     JetBrains Mono and is untouched; Persian resolves to the same Vazirmatn
+     the rest of the UI already uses. */
+  --font-mono: "JetBrains Mono", "Vazirmatn", ui-monospace, "SFMono-Regular", monospace;
 
   /* ---- Fluid display scale ----------------------------------------------
      One continuous curve from 360px to 1440px instead of three discrete
@@ -724,14 +738,24 @@
   }
 
   .eyebrow {
-    font-family: var(--font-mono);
-    /* --text-micro (13px), not --text-label (11px): most eyebrows are Persian
-       («چرا ما», «فرآیند خرید») and the mono fallback renders Persian without
-       the tracking benefit Latin gets, so the extra pixels matter here. */
+    /* Sans, not mono. All 26 eyebrows in the repo are Persian («چرا ما»,
+       «فرآیند خرید», «کارنامه اجرایی», spec-group and solution names) — there
+       is not one Latin eyebrow — so the mono stack only ever reached its
+       generic fallback here.
+
+       The 0.14em tracking went with it. Latin gains a label-like rhythm from
+       tracking; Persian is a connected script, and prising the clusters apart
+       breaks the joins — the same reason the heading rule below refuses
+       negative tracking. Weight carries the label instead: 600 against the
+       body's 400, in the brand colour, still at --text-micro (13px).
+
+       text-transform is kept as a no-op for Persian so a Latin eyebrow, if one
+       is ever added, still reads as a label rather than as a sentence. */
+    font-family: var(--font-sans);
     font-size: var(--text-micro);
-    line-height: 1.6;
-    font-weight: 500;
-    letter-spacing: 0.14em;
+    line-height: 1.7;
+    font-weight: 600;
+    letter-spacing: normal;
     text-transform: uppercase;
     color: var(--brand-text);
   }

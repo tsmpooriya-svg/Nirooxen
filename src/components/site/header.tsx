@@ -417,7 +417,7 @@ export function SiteHeader({
                     <span className="block text-sm font-semibold text-[var(--fg-primary)] transition-colors group-hover:text-[var(--brand)]">
                       {category.name}
                     </span>
-                    <span className="block font-mono text-micro tracking-wide text-[var(--fg-subtle)]">
+                    <span className="block text-micro text-[var(--fg-subtle)]">
                       {toFaDigits(category.productCount)} کالا
                     </span>
                   </span>
