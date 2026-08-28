@@ -353,10 +353,17 @@ export async function listProducts(filters: ProductFilters = {}) {
     switch (sort) {
       case "popular":
         return [desc(products.viewCount), desc(products.publishedAt)];
+      // جهت مرتب‌سازی داخل خود قطعه SQL نوشته شده، نه با asc()/desc().
+      // آن دو کمک‌کننده کلمه‌ی جهت را به انتهای هرچه بگیرند می‌چسبانند، پس
+      // asc(sql`price nulls last`) به «price nulls last asc» تبدیل می‌شد و
+      // پستگرس آن را رد می‌کرد؛ دستور زبان صحیح
+      // ORDER BY expr [ASC|DESC] [NULLS FIRST|LAST] است و NULLS بعد از جهت می‌آید.
+      // کالای بدون قیمت (استعلامی و تماس بگیرید) در هر دو جهت آخر می‌ماند —
+      // همان رفتاری که nulls last از ابتدا قصدش را داشت.
       case "price-asc":
-        return [asc(sql`${products.price} nulls last`), asc(products.name)];
+        return [sql`${products.price} asc nulls last`, asc(products.name)];
       case "price-desc":
-        return [desc(sql`${products.price} nulls last`), asc(products.name)];
+        return [sql`${products.price} desc nulls last`, asc(products.name)];
       case "name":
         return [asc(products.name)];
       default:
