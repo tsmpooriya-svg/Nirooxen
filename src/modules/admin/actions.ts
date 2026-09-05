@@ -5,7 +5,7 @@
  *  ماژول مدیریت — عملیات نوشتن
  * =============================================================================
  *  هر اکشن سه کار را همیشه انجام می‌دهد:
- *   1. requirePermission — چون layout فقط رندر را محافظت می‌کند نه اکشن‌ها
+ *   1. requireWritePermission — چون layout فقط رندر را محافظت می‌کند نه اکشن‌ها
  *   2. اعتبارسنجی با Zod
  *   3. ثبت لاگ فعالیت
  * =============================================================================
@@ -40,7 +40,7 @@ import {
 } from "@/db/schema";
 import { buildSpecRows } from "@/modules/catalog/spec-writer";
 import { logActivity } from "@/lib/activity";
-import { AuthError, destroyAllSessions, hashPassword, requirePermission } from "@/lib/auth";
+import { AuthError, destroyAllSessions, hashPassword, requireWritePermission } from "@/lib/auth";
 import { ORDER_STATUS } from "@/lib/constants";
 import { readingTime, slugify, stripHtml, truncate } from "@/lib/utils";
 import {
@@ -111,7 +111,7 @@ async function uniqueSlug(
 
 export async function updateOrderStatus(orderId: string, status: OrderStatus): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
 
     const [current] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
     if (!current) return { status: "error", message: "سفارش پیدا نشد." };
@@ -149,7 +149,7 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus): P
 
 export async function updateOrderPriority(orderId: string, priority: OrderPriority): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
     await db.update(orders).set({ priority, updatedAt: new Date() }).where(eq(orders.id, orderId));
     await db.insert(orderEvents).values({
       orderId,
@@ -165,7 +165,7 @@ export async function updateOrderPriority(orderId: string, priority: OrderPriori
 
 export async function assignOrder(orderId: string, assigneeId: string | null): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
 
     let assigneeName = "هیچ‌کس";
     if (assigneeId) {
@@ -197,7 +197,7 @@ export async function assignOrder(orderId: string, assigneeId: string | null): P
 
 export async function addOrderNote(orderId: string, body: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
     const text = body.trim();
     if (text.length < 2) return { status: "error", message: "متن یادداشت خیلی کوتاه است." };
 
@@ -216,7 +216,7 @@ export async function addOrderNote(orderId: string, body: string): Promise<Actio
 
 export async function logOrderContact(orderId: string, note: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
     await db.insert(orderEvents).values({
       orderId,
       userId: user.id,
@@ -235,7 +235,7 @@ export async function submitQuote(
   extra: { discount?: number; tax?: number; shipping?: number; validDays?: number } = {},
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
 
     const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
     if (items.length === 0) return { status: "error", message: "این پرونده قلمی ندارد." };
@@ -311,7 +311,7 @@ export async function saveProduct(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
 
     const parsed = productFormSchema.safeParse({
       name: formData.get("name"),
@@ -435,7 +435,7 @@ export async function saveProduct(
 
 export async function deleteProduct(productId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
     const [product] = await db.select({ name: products.name }).from(products).where(eq(products.id, productId)).limit(1);
 
     await db.delete(products).where(eq(products.id, productId));
@@ -459,7 +459,7 @@ export async function bulkUpdateProductStatus(
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED",
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
     if (ids.length === 0) return { status: "error", message: "محصولی انتخاب نشده است." };
 
     await db
@@ -491,7 +491,7 @@ export async function saveCategory(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("categories");
+    const user = await requireWritePermission("categories");
 
     const parsed = categoryFormSchema.safeParse({
       name: formData.get("name"),
@@ -551,7 +551,7 @@ export async function saveCategory(
 
 export async function deleteCategory(categoryId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("categories");
+    const user = await requireWritePermission("categories");
 
     const [{ total }] = await db
       .select({ total: sql<number>`count(*)::int` })
@@ -585,7 +585,7 @@ export async function saveBrand(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("brands");
+    const user = await requireWritePermission("brands");
 
     const parsed = brandFormSchema.safeParse({
       name: formData.get("name"),
@@ -640,7 +640,7 @@ export async function saveBrand(
 
 export async function deleteBrand(brandId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("brands");
+    const user = await requireWritePermission("brands");
     await db.delete(brands).where(eq(brands.id, brandId));
     await logActivity({ userId: user.id, action: "delete", entity: "brand", entityId: brandId, summary: "حذف برند" });
     revalidatePath("/admin/brands");
@@ -659,7 +659,7 @@ export async function saveCustomer(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("customers");
+    const user = await requireWritePermission("customers");
 
     const parsed = customerFormSchema.safeParse({
       fullName: formData.get("fullName"),
@@ -722,7 +722,7 @@ export async function savePost(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("posts");
+    const user = await requireWritePermission("posts");
 
     const parsed = postFormSchema.safeParse({
       title: formData.get("title"),
@@ -795,7 +795,7 @@ export async function savePost(
 
 export async function deletePost(postId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("posts");
+    const user = await requireWritePermission("posts");
     await db.delete(posts).where(eq(posts.id, postId));
     await logActivity({ userId: user.id, action: "delete", entity: "post", entityId: postId, summary: "حذف مطلب" });
     revalidatePath("/admin/posts");
@@ -820,7 +820,7 @@ export async function saveUnit(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
 
     const parsed = unitFormSchema.safeParse({
       code: formData.get("code"),
@@ -886,7 +886,7 @@ export async function saveSpecDefinition(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
 
     const parsed = specDefinitionFormSchema.safeParse({
       key: formData.get("key"),
@@ -947,7 +947,7 @@ export async function saveSpecDefinition(
 
 export async function deleteSpecDefinition(definitionId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
 
     /*
      * حذف تعریف، definition_id ردیف‌های مقدار را null می‌کند (ON DELETE SET
@@ -980,7 +980,7 @@ export async function deleteSpecDefinition(definitionId: string): Promise<Action
 
 export async function saveCategorySpec(_prev: ActionState, formData: FormData): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("categories");
+    const user = await requireWritePermission("categories");
 
     const parsed = categorySpecFormSchema.safeParse({
       categoryId: formData.get("categoryId"),
@@ -1021,7 +1021,7 @@ export async function saveCategorySpec(_prev: ActionState, formData: FormData): 
 
 export async function deleteCategorySpec(linkId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("categories");
+    const user = await requireWritePermission("categories");
     await db.delete(categorySpecs).where(eq(categorySpecs.id, linkId));
     await logActivity({
       userId: user.id, action: "delete", entity: "category", entityId: linkId,
@@ -1043,7 +1043,7 @@ export async function saveProject(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("projects");
+    const user = await requireWritePermission("projects");
 
     const parsed = projectFormSchema.safeParse({
       title: formData.get("title"),
@@ -1108,7 +1108,7 @@ export async function saveProject(
 
 export async function deleteProject(projectId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("projects");
+    const user = await requireWritePermission("projects");
     await db.delete(projects).where(eq(projects.id, projectId));
     await logActivity({
       userId: user.id, action: "delete", entity: "project", entityId: projectId, summary: "حذف پروژه",
@@ -1126,7 +1126,7 @@ export async function deleteProject(projectId: string): Promise<ActionState> {
 
 export async function updateMessageStatus(messageId: string, status: MessageStatus): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("messages");
+    const user = await requireWritePermission("messages");
     await db.update(contactMessages).set({ status }).where(eq(contactMessages.id, messageId));
     await logActivity({
       userId: user.id,
@@ -1151,7 +1151,7 @@ export async function saveUser(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const actor = await requirePermission("users");
+    const actor = await requireWritePermission("users");
 
     const parsed = userFormSchema.safeParse({
       name: formData.get("name"),
@@ -1215,7 +1215,7 @@ export async function saveUser(
 
 export async function saveSettings(_prev: ActionState, formData: FormData): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("settings");
+    const user = await requireWritePermission("settings");
 
     const entries = Array.from(formData.entries()).filter(([key]) => key.startsWith("setting:"));
 

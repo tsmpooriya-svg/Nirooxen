@@ -2,6 +2,7 @@ import { CategoryDialog, DeleteTaxonomyButton } from "@/components/admin/taxonom
 import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/components/admin/ui";
 import { toFaDigits } from "@/lib/utils";
 import { getCategoryOptions } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,8 @@ const empty = {
 };
 
 export default async function AdminCategoriesPage() {
+  await requirePageAccess("categories");
+
   const categories = await getCategoryOptions();
   const roots = categories.filter((c) => c.depth === 0).map((c) => ({ id: c.id, name: c.name }));
 

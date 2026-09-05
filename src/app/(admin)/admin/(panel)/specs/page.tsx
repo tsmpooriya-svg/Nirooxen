@@ -8,6 +8,7 @@ import {
   UnitDialog,
 } from "@/components/admin/spec-forms";
 import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/components/admin/ui";
+import { requirePageAccess } from "@/lib/auth";
 import { toFaDigits } from "@/lib/utils";
 import {
   getAdminCategorySpecs,
@@ -30,6 +31,8 @@ const emptyDefinition = {
 };
 
 export default async function AdminSpecsPage() {
+  await requirePageAccess("products");
+
   const [units, definitions, links, categories] = await Promise.all([
     getAdminUnits(),
     getAdminSpecDefinitions(),

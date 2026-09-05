@@ -12,12 +12,15 @@ import { AdminPageHeader, Panel, StatusBadge } from "@/components/admin/ui";
 import { ORDER_SOURCE, ORDER_STATUS, ORDER_TYPE, PAYMENT_STATUS } from "@/lib/constants";
 import { formatDateTime, formatPrice, toFaDigits } from "@/lib/utils";
 import { getOrderById, getStaffList } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 type Params = Promise<{ id: string }>;
 
 export const dynamic = "force-dynamic";
 
 export default async function OrderDetailPage({ params }: { params: Params }) {
+  await requirePageAccess("orders");
+
   const { id } = await params;
   const data = await getOrderById(id);
   if (!data) notFound();

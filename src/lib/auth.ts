@@ -17,10 +17,11 @@ import { cache } from "react";
 import bcrypt from "bcryptjs";
 import { and, eq, gt, lt } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 import { db } from "@/db";
 import { sessions, users, type UserRole } from "@/db/schema";
-import { can, type PermissionKey } from "@/lib/constants";
+import { can, canWrite, type PermissionKey } from "@/lib/constants";
 
 export const SESSION_COOKIE = "aria_session";
 const SESSION_TTL_DAYS = 7;
@@ -153,6 +154,21 @@ export async function requirePermission(key: PermissionKey): Promise<SessionUser
   if (!can(user.role, key)) {
     throw new AuthError("شما به این بخش دسترسی ندارید.");
   }
+  return user;
+}
+
+export async function requireWritePermission(key: PermissionKey): Promise<SessionUser> {
+  const user = await requireUser();
+  if (!canWrite(user.role, key)) {
+    throw new AuthError("حساب شما فقط اجازه مشاهده دارد و نمی‌تواند این تغییر را انجام دهد.");
+  }
+  return user;
+}
+
+export async function requirePageAccess(key: PermissionKey): Promise<SessionUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/admin/login");
+  if (!can(user.role, key)) redirect("/admin");
   return user;
 }
 

@@ -4,6 +4,7 @@ import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/compon
 import { Pagination } from "@/components/ui/pagination";
 import { buildQuery, formatDate, formatRelative, toFaDigits } from "@/lib/utils";
 import { listCustomers } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export const dynamic = "force-dynamic";
@@ -15,6 +16,8 @@ const TYPE_MAP = {
 };
 
 export default async function AdminCustomersPage({ searchParams }: { searchParams: SearchParams }) {
+  await requirePageAccess("customers");
+
   const params = await searchParams;
   const q = first(params.q);
   const page = Math.max(1, Number(first(params.page) ?? 1) || 1);

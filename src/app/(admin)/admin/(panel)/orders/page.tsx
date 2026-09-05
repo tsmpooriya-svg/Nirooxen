@@ -6,6 +6,7 @@ import type { OrderStatus, OrderType } from "@/db/schema";
 import { ORDER_PRIORITY, ORDER_SOURCE, ORDER_STATUS, ORDER_TYPE } from "@/lib/constants";
 import { buildQuery, formatDateTime, formatPrice, formatRelative, toFaDigits } from "@/lib/utils";
 import { listOrders } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -14,6 +15,8 @@ export const dynamic = "force-dynamic";
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 export default async function AdminOrdersPage({ searchParams }: { searchParams: SearchParams }) {
+  await requirePageAccess("orders");
+
   const params = await searchParams;
 
   const filters = {

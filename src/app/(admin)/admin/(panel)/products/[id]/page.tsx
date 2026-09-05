@@ -5,12 +5,15 @@ import { AdminPageHeader, Panel } from "@/components/admin/ui";
 import { ProductForm, type ProductFormValues } from "@/components/admin/product-form";
 import { formatDateTime, toFaDigits } from "@/lib/utils";
 import { getAdminProduct, getBrandOptions, getCategoryOptions } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 type Params = Promise<{ id: string }>;
 
 export const dynamic = "force-dynamic";
 
 export default async function EditProductPage({ params }: { params: Params }) {
+  await requirePageAccess("products");
+
   const { id } = await params;
   const data = await getAdminProduct(id);
   if (!data) notFound();

@@ -35,6 +35,22 @@
  * =============================================================================
  */
 
+const DEV_SITE_URL = "http://localhost:3000";
+
+function resolveSiteUrl(): string {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+
+  if (configured) return configured.replace(/\/+$/, "");
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "NEXT_PUBLIC_SITE_URL تعریف نشده است. بدون آن canonical، Open Graph و sitemap به localhost اشاره می‌کنند. مقدار آن را از روی .env.example تنظیم کنید.",
+    );
+  }
+
+  return DEV_SITE_URL;
+}
+
 export const siteConfig = {
   /** نام کوتاه — در لوگو و عنوان صفحات */
   name: "نیروژن",
@@ -46,7 +62,7 @@ export const siteConfig = {
   description:
     "تأمین‌کننده تخصصی پمپ آب، الکتروپمپ صنعتی، مخازن تحت فشار، اتصالات و شیرآلات صنعتی؛ همراه با مشاوره فنی، طراحی و نصب تخصصی در سراسر کشور.",
 
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: resolveSiteUrl(),
   locale: "fa_IR",
   direction: "rtl",
 

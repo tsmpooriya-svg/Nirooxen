@@ -5,12 +5,15 @@ import { Pagination } from "@/components/ui/pagination";
 import { POST_STATUS } from "@/lib/constants";
 import { buildQuery, formatDate, formatRelative, toFaDigits } from "@/lib/utils";
 import { listAdminPosts } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export const dynamic = "force-dynamic";
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 export default async function AdminPostsPage({ searchParams }: { searchParams: SearchParams }) {
+  await requirePageAccess("posts");
+
   const params = await searchParams;
   const q = first(params.q);
   const page = Math.max(1, Number(first(params.page) ?? 1) || 1);

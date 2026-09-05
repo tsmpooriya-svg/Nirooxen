@@ -4,11 +4,14 @@ import { PostForm } from "@/components/admin/post-form";
 import { AdminPageHeader, Panel } from "@/components/admin/ui";
 import { formatDateTime, toFaDigits } from "@/lib/utils";
 import { getAdminPost } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 type Params = Promise<{ id: string }>;
 export const dynamic = "force-dynamic";
 
 export default async function EditPostPage({ params }: { params: Params }) {
+  await requirePageAccess("posts");
+
   const { id } = await params;
   const post = await getAdminPost(id);
   if (!post) notFound();

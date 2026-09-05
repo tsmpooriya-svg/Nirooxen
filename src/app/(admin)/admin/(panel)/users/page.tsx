@@ -3,10 +3,13 @@ import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/compon
 import { USER_ROLE } from "@/lib/constants";
 import { formatDateTime, formatRelative } from "@/lib/utils";
 import { listUsers } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
+  await requirePageAccess("users");
+
   const users = await listUsers();
 
   return (

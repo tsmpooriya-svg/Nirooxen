@@ -1,6 +1,7 @@
 import { AdminPageHeader, Panel } from "@/components/admin/ui";
 import { ProductForm, type ProductFormValues } from "@/components/admin/product-form";
 import { getBrandOptions, getCategoryOptions } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,8 @@ const emptyValues: ProductFormValues = {
 };
 
 export default async function NewProductPage() {
+  await requirePageAccess("products");
+
   const [categories, brands] = await Promise.all([getCategoryOptions(), getBrandOptions()]);
 
   return (

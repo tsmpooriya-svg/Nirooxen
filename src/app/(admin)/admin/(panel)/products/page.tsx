@@ -7,6 +7,7 @@ import type { ProductStatus } from "@/db/schema";
 import { PRICE_MODE, PRODUCT_STATUS, STOCK_STATUS } from "@/lib/constants";
 import { buildQuery, formatPrice, formatRelative, toFaDigits } from "@/lib/utils";
 import { getCategoryOptions, listAdminProducts } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -15,6 +16,8 @@ export const dynamic = "force-dynamic";
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 export default async function AdminProductsPage({ searchParams }: { searchParams: SearchParams }) {
+  await requirePageAccess("products");
+
   const params = await searchParams;
 
   const filters = {

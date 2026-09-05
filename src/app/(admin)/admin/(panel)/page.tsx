@@ -4,6 +4,7 @@ import { AdminPageHeader, DataTable, EmptyState, Panel, StatCard, StatusBadge, T
 import { ORDER_PRIORITY, ORDER_STATUS, ORDER_TYPE } from "@/lib/constants";
 import { formatPrice, formatRelative, toFaDigits } from "@/lib/utils";
 import { getDashboardData } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,8 @@ const icon = (d: string) => (
 );
 
 export default async function DashboardPage() {
+  await requirePageAccess("dashboard");
+
   const { stats, recentOrders, statusBreakdown, dailyTrend, topProducts, recentActivity } =
     await getDashboardData();
 

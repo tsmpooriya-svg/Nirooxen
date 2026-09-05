@@ -20,12 +20,14 @@ npm run dev                 # http://localhost:3000
 
 ### متغیرهای محیطی
 
-| متغیر | توضیح |
-|---|---|
-| `DATABASE_URL` | رشته اتصال PostgreSQL |
-| `AUTH_SECRET` | کلید تصادفی ۳۲ بایتی — `openssl rand -base64 32` |
-| `NEXT_PUBLIC_SITE_URL` | آدرس کامل سایت (برای canonical و sitemap) |
-| `DATABASE_SSL` | اگر پایگاه داده SSL می‌خواهد، `true` |
+فایل نمونه در `.env.example` است؛ `cp .env.example .env` و مقادیر را پر کنید.
+
+| متغیر | الزامی | توضیح |
+|---|---|---|
+| `DATABASE_URL` | بله | رشته اتصال PostgreSQL |
+| `NEXT_PUBLIC_SITE_URL` | بله در production | آدرس کامل سایت (مبنای canonical، Open Graph و sitemap). اگر در production تعریف نشود، build با خطا متوقف می‌شود تا آدرس localhost منتشر نشود. در محیط توسعه به `http://localhost:3000` برمی‌گردد. |
+| `DATABASE_SSL` | خیر | اگر پایگاه داده SSL می‌خواهد، `true` |
+| `DATABASE_POOL_MAX` | خیر | بیشینه اتصال‌های pool — پیش‌فرض `10` |
 
 ---
 

@@ -3,6 +3,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { buildQuery, formatDateTime, formatRelative, toFaDigits } from "@/lib/utils";
 import { listActivityLogs } from "@/modules/admin/queries";
 import Link from "next/link";
+import { requirePageAccess } from "@/lib/auth";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export const dynamic = "force-dynamic";
@@ -16,6 +17,8 @@ const ACTION_LABEL: Record<string, string> = {
 const ENTITIES = ["order", "product", "category", "brand", "customer", "post", "message", "user", "settings"];
 
 export default async function AdminLogsPage({ searchParams }: { searchParams: SearchParams }) {
+  await requirePageAccess("logs");
+
   const params = await searchParams;
   const entity = first(params.entity);
   const page = Math.max(1, Number(first(params.page) ?? 1) || 1);

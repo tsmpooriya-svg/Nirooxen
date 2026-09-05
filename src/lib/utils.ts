@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import { siteConfig } from "@/config/site";
+
 /** ادغام امن کلاس‌های Tailwind */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -195,6 +197,6 @@ export function buildQuery(params: Record<string, string | number | undefined | 
 }
 
 export function absoluteUrl(path: string, base?: string): string {
-  const origin = base ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const origin = base ?? siteConfig.url;
   return `${origin.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
 }
