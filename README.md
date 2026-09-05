@@ -127,7 +127,7 @@ src/
 - کوکی `httpOnly` + `sameSite=lax` + `secure` در production
 - محدودسازی نرخ روی ورود، ثبت سفارش، فرم تماس، خبرنامه و جستجوی سریع
 - honeypot ضد ربات در فرم‌های عمومی
-- `requirePermission` در **هر** Server Action (نه فقط در layout)
+- `requireWritePermission` در **هر** Server Action (نه فقط در layout)
 - پنل مدیریت با `noindex` و مسدود در `robots.txt`
 
 ---
