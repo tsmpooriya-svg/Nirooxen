@@ -9,7 +9,7 @@
 
 ```bash
 npm install                 # نصب وابستگی‌ها
-cp .env.example .env        # سپس DATABASE_URL و AUTH_SECRET را پر کنید
+cp .env.example .env        # سپس DATABASE_URL و NEXT_PUBLIC_SITE_URL را پر کنید
 npm run db:migrate          # ساخت جداول
 npm run db:seed             # داده نمونه (فقط محیط توسعه)
 npm run dev                 # http://localhost:3000
@@ -125,7 +125,7 @@ src/
 - رمز عبور با bcrypt (۱۲ round)
 - نشست: توکن مبهم + هش SHA-256 در پایگاه داده ⟵ امکان ابطال فوری
 - کوکی `httpOnly` + `sameSite=lax` + `secure` در production
-- محدودسازی نرخ روی ورود، ثبت سفارش، فرم تماس و خبرنامه
+- محدودسازی نرخ روی ورود، ثبت سفارش، فرم تماس، خبرنامه و جستجوی سریع
 - honeypot ضد ربات در فرم‌های عمومی
 - `requirePermission` در **هر** Server Action (نه فقط در layout)
 - پنل مدیریت با `noindex` و مسدود در `robots.txt`

@@ -276,6 +276,25 @@ export const userFormSchema = z.object({
   isActive: checkbox.default(true),
 });
 
+/* ------------------------- فیلترهای کاتالوگ (URL) -------------------------- */
+
+/**
+ * پارامترهای فیلتر از نوار نشانی می‌آیند و قابل دست‌کاری‌اند. مقدار نامعتبر
+ * باید بی‌صدا کنار گذاشته شود، نه اینکه تا پایگاه داده برود؛ enum پستگرس
+ * مقدار ناشناخته را با خطا رد می‌کند و کل صفحه ۵۰۰ می‌شود.
+ */
+export const stockFilterSchema = z
+  .enum(["IN_STOCK", "LOW_STOCK", "ORDER_ONLY", "OUT_OF_STOCK", "DISCONTINUED"])
+  .optional()
+  .catch(undefined);
+
+export const sortFilterSchema = z
+  .enum(["newest", "popular", "price-asc", "price-desc", "name"])
+  .catch("newest");
+
+/** جستجوی سریع — سقف طول تا الگوی ILIKE بی‌اندازه بزرگ نشود */
+export const searchQuerySchema = z.string().trim().min(2).max(64);
+
 /* -------------------------- تبدیل خطا به فرم ------------------------------ */
 
 export type FieldErrors = Record<string, string>;

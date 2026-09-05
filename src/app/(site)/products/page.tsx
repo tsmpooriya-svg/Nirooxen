@@ -7,11 +7,10 @@ import { ProductCard } from "@/components/site/product-card";
 import { ProductFilters, ProductToolbar } from "@/components/site/product-filters";
 import { Pagination } from "@/components/ui/pagination";
 import { ProductCardSkeleton } from "@/components/ui/skeleton";
-import type { StockStatus } from "@/db/schema";
-import type { SortOption } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 import { SPEC_PARAM_PREFIX, parseSpecParams } from "@/lib/spec-filter-params";
 import { buildQuery } from "@/lib/utils";
+import { sortFilterSchema, stockFilterSchema } from "@/lib/validation";
 import {
   getBrandBySlug,
   getBrands,
@@ -92,9 +91,9 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
     q: first(params.q),
     category: categorySlug,
     brand: first(params.brand),
-    stock: first(params.stock) as StockStatus | undefined,
+    stock: stockFilterSchema.parse(first(params.stock)),
     onlyPriced: first(params.priced) === "1",
-    sort: (first(params.sort) ?? "newest") as SortOption,
+    sort: sortFilterSchema.parse(first(params.sort)),
     page: Math.max(1, Number(first(params.page) ?? 1) || 1),
     specs,
   };

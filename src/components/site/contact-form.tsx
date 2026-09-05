@@ -26,7 +26,7 @@ export function ContactForm() {
 
   return (
     <form action={formAction} className="space-y-5" noValidate>
-      <div className="absolute -left-[9999px] top-0" aria-hidden>
+      <div className="sr-only" aria-hidden>
         <label htmlFor="contact-hp">وب‌سایت</label>
         <input id="contact-hp" type="text" name="website" tabIndex={-1} autoComplete="off" />
       </div>

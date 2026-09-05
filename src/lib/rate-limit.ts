@@ -62,4 +62,6 @@ export const RATE_LIMITS = {
   login: { limit: 8, windowMs: 15 * 60_000 },
   /** خبرنامه */
   subscribe: { limit: 3, windowMs: 60 * 60_000 },
+  /** جستجوی سریع: سخاوتمند برای تایپِ debounce شده، ولی جلوی برداشت انبوه کاتالوگ را می‌گیرد */
+  search: { limit: 30, windowMs: 60_000 },
 } as const;

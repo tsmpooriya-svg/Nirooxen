@@ -1,19 +1,35 @@
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { db } from "@/db";
 import { brands, categories, products } from "@/db/schema";
+import { getClientIp } from "@/lib/auth";
+import { RATE_LIMITS, rateLimit } from "@/lib/rate-limit";
+import { searchQuerySchema } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
+/** %  _  \ در ILIKE معنی دارند؛ ورودی کاربر باید متن ساده بماند نه الگو */
+function escapeLikePattern(value: string): string {
+  return value.replace(/[\\%_]/g, (char) => `\\${char}`);
+}
+
 /** جستجوی سریع برای دیالوگ Ctrl+K — حداکثر ۸ نتیجه */
 export async function GET(request: Request) {
+  const headerList = await headers();
+  const ip = getClientIp(headerList) ?? "unknown";
+
+  if (!rateLimit(`search:${ip}`, RATE_LIMITS.search).success) {
+    return NextResponse.json({ items: [] }, { status: 429 });
+  }
+
   const { searchParams } = new URL(request.url);
-  const q = searchParams.get("q")?.trim() ?? "";
+  const parsed = searchQuerySchema.safeParse(searchParams.get("q") ?? "");
 
-  if (q.length < 2) return NextResponse.json({ items: [] });
+  if (!parsed.success) return NextResponse.json({ items: [] });
 
-  const term = `%${q}%`;
+  const term = `%${escapeLikePattern(parsed.data)}%`;
 
   const items = await db
     .select({

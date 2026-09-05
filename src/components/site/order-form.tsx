@@ -65,7 +65,7 @@ export function OrderForm({
       <input type="hidden" name="items" value={JSON.stringify(lines)} />
 
       {/* honeypot ضد ربات — برای کاربران نامرئی است */}
-      <div className="absolute -left-[9999px] top-0" aria-hidden>
+      <div className="sr-only" aria-hidden>
         <label htmlFor="website-hp">وب‌سایت</label>
         <input id="website-hp" type="text" name="website" tabIndex={-1} autoComplete="off" />
       </div>
