@@ -188,9 +188,7 @@ export function ProductCard({
                 </span>
               </div>
             ) : (
-              <span className="text-sm font-medium text-[var(--brand)]">
-                {product.priceMode === "CALL" ? "تماس بگیرید" : "استعلام قیمت"}
-              </span>
+              <span className="text-sm font-medium text-[var(--brand)]">استعلام قیمت</span>
             )}
           </div>
 
@@ -199,7 +197,7 @@ export function ProductCard({
               href={`/products/${product.slug}`}
               className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-[background-color,box-shadow] duration-200 group-hover:shadow-[var(--shadow-brand)] group-has-[:focus-visible]:shadow-[var(--shadow-brand)] hover:bg-[var(--brand-hover)]"
             >
-              {product.priceMode === "PUBLIC" ? "ثبت سفارش" : "استعلام قیمت"}
+              {hasPrice ? "ثبت سفارش" : "استعلام قیمت"}
             </Link>
             {cartEnabled && (
             <button

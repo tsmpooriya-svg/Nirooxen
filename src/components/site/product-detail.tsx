@@ -40,11 +40,9 @@ export type ProductDetailProps = {
   brand: { name: string; slug: string; latinName: string | null } | null;
   images: Image[];
   specGroups: SpecGroup[];
-  /** از تنظیمات مدیر می‌آید تا شماره اینجا با بقیه سایت یکی باشد */
-  salesPhoneRaw: string;
 };
 
-export function ProductDetail({ product, category, brand, images, specGroups, salesPhoneRaw }: ProductDetailProps) {
+export function ProductDetail({ product, category, brand, images, specGroups }: ProductDetailProps) {
   const [activeImage, setActiveImage] = React.useState(0);
   const [quantity, setQuantity] = React.useState(product.minOrderQty);
   const [orderOpen, setOrderOpen] = React.useState(false);
@@ -302,9 +300,7 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
                 </>
               ) : (
                 <div className="rounded-lg border border-[var(--border-brand)] bg-[var(--brand-soft)] p-4">
-                  <p className="text-sm font-semibold text-[var(--brand)]">
-                    {product.priceMode === "CALL" ? "قیمت تلفنی اعلام می‌شود" : "قیمت با استعلام"}
-                  </p>
+                  <p className="text-sm font-semibold text-[var(--brand)]">استعلام قیمت</p>
                   <p className="mt-1.5 text-meta leading-7 text-[var(--fg-secondary)]">
                     قیمت این کالا به مشخصات دقیق و تعداد سفارش بستگی دارد. درخواست خود را ثبت کنید تا
                     کارشناس با شما تماس بگیرد.
@@ -314,57 +310,43 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
             </div>
 
             {/* تعداد */}
-            {product.priceMode !== "CALL" && (
-              <div className="mt-5 flex items-center gap-3">
-                <span className="text-meta text-[var(--fg-muted)]">تعداد</span>
-                <div className="flex items-center rounded-md border border-[var(--border-subtle)]">
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.max(product.minOrderQty, q - 1))}
-                    aria-label="کاهش تعداد"
-                    className="grid size-9 place-items-center text-[var(--fg-muted)] transition-colors hover:text-[var(--brand)]"
-                  >
-                    <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M3.5 8h9" strokeLinecap="round" />
-                    </svg>
-                  </button>
-                  <span className="min-w-10 text-center font-mono text-base font-medium">{toFaDigits(quantity)}</span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.min(999, q + 1))}
-                    aria-label="افزایش تعداد"
-                    className="grid size-9 place-items-center text-[var(--fg-muted)] transition-colors hover:text-[var(--brand)]"
-                  >
-                    <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M8 3.5v9M3.5 8h9" strokeLinecap="round" />
-                    </svg>
-                  </button>
-                </div>
-                <span className="text-meta text-[var(--fg-subtle)]">{product.unit}</span>
+            <div className="mt-5 flex items-center gap-3">
+              <span className="text-meta text-[var(--fg-muted)]">تعداد</span>
+              <div className="flex items-center rounded-md border border-[var(--border-subtle)]">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(product.minOrderQty, q - 1))}
+                  aria-label="کاهش تعداد"
+                  className="grid size-9 place-items-center text-[var(--fg-muted)] transition-colors hover:text-[var(--brand)]"
+                >
+                  <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3.5 8h9" strokeLinecap="round" />
+                  </svg>
+                </button>
+                <span className="min-w-10 text-center font-mono text-base font-medium">{toFaDigits(quantity)}</span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.min(999, q + 1))}
+                  aria-label="افزایش تعداد"
+                  className="grid size-9 place-items-center text-[var(--fg-muted)] transition-colors hover:text-[var(--brand)]"
+                >
+                  <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M8 3.5v9M3.5 8h9" strokeLinecap="round" />
+                  </svg>
+                </button>
               </div>
-            )}
+              <span className="text-meta text-[var(--fg-subtle)]">{product.unit}</span>
+            </div>
 
             {/* اقدام‌ها */}
             <div className="mt-6 space-y-2.5">
-              {product.priceMode === "CALL" ? (
-                <a
-                  href={`tel:${salesPhoneRaw}`}
-                  className="flex h-12 items-center justify-center gap-2 rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
-                >
-                  <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M3 2.5h2.5l1 3-1.6 1a8 8 0 0 0 3.6 3.6l1-1.6 3 1V13a1 1 0 0 1-1.1 1A11 11 0 0 1 2 3.6 1 1 0 0 1 3 2.5Z" />
-                  </svg>
-                  تماس با کارشناس فروش
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setOrderOpen(true)}
-                  className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
-                >
-                  {hasPrice ? "ثبت سفارش" : "استعلام قیمت"}
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => setOrderOpen(true)}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
+              >
+                {hasPrice ? "ثبت سفارش" : "استعلام قیمت"}
+              </button>
 
               <button
                 type="button"
@@ -457,9 +439,7 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
               </>
             ) : (
               <>
-                <p className="text-meta font-semibold text-[var(--brand-text)]">
-                  {product.priceMode === "CALL" ? "قیمت تلفنی" : "قیمت با استعلام"}
-                </p>
+                <p className="text-meta font-semibold text-[var(--brand-text)]">استعلام قیمت</p>
                 <p className="mt-0.5 truncate text-micro text-[var(--fg-subtle)]">{stock.label}</p>
               </>
             )}
@@ -478,22 +458,13 @@ export function ProductDetail({ product, category, brand, images, specGroups, sa
             </svg>
           </button>
 
-          {product.priceMode === "CALL" ? (
-            <a
-              href={`tel:${salesPhoneRaw}`}
-              className="flex h-11 shrink-0 items-center justify-center gap-2 rounded-md bg-[var(--brand)] px-5 text-meta font-medium text-[var(--fg-on-brand)]"
-            >
-              تماس با کارشناس
-            </a>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setOrderOpen(true)}
-              className="flex h-11 shrink-0 items-center justify-center rounded-md bg-[var(--brand)] px-6 text-meta font-medium text-[var(--fg-on-brand)]"
-            >
-              {hasPrice ? "ثبت سفارش" : "استعلام قیمت"}
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => setOrderOpen(true)}
+            className="flex h-11 shrink-0 items-center justify-center rounded-md bg-[var(--brand)] px-6 text-meta font-medium text-[var(--fg-on-brand)]"
+          >
+            {hasPrice ? "ثبت سفارش" : "استعلام قیمت"}
+          </button>
         </div>
       </div>
     </>

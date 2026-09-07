@@ -131,6 +131,7 @@ export function ProductFilters({
                   <button
                     type="button"
                     onClick={() => setParam("category", category.slug)}
+                    aria-pressed={isActive}
                     className={cn(
                       "flex flex-1 items-center gap-2.5 rounded-sm px-2 py-2 text-start text-meta transition-colors",
                       isActive
@@ -143,9 +144,7 @@ export function ProductFilters({
                       className={cn("size-4 shrink-0", isActive ? "text-[var(--brand)]" : "text-[var(--fg-subtle)]")}
                     />
                     <span className="flex-1 truncate">{category.name}</span>
-                    <span className="font-mono text-micro text-[var(--fg-subtle)]">
-                      {toFaDigits(category.productCount)}
-                    </span>
+                    <FacetCount value={category.productCount} />
                   </button>
                   {category.children.length > 0 && (
                     <button
@@ -184,6 +183,7 @@ export function ProductFilters({
                             <button
                               type="button"
                               onClick={() => setParam("category", child.slug)}
+                              aria-pressed={activeCategory === child.slug}
                               className={cn(
                                 "w-full rounded-sm px-2 py-1.5 text-start text-meta transition-colors",
                                 activeCategory === child.slug
@@ -213,6 +213,7 @@ export function ProductFilters({
               <button
                 type="button"
                 onClick={() => setParam("brand", brand.slug)}
+                aria-pressed={activeBrand === brand.slug}
                 className={cn(
                   "flex w-full items-center gap-2 rounded-sm px-2 py-2 text-start text-meta transition-colors",
                   activeBrand === brand.slug
@@ -236,9 +237,7 @@ export function ProductFilters({
                   )}
                 </span>
                 <span className="flex-1 truncate">{brand.name}</span>
-                <span className="font-mono text-micro text-[var(--fg-subtle)]">
-                  {toFaDigits(brand.productCount)}
-                </span>
+                <FacetCount value={brand.productCount} />
               </button>
             </li>
           ))}
@@ -253,6 +252,7 @@ export function ProductFilters({
               <button
                 type="button"
                 onClick={() => setParam("stock", key)}
+                aria-pressed={activeStock === key}
                 className={cn(
                   "flex w-full items-center gap-2.5 rounded-sm px-2 py-2 text-start text-meta transition-colors",
                   activeStock === key
@@ -447,15 +447,23 @@ function SpecOptionsFilter({
                   className="size-4 shrink-0 accent-[var(--brand)]"
                 />
                 <span className="min-w-0 flex-1 truncate">{option.label}</span>
-                <span className="shrink-0 font-mono text-micro text-[var(--fg-subtle)]">
-                  {toFaDigits(option.count)}
-                </span>
+                <FacetCount value={option.count} />
               </label>
             </li>
           );
         })}
       </ul>
     </FilterGroup>
+  );
+}
+
+/** جداکننده فقط برای صفحه‌خوان است؛ بدون آن نام دسترس‌پذیر «پنتاکس۲» خوانده می‌شود */
+function FacetCount({ value }: { value: number }) {
+  return (
+    <span className="shrink-0 font-mono text-micro text-[var(--fg-subtle)]">
+      <span className="sr-only"> — </span>
+      {toFaDigits(value)}
+    </span>
   );
 }
 
