@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { Reveal } from "@/components/motion/reveal";
@@ -108,6 +110,17 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
       filters.brand ? getBrandBySlug(filters.brand) : Promise.resolve(null),
     ]);
 
+  if (filters.page > pageCount) redirect(hrefForPage(pageCount));
+
+  const hasActiveFilters = Boolean(
+    filters.q ||
+      filters.category ||
+      filters.brand ||
+      filters.stock ||
+      filters.onlyPriced ||
+      filters.specs.length > 0,
+  );
+
   const title = category?.name ?? (brand ? `محصولات ${brand.name}` : "کاتالوگ محصولات");
   const description =
     category?.description ??
@@ -170,7 +183,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
             </Suspense>
 
             {items.length === 0 ? (
-              <EmptyResults query={filters.q} />
+              <EmptyResults query={filters.q} hasActiveFilters={hasActiveFilters} />
             ) : (
               <>
                 {/*
@@ -196,7 +209,14 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
   );
 }
 
-function EmptyResults({ query }: { query?: string }) {
+function EmptyResults({ query, hasActiveFilters }: { query?: string; hasActiveFilters: boolean }) {
+  const heading = hasActiveFilters ? "نتیجه‌ای پیدا نشد" : "هنوز کالایی در کاتالوگ ثبت نشده است";
+  const body = query
+    ? `کالایی مطابق «${query}» در کاتالوگ نبود. ممکن است بتوانیم آن را برایتان تأمین کنیم.`
+    : hasActiveFilters
+      ? "با این ترکیب فیلترها کالایی وجود ندارد. چند فیلتر را حذف کنید."
+      : "کاتالوگ در حال تکمیل است. برای استعلام مستقیم با کارشناسان ما تماس بگیرید.";
+
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border-default)] px-6 py-20 text-center">
       <span className="mb-5 grid size-16 place-items-center rounded-full border border-[var(--border-subtle)] bg-[var(--bg-elev-2)] text-[var(--fg-subtle)]">
@@ -205,12 +225,23 @@ function EmptyResults({ query }: { query?: string }) {
           <path d="m15.5 15.5 4.5 4.5" strokeLinecap="round" />
         </svg>
       </span>
-      <h2 className="font-display text-lg font-bold">نتیجه‌ای پیدا نشد</h2>
-      <p className="mt-3 max-w-md text-sm leading-8 text-[var(--fg-muted)]">
-        {query
-          ? `کالایی مطابق «${query}» در کاتالوگ نبود. ممکن است بتوانیم آن را برایتان تأمین کنیم.`
-          : "با این ترکیب فیلترها کالایی وجود ندارد. چند فیلتر را حذف کنید."}
-      </p>
+      <h2 className="font-display text-lg font-bold">{heading}</h2>
+      <p className="mt-3 max-w-md text-sm leading-8 text-[var(--fg-muted)]">{body}</p>
+      {hasActiveFilters ? (
+        <Link
+          href="/products"
+          className="mt-6 inline-flex h-11 items-center rounded-md border border-[var(--border-default)] px-6 text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+        >
+          نمایش همه محصولات
+        </Link>
+      ) : (
+        <Link
+          href="/contact"
+          className="mt-6 inline-flex h-11 items-center rounded-md border border-[var(--border-default)] px-6 text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+        >
+          تماس با کارشناسان
+        </Link>
+      )}
     </div>
   );
 }

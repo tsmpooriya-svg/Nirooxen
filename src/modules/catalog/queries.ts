@@ -377,6 +377,9 @@ export async function listProducts(filters: ProductFilters = {}) {
     .where(where)
     .then((r) => (r.length ? r : [{ total: 0 }]));
 
+  const pageCount = Math.max(1, Math.ceil((total ?? 0) / pageSize));
+  const currentPage = Math.min(page, pageCount);
+
   const rows = await db
     .select(cardSelection)
     .from(products)
@@ -385,14 +388,14 @@ export async function listProducts(filters: ProductFilters = {}) {
     .where(where)
     .orderBy(...orderBy)
     .limit(pageSize)
-    .offset((page - 1) * pageSize);
+    .offset((currentPage - 1) * pageSize);
 
   return {
     items: await attachKeySpecs(rows as Omit<ProductCardData, "keySpecs">[]),
     total: total ?? 0,
-    page,
+    page: currentPage,
     pageSize,
-    pageCount: Math.max(1, Math.ceil((total ?? 0) / pageSize)),
+    pageCount,
   };
 }
 
