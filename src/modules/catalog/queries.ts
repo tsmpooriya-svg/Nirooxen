@@ -9,7 +9,7 @@
  */
 import "server-only";
 
-import { and, asc, count, desc, eq, gte, ilike, inArray, isNotNull, lte, ne, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, isNotNull, lte, ne, or, sql, type SQL } from "drizzle-orm";
 import { cache } from "react";
 
 import { db } from "@/db";
@@ -717,23 +717,50 @@ export const getProductBySlug = cache(async (slug: string) => {
 
 /** محصولات مشابه: هم‌دسته، به‌جز خودش */
 export const getRelatedProducts = cache(
-  async (productId: string, categoryId: string, limit = 4): Promise<ProductCardData[]> => {
-    const rows = await db
-      .select(cardSelection)
-      .from(products)
-      .innerJoin(categories, eq(products.categoryId, categories.id))
-      .leftJoin(brands, eq(products.brandId, brands.id))
-      .where(
-        and(
-          eq(products.status, "PUBLISHED"),
-          eq(products.categoryId, categoryId),
-          ne(products.id, productId),
-        ),
-      )
-      .orderBy(desc(products.isFeatured), desc(products.viewCount))
-      .limit(limit);
+  async (
+    productId: string,
+    categoryId: string,
+    parentCategoryId: string | null = null,
+    brandId: string | null = null,
+    limit = 4,
+  ): Promise<ProductCardData[]> => {
+    const familyRootId = parentCategoryId ?? categoryId;
+    const familyRows = await db
+      .select({ id: categories.id })
+      .from(categories)
+      .where(or(eq(categories.id, familyRootId), eq(categories.parentId, familyRootId)));
+    const familyIds = familyRows.map((row) => row.id);
 
-    return attachKeySpecs(rows as Omit<ProductCardData, "keySpecs">[]);
+    const stages: (SQL | undefined)[] = [
+      eq(products.categoryId, categoryId),
+      familyIds.length > 0 ? inArray(products.categoryId, familyIds) : undefined,
+      brandId ? eq(products.brandId, brandId) : undefined,
+    ];
+
+    const collected: Omit<ProductCardData, "keySpecs">[] = [];
+    const seen = new Set<string>([productId]);
+
+    for (const stage of stages) {
+      if (collected.length >= limit || !stage) continue;
+
+      const rows = await db
+        .select(cardSelection)
+        .from(products)
+        .innerJoin(categories, eq(products.categoryId, categories.id))
+        .leftJoin(brands, eq(products.brandId, brands.id))
+        .where(and(eq(products.status, "PUBLISHED"), ne(products.id, productId), stage))
+        .orderBy(desc(products.isFeatured), desc(products.viewCount))
+        .limit(limit + collected.length);
+
+      for (const row of rows as Omit<ProductCardData, "keySpecs">[]) {
+        if (collected.length >= limit) break;
+        if (seen.has(row.id)) continue;
+        seen.add(row.id);
+        collected.push(row);
+      }
+    }
+
+    return attachKeySpecs(collected);
   },
 );
 

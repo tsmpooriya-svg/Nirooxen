@@ -49,7 +49,7 @@ export default async function ProductPage({ params }: { params: Params }) {
   const { product, category, brand, images, specGroups } = data;
 
   const [related, categoryPath, settings] = await Promise.all([
-    getRelatedProducts(product.id, product.categoryId),
+    getRelatedProducts(product.id, product.categoryId, category.parentId, product.brandId),
     getCategoryPath(category.slug),
     getSiteSettings(),
   ]);
