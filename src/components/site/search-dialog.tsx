@@ -6,6 +6,9 @@ import * as React from "react";
 
 import { cn, formatPrice } from "@/lib/utils";
 
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 type SearchHit = {
   id: string;
   name: string;
@@ -34,6 +37,8 @@ export function SearchDialog() {
   const [rateLimited, setRateLimited] = React.useState(false);
   const [activeIndex, setActiveIndex] = React.useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const openerRef = React.useRef<HTMLButtonElement>(null);
+  const dialogRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -53,6 +58,41 @@ export function SearchDialog() {
     return () => {
       document.body.style.overflow = "";
     };
+  }, [open]);
+
+  // هنگام بستن، کانون به همان دکمه‌ای برمی‌گردد که دیالوگ را باز کرده بود
+  React.useEffect(() => {
+    if (!open) return;
+    const opener = openerRef.current;
+    return () => {
+      if (opener?.isConnected) opener.focus();
+    };
+  }, [open]);
+
+  // نگه‌داشتن کانون داخل دیالوگ تا وقتی باز است
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const dialog = dialogRef.current;
+      if (!dialog) return;
+
+      const items = [...dialog.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
+        (element) => element.offsetParent !== null,
+      );
+      if (items.length === 0) return;
+
+      const index = items.indexOf(document.activeElement as HTMLElement);
+      if (event.shiftKey && index <= 0) {
+        event.preventDefault();
+        items[items.length - 1]!.focus();
+      } else if (!event.shiftKey && (index === -1 || index === items.length - 1)) {
+        event.preventDefault();
+        items[0]!.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
   React.useEffect(() => {
@@ -97,8 +137,10 @@ export function SearchDialog() {
   return (
     <>
       <button
+        ref={openerRef}
         type="button"
         onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
         aria-label="جستجوی محصولات"
         className="group flex h-10 items-center gap-2 rounded-md border border-[var(--border-subtle)] px-3 text-[var(--fg-muted)] transition-all duration-300 hover:border-[var(--border-brand)] hover:text-[var(--brand)] md:w-56 lg:w-64"
       >
@@ -118,7 +160,13 @@ export function SearchDialog() {
             className="absolute inset-0 bg-[var(--bg-scrim)] backdrop-blur-sm anim-fade-in"
             onClick={() => setOpen(false)}
           />
-          <div className="anim-pop relative w-full max-w-2xl overflow-hidden rounded-xl border border-[var(--border-default)] bg-[var(--bg-elev-1)] shadow-[var(--shadow-xl)]">
+          <div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="جستجوی محصولات"
+            className="anim-pop relative w-full max-w-2xl overflow-hidden rounded-xl border border-[var(--border-default)] bg-[var(--bg-elev-1)] shadow-[var(--shadow-xl)]"
+          >
             <form onSubmit={submit} className="flex items-center gap-3 border-b border-[var(--border-hairline)] px-5">
               <svg viewBox="0 0 20 20" className="size-5 shrink-0 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth="1.6">
                 <circle cx="9" cy="9" r="6" />
