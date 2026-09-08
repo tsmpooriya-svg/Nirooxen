@@ -196,7 +196,9 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
                             <dd className="flex-1 font-medium text-[var(--fg-primary)]">
                               {spec.value}
                               {spec.unit && (
-                                <span className="ms-1 font-normal text-[var(--fg-muted)]">{spec.unit}</span>
+                                <span className="font-normal text-[var(--fg-muted)]">
+                                  {withUnitGap(spec.value, spec.unit)}
+                                </span>
                               )}
                             </dd>
                           </div>
@@ -275,7 +277,11 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
                     <dt className="text-micro text-[var(--fg-subtle)]">{spec.label}</dt>
                     <dd className="mt-1 text-base font-semibold text-[var(--fg-primary)]">
                       {spec.value}
-                      {spec.unit && <span className="ms-1 text-meta font-normal text-[var(--fg-muted)]">{spec.unit}</span>}
+                      {spec.unit && (
+                        <span className="text-meta font-normal text-[var(--fg-muted)]">
+                          {withUnitGap(spec.value, spec.unit)}
+                        </span>
+                      )}
                     </dd>
                   </div>
                 ))}
@@ -469,6 +475,16 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
       </div>
     </>
   );
+}
+
+/**
+ * فاصله میان مقدار و واحد باید کاراکتر واقعی باشد نه margin، وگرنه متن کپی‌شده
+ * و صفحه‌خوان «۲۴لیتر» می‌دهند. دقیقاً یک فاصله می‌ماند: اگر مقدار خودش به
+ * فاصله ختم شود یا واحد با فاصله شروع شود، دومی حذف می‌شود.
+ */
+function withUnitGap(value: string, unit: string): string {
+  const trimmed = unit.trimStart();
+  return /\s$/.test(value) ? trimmed : ` ${trimmed}`;
 }
 
 function TabButton({

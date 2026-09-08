@@ -12,6 +12,10 @@ import type { CategoryNode, SpecFacet } from "@/modules/catalog/queries";
 
 type Brand = { id: string; name: string; slug: string; productCount: number };
 
+const SHEET_TITLE_ID = "product-filter-sheet-title";
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 /**
  * پنل فیلتر.
  *
@@ -496,6 +500,9 @@ export function ProductToolbar({
   const pathname = usePathname();
   const params = useSearchParams();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const sheetRef = React.useRef<HTMLDivElement>(null);
+  const headingRef = React.useRef<HTMLHeadingElement>(null);
   const sort = params.get("sort") ?? "newest";
 
   // شیت modal است، پس صفحه پشتش نباید اسکرول شود
@@ -518,6 +525,43 @@ export function ProductToolbar({
     return () => window.removeEventListener("keydown", onKey);
   }, [mobileOpen]);
 
+  // عنوان شیت کانون را می‌گیرد تا صفحه‌خوان بداند کجاست؛ هنگام بستن، کانون به
+  // همان دکمه‌ای برمی‌گردد که شیت را باز کرده بود
+  React.useEffect(() => {
+    if (!mobileOpen) return;
+    const trigger = triggerRef.current;
+    headingRef.current?.focus();
+    return () => {
+      if (trigger?.isConnected) trigger.focus();
+    };
+  }, [mobileOpen]);
+
+  // نگه‌داشتن کانون داخل شیت تا وقتی باز است
+  React.useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const sheet = sheetRef.current;
+      if (!sheet) return;
+
+      const items = [...sheet.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
+        (element) => element.offsetParent !== null,
+      );
+      if (items.length === 0) return;
+
+      const index = items.indexOf(document.activeElement as HTMLElement);
+      if (event.shiftKey && index <= 0) {
+        event.preventDefault();
+        items[items.length - 1]!.focus();
+      } else if (!event.shiftKey && (index === -1 || index === items.length - 1)) {
+        event.preventDefault();
+        items[0]!.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [mobileOpen]);
+
   function onSortChange(value: string) {
     const next = new URLSearchParams(params.toString());
     if (value === "newest") next.delete("sort");
@@ -535,8 +579,10 @@ export function ProductToolbar({
 
         <div className="flex items-center gap-2">
           <button
+            ref={triggerRef}
             type="button"
             onClick={() => setMobileOpen(true)}
+            aria-haspopup="dialog"
             className="flex h-10 items-center gap-2 rounded-md border border-[var(--border-subtle)] px-3 text-meta text-[var(--fg-secondary)] transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)] lg:hidden"
           >
             <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
@@ -570,7 +616,7 @@ export function ProductToolbar({
       */}
       <div
         className={cn("fixed inset-0 z-[70] lg:hidden", mobileOpen ? "pointer-events-auto" : "pointer-events-none")}
-        aria-hidden={!mobileOpen}
+        inert={!mobileOpen}
       >
         <div
           onClick={() => setMobileOpen(false)}
@@ -580,9 +626,10 @@ export function ProductToolbar({
           )}
         />
         <div
+          ref={sheetRef}
           role="dialog"
           aria-modal="true"
-          aria-label="فیلترها"
+          aria-labelledby={SHEET_TITLE_ID}
           className={cn(
             "absolute inset-x-0 bottom-0 flex max-h-[86dvh] flex-col rounded-t-2xl border-t border-[var(--border-subtle)]",
             "bg-[var(--bg-base)] shadow-[0_-16px_48px_-16px_rgb(0_0_0/0.45)] transition-transform duration-400",
@@ -596,7 +643,9 @@ export function ProductToolbar({
           </div>
 
           <div className="flex shrink-0 items-center justify-between px-5 pb-3 pt-2">
-            <h2 className="font-display text-base font-bold">فیلترها</h2>
+            <h2 id={SHEET_TITLE_ID} ref={headingRef} tabIndex={-1} className="font-display text-base font-bold outline-none">
+              فیلترها
+            </h2>
             <button
               type="button"
               onClick={() => setMobileOpen(false)}
