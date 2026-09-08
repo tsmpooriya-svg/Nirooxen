@@ -13,7 +13,7 @@
  * =============================================================================
  */
 
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
@@ -129,7 +129,7 @@ export async function createOrder(
             minOrderQty: products.minOrderQty,
           })
           .from(products)
-          .where(and(eq(products.status, "PUBLISHED"), sql`${products.id} = any(${productIds})`))
+          .where(and(eq(products.status, "PUBLISHED"), inArray(products.id, productIds)))
       : [];
 
     const productMap = new Map(dbProducts.map((p) => [p.id, p]));
