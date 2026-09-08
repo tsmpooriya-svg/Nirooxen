@@ -127,7 +127,7 @@ export function ProductFilters({
       <FilterGroup title="دسته‌بندی">
         <ul className="space-y-0.5">
           {categories.map((category) => {
-            const isOpen = openGroups[category.id];
+            const isOpen = Boolean(openGroups[category.id]);
             const isActive = activeCategory === category.slug;
             return (
               <li key={category.id}>
@@ -174,6 +174,7 @@ export function ProductFilters({
 
                 {category.children.length > 0 && (
                   <ul
+                    inert={!isOpen}
                     className={cn(
                       "grid overflow-hidden transition-all duration-400",
                       "[transition-timing-function:var(--ease-out-expo)]",
