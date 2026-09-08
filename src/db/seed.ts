@@ -41,6 +41,16 @@ const {
   users,
 } = schema;
 
+// این اسکریپت تمام جدول‌ها را TRUNCATE می‌کند؛ روی production هرگز نباید اجرا
+// شود و یادداشت هشدار به‌تنهایی محافظ نیست. راه دور زدن عمداً وجود ندارد.
+if (process.env.NODE_ENV === "production") {
+  console.error(
+    "✖ اجرای db:seed روی محیط production ممنوع است: این اسکریپت تمام جدول‌ها را پاک می‌کند.\n" +
+      "  برای ساخت نخستین حساب مدیر از `npm run bootstrap:admin` استفاده کنید.",
+  );
+  process.exit(1);
+}
+
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool, { schema, casing: "snake_case" });
 

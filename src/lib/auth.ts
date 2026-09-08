@@ -181,8 +181,30 @@ export class AuthError extends Error {
 
 /* --------------------------------- کمکی ---------------------------------- */
 
+/**
+ * نشانی واقعی کلاینت، برای کلید محدودسازی نرخ.
+ *
+ * استقرار پشت یک reverse proxy مورد اعتماد است و همان proxy باید هر دو هدر
+ * زیر را بازنویسی کند (نه صرفاً عبور دهد) — به README بخش «استقرار» ببینید.
+ *
+ * X-Real-IP تک‌مقداری است و proxy آن را جایگزین می‌کند، پس اولویت با آن است.
+ * در X-Forwarded-For آخرین مقدار خوانده می‌شود نه اولی: هر مقداری که کلاینت
+ * خودش بفرستد در ابتدای فهرست می‌نشیند، بنابراین خواندن مقدار اول یعنی مهاجم
+ * می‌تواند با یک هدر ساختگی سطل محدودسازی تازه بگیرد.
+ */
 export function getClientIp(headerList: Headers): string | null {
+  const realIp = headerList.get("x-real-ip")?.trim();
+  if (realIp) return realIp.slice(0, 60);
+
   const forwarded = headerList.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]!.trim().slice(0, 60);
-  return headerList.get("x-real-ip")?.slice(0, 60) ?? null;
+  if (forwarded) {
+    const hops = forwarded
+      .split(",")
+      .map((hop) => hop.trim())
+      .filter(Boolean);
+    const nearest = hops[hops.length - 1];
+    if (nearest) return nearest.slice(0, 60);
+  }
+
+  return null;
 }
