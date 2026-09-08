@@ -39,9 +39,9 @@ const numericString = z
 export const orderItemInputSchema = z.object({
   productId: z.string().uuid().optional(),
   productName: z.string().trim().min(1).max(220),
-  productSku: z.string().trim().max(64).optional(),
+  productSku: z.string().trim().max(64).nullable().optional(),
   productSlug: z.string().trim().max(250).optional(),
-  imageUrl: z.string().trim().max(500).optional(),
+  imageUrl: z.string().trim().max(500).nullable().optional(),
   unit: z.string().trim().max(32).default("دستگاه"),
   unitPrice: z.number().int().nonnegative().nullable().optional(),
   quantity: z.coerce.number().int().min(1, "حداقل تعداد ۱ است").max(9999),
