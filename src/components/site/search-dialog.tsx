@@ -31,6 +31,7 @@ export function SearchDialog() {
   // نتایج فقط تا وقتی معتبرند که پرس‌وجو خالی نباشد
   const hits = query.trim() ? fetchedHits : [];
   const [loading, setLoading] = React.useState(false);
+  const [rateLimited, setRateLimited] = React.useState(false);
   const [activeIndex, setActiveIndex] = React.useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -67,8 +68,10 @@ export function SearchDialog() {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
           signal: controller.signal,
         });
-        const data = (await res.json()) as { items: SearchHit[] };
-        setFetchedHits(data.items ?? []);
+        const data = (await res.json()) as { items: SearchHit[]; error?: string };
+        // ۴۲۹ یعنی «فعلاً نه»، نه «چیزی پیدا نشد» — دو حالت کاملاً متفاوت
+        setRateLimited(res.status === 429 || data.error === "RATE_LIMITED");
+        setFetchedHits(res.ok ? (data.items ?? []) : []);
         setActiveIndex(0);
       } catch {
         /* درخواست لغو شد */
@@ -152,7 +155,16 @@ export function SearchDialog() {
             </form>
 
             <div className="max-h-[52vh] overflow-y-auto">
-              {query.trim() && !loading && hits.length === 0 && (
+              {query.trim() && !loading && rateLimited && (
+                <div className="px-5 py-12 text-center">
+                  <p className="text-sm text-[var(--fg-muted)]">جستجوی شما موقتاً محدود شده است.</p>
+                  <p className="mt-2 text-meta text-[var(--fg-subtle)]">
+                    چند لحظه صبر کنید و دوباره تلاش کنید.
+                  </p>
+                </div>
+              )}
+
+              {query.trim() && !loading && !rateLimited && hits.length === 0 && (
                 <div className="px-5 py-12 text-center">
                   <p className="text-sm text-[var(--fg-muted)]">نتیجه‌ای برای «{query}» پیدا نشد.</p>
                   <p className="mt-2 text-meta text-[var(--fg-subtle)]">
