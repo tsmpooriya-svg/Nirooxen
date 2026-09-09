@@ -15,6 +15,12 @@
  * =============================================================================
  */
 import "dotenv/config";
+
+import { assertSafeTarget } from "./guard-destructive.mjs";
+
+// این اسکریپت داده می‌نویسد؛ هدف باید محلی باشد یا اپراتور صریحاً تأیید کند.
+// حالت آزمایشی چیزی نمی‌نویسد، پس آزاد است.
+if (!process.argv.includes("--dry")) assertSafeTarget("replace-watertank-images");
 import { Client } from "pg";
 
 const DRY = process.argv.includes("--dry");

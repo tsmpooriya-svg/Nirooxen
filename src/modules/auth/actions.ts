@@ -57,10 +57,12 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
     return invalid;
   }
 
-  if (!user.isActive) {
-    return { status: "error", message: "حساب کاربری شما غیرفعال شده است. با مدیر سیستم تماس بگیرید." };
-  }
-
+  /*
+    ترتیب اینجا امنیتی است: رمز عبور همیشه پیش از هر پیام اختصاصی بررسی می‌شود.
+    اگر «حساب غیرفعال است» پیش از بررسی رمز برگردد، هر کسی با فرستادن یک رمز
+    دلخواه می‌فهمد که آن ایمیل در سیستم وجود دارد — همان چیزی که پیام یکسانِ
+    بالا برای پنهان کردنش هست.
+  */
   const valid = await verifyPassword(parsed.data.password, user.passwordHash);
   if (!valid) {
     await logActivity({
@@ -71,6 +73,18 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
       summary: `رمز عبور نادرست برای ${user.email}`,
     });
     return invalid;
+  }
+
+  // رمز درست بوده؛ حالا گفتن دلیل واقعی به صاحب حساب نشتی نیست
+  if (!user.isActive) {
+    await logActivity({
+      userId: user.id,
+      action: "login_failed",
+      entity: "user",
+      entityId: user.id,
+      summary: `ورود حساب غیرفعال ${user.email}`,
+    });
+    return { status: "error", message: "حساب کاربری شما غیرفعال شده است. با مدیر سیستم تماس بگیرید." };
   }
 
   await createSession(user.id);

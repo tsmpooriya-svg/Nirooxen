@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { subscribers } from "@/db/schema";
 import { getClientIp } from "@/lib/auth";
+import { BODY_LIMITS, BodyTooLargeError, readTextWithLimit } from "@/lib/http/body-limit";
 import { RATE_LIMITS, rateLimit } from "@/lib/rate-limit";
 import { subscribeSchema } from "@/lib/validation";
 
@@ -18,7 +19,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const body = await request.json().catch(() => null);
+  // بدنه با سقف خوانده می‌شود؛ `request.json()` هر حجمی را تا آخر در حافظه می‌ریزد
+  let body: unknown = null;
+  try {
+    const text = await readTextWithLimit(request, BODY_LIMITS.subscribe);
+    body = text ? JSON.parse(text) : null;
+  } catch (error) {
+    if (error instanceof BodyTooLargeError) {
+      return NextResponse.json({ ok: false, message: "حجم درخواست بیش از حد مجاز است." }, { status: 413 });
+    }
+    body = null;
+  }
+
   const parsed = subscribeSchema.safeParse(body);
 
   if (!parsed.success) {

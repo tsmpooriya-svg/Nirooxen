@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { AuthError, requireWritePermission } from "@/lib/auth";
+import { checkDeclaredLength } from "@/lib/http/body-limit";
 import { logActivity } from "@/lib/activity";
 import { MediaValidationError, maxUploadBytes, maxUploadMb, processUpload } from "@/lib/media/process";
 import { getStorage } from "@/lib/storage";
@@ -28,12 +29,24 @@ export async function POST(request: Request): Promise<Response> {
     throw error;
   }
 
-  const declared = Number(request.headers.get("content-length") ?? 0);
-  if (declared && declared > maxUploadBytes() * 1.1) {
+  /*
+    `formData()` را نمی‌توان وسط خواندن متوقف کرد، پس سقف فقط از روی هدر قابل
+    اعمال است و درخواست بدون Content-Length رد می‌شود؛ وگرنه بدنهٔ chunked
+    نامحدود، بررسی حجم را دور می‌زد. مرورگر همیشه این هدر را برای FormData
+    می‌فرستد. ضریب ۱.۱ جا برای سربار چندبخشی باز می‌کند؛ حجم واقعی فایل را
+    processUpload می‌سنجد.
+  */
+  const lengthCheck = checkDeclaredLength(request, Math.ceil(maxUploadBytes() * 1.1), {
+    requireLength: true,
+  });
+  if (lengthCheck === "too-large") {
     return NextResponse.json(
       { error: `حجم فایل بیش از ${maxUploadMb()} مگابایت است.` },
       { status: 413 },
     );
+  }
+  if (lengthCheck === "length-required") {
+    return NextResponse.json({ error: "طول درخواست مشخص نیست." }, { status: 411 });
   }
 
   let form: FormData;

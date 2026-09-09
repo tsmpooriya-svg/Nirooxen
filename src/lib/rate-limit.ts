@@ -2,8 +2,12 @@
  * محدودسازی نرخ درخواست — پیاده‌سازی in-memory با پنجره لغزان.
  *
  * برای یک نصب تک‌سروری (که حالت رایج این پروژه است) کافی است.
- * اگر روزی چند instance اجرا شد، تنها همین فایل باید به Redis مهاجرت کند؛
- * امضای تابع تغییری نمی‌کند.
+ *
+ * ⚠️ وضعیت در حافظهٔ همین پروسه نگهداری می‌شود. با چند instance (چند process
+ * در PM2، چند کانتینر، یا استقرار افقی) هر instance شمارندهٔ خودش را دارد و
+ * سقف مؤثر در عمل در تعداد instance ها ضرب می‌شود. استقرار چند-instance به
+ * وضعیت مشترک (مثلاً Redis) نیاز دارد؛ تنها همین فایل باید عوض شود، امضای
+ * تابع تغییری نمی‌کند.
  */
 import "server-only";
 
@@ -12,11 +16,35 @@ type Bucket = { count: number; resetAt: number };
 const buckets = new Map<string, Bucket>();
 let lastSweep = Date.now();
 
-function sweep(now: number) {
-  if (now - lastSweep < 60_000) return;
-  lastSweep = now;
+/*
+  کلید هر سطل از IP ساخته می‌شود، یعنی مهاجم آن را کنترل می‌کند. جاروی زمانی
+  فقط هر ۶۰ ثانیه اجرا می‌شود و سطل‌ها تا پایان پنجره (برای خبرنامه یک ساعت)
+  زنده‌اند؛ پس بدون سقف، سیلی از IP های جعلی می‌توانست حافظهٔ پروسه را پر کند.
+  سقف زیر آن حالت را به یک هزینهٔ ثابت تبدیل می‌کند.
+*/
+const MAX_BUCKETS = 20_000;
+/** پس از پر شدن، تا این اندازه کوچک می‌شود تا حذف در هر درخواست تکرار نشود */
+const TARGET_BUCKETS = 16_000;
+
+function dropExpired(now: number) {
   for (const [key, bucket] of buckets) {
     if (bucket.resetAt <= now) buckets.delete(key);
+  }
+}
+
+function sweep(now: number) {
+  if (now - lastSweep >= 60_000) {
+    lastSweep = now;
+    dropExpired(now);
+  }
+
+  if (buckets.size <= MAX_BUCKETS) return;
+
+  // زیر فشار، اول منقضی‌ها؛ اگر باز هم زیاد بود قدیمی‌ترین‌ها (ترتیب درج Map)
+  dropExpired(now);
+  for (const key of buckets.keys()) {
+    if (buckets.size <= TARGET_BUCKETS) break;
+    buckets.delete(key);
   }
 }
 
@@ -65,3 +93,8 @@ export const RATE_LIMITS = {
   /** جستجوی سریع: سخاوتمند برای تایپِ debounce شده، ولی جلوی برداشت انبوه کاتالوگ را می‌گیرد */
   search: { limit: 30, windowMs: 60_000 },
 } as const;
+
+/** فقط برای بررسی و تست — اندازهٔ فعلی جدول سطل‌ها */
+export function rateLimitBucketCount(): number {
+  return buckets.size;
+}

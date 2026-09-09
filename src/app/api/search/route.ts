@@ -124,28 +124,41 @@ export async function GET(request: Request) {
 
   const relevance = sql`(${sql.join(scoreParts, sql` + `)})`;
 
-  const items = await db
-    .select({
-      id: products.id,
-      name: products.name,
-      slug: products.slug,
-      model: products.model,
-      price: products.price,
-      priceMode: products.priceMode,
-      categoryName: categories.name,
-      brandName: brands.name,
-      imageUrl: sql<string | null>`(
-        select pi.url from product_images pi
-        where pi.product_id = products.id
-        order by pi.is_primary desc, pi.position asc limit 1
-      )`,
-    })
-    .from(products)
-    .innerJoin(categories, eq(products.categoryId, categories.id))
-    .leftJoin(brands, eq(products.brandId, brands.id))
-    .where(and(eq(products.status, "PUBLISHED"), ...tokenConditions))
-    .orderBy(desc(relevance), desc(products.isFeatured), desc(products.viewCount), asc(products.id))
-    .limit(8);
+  /*
+    قطعی پایگاه داده نباید این مسیر را به ۵۰۰ با بدنهٔ خالی تبدیل کند؛ کلاینت
+    پاسخ را json می‌کند و همان‌جا می‌شکند. شکل پاسخ همان می‌ماند و فقط با
+    error علامت می‌خورد — همان قراردادی که برای RATE_LIMITED هم به کار می‌رود.
+    هیچ نتیجهٔ ساختگی برنمی‌گردد؛ فهرست خالی یعنی خالی.
+  */
+  let items;
+
+  try {
+    items = await db
+      .select({
+        id: products.id,
+        name: products.name,
+        slug: products.slug,
+        model: products.model,
+        price: products.price,
+        priceMode: products.priceMode,
+        categoryName: categories.name,
+        brandName: brands.name,
+        imageUrl: sql<string | null>`(
+          select pi.url from product_images pi
+          where pi.product_id = products.id
+          order by pi.is_primary desc, pi.position asc limit 1
+        )`,
+      })
+      .from(products)
+      .innerJoin(categories, eq(products.categoryId, categories.id))
+      .leftJoin(brands, eq(products.brandId, brands.id))
+      .where(and(eq(products.status, "PUBLISHED"), ...tokenConditions))
+      .orderBy(desc(relevance), desc(products.isFeatured), desc(products.viewCount), asc(products.id))
+      .limit(8);
+  } catch (error) {
+    console.error("[search] پرس‌وجوی جستجو ناموفق بود:", error);
+    return NextResponse.json({ items: [], error: "UNAVAILABLE" }, { status: 503 });
+  }
 
   return NextResponse.json(
     { items },

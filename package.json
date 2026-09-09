@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.0.0",
-    "npm": ">=10.0.0"
+    "node": ">=22.0.0 <23.0.0",
+    "npm": ">=10.0.0 <11.0.0"
   },
+  "packageManager": "npm@10.9.7",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -14,13 +15,13 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
+    "db:push": "node scripts/guard-destructive.mjs db:push && drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "tsx src/db/seed.ts",
+    "db:seed": "node scripts/guard-destructive.mjs db:seed && tsx src/db/seed.ts",
     "bootstrap:admin": "tsx scripts/create-admin.ts",
     "placeholders": "node scripts/generate-placeholders.mjs",
-    "db:specs": "tsx scripts/backfill-specs.mjs",
+    "db:specs": "node scripts/guard-destructive.mjs db:specs && tsx scripts/backfill-specs.mjs",
     "db:specs:dry": "tsx scripts/backfill-specs.mjs --dry-run",
     "db:apply": "node scripts/apply-migration.mjs"
   },
