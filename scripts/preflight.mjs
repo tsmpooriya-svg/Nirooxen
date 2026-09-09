@@ -14,6 +14,8 @@
  */
 import "dotenv/config";
 
+import path from "node:path";
+
 const REQUIRED_NODE_MAJOR = 22;
 
 const problems = [];
@@ -57,6 +59,39 @@ if (!siteUrl) {
       notes.push(`NEXT_PUBLIC_SITE_URL نشانی مطلق معتبر است (${parsed.origin})`);
     }
   }
+}
+
+/*
+  MEDIA_STORAGE_ROOT در production الزامی است، اما خطایش «تنبل» است: برنامه بالا
+  می‌آید، کاتالوگ را سرو می‌کند و تنها در نخستین درخواست تصویر یا نخستین آپلود
+  با ۵۰۰ شکست می‌خورد. پس یک استقرارِ فراموش‌شده از build و start هم رد می‌شد و
+  خطا در بدترین لحظه دیده می‌شد. اینجا همان را به یک شکستِ زودهنگام تبدیل می‌کنیم.
+
+  فقط «شکل» پیکربندی بررسی می‌شود، نه وجود یا دسترسیِ پوشه: provider خودش مسیر
+  را به‌صورت بازگشتی می‌سازد، بررسی دسترسی روی همهٔ سیستم‌ها قابل اتکا نیست
+  (کاربر root بیت‌های دسترسی را دور می‌زند)، و preflight عمداً هیچ چیزِ محیط را
+  کاوش نمی‌کند. مقدار متغیر هیچ‌جا چاپ نمی‌شود.
+*/
+const mediaRoot = process.env.MEDIA_STORAGE_ROOT?.trim();
+
+if (!mediaRoot) {
+  if (isProduction) {
+    problems.push(
+      "MEDIA_STORAGE_ROOT در production الزامی است — بدون آن نخستین درخواست تصویر با خطای ۵۰۰ شکست می‌خورد",
+    );
+  } else {
+    notes.push("MEDIA_STORAGE_ROOT تعریف نشده — در توسعه به مسیر موقت سیستم برمی‌گردد");
+  }
+} else if (!path.isAbsolute(mediaRoot)) {
+  if (isProduction) {
+    problems.push(
+      "MEDIA_STORAGE_ROOT باید مسیر مطلق باشد؛ مسیر نسبی بر پایهٔ پوشهٔ کاری حل می‌شود و با استقرار بعدی از بین می‌رود",
+    );
+  } else {
+    notes.push("MEDIA_STORAGE_ROOT مسیر نسبی است — بر پایهٔ پوشهٔ کاری حل می‌شود (در production مطلق لازم است)");
+  }
+} else {
+  notes.push("MEDIA_STORAGE_ROOT مسیر مطلق است");
 }
 
 for (const note of notes) console.log(`✓ ${note}`);
