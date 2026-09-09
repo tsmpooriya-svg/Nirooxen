@@ -25,6 +25,25 @@ const DISPLAY_QUALITY = 82;
 
 const DEFAULT_MAX_MB = 8;
 
+/*
+  سقف پیکسل تصویر ورودی.
+
+  سقف حجم بایت به‌تنهایی کافی نیست: یک PNG تک‌رنگِ ۴۳۶ کیلوبایتی می‌تواند
+  ۱۴۴ مگاپیکسل باز شود و صدها مگابایت حافظه بگیرد. سقف پیش‌فرض خود libvips
+  (~۲۶۸ مگاپیکسل) برای این کاربرد بسیار بالاست.
+
+  چرا ۴۰ مگاپیکسل: نسخهٔ تحویلی فقط ۱۶۰۰ پیکسل عرض دارد، و هر عکس محصولِ
+  واقعی که زیر سقف ۸ مگابایت جا شود بسیار کوچک‌تر از این است (یک دوربین
+  ۵۰ مگاپیکسلی هم در JPEG معمولاً از ۸ مگابایت رد می‌شود). پس این سقف هیچ
+  عکس واقعی‌ای را رد نمی‌کند، ولی مصرف حافظهٔ بدترین حالت را از حدود یک
+  گیگابایت به حدود ۱۶۰ مگابایت می‌آورد.
+*/
+const MAX_INPUT_PIXELS = 40_000_000;
+
+export function maxInputPixels(): number {
+  return MAX_INPUT_PIXELS;
+}
+
 export function maxUploadBytes(): number {
   const raw = Number(process.env.MEDIA_MAX_UPLOAD_MB);
   const mb = Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_MAX_MB;
@@ -102,12 +121,24 @@ export async function processUpload(buffer: Buffer): Promise<ProcessedImage> {
     throw new MediaValidationError("ابعاد تصویر قابل تشخیص نیست.");
   }
 
+  /*
+    رد کردن پیش از رمزگشایی: metadata فقط هدر را می‌خواند، پس اینجا هنوز هیچ
+    پیکسلی باز نشده است. همین بررسی است که جلوی «بمب فشرده‌سازی» را می‌گیرد.
+  */
+  if (meta.width * meta.height > MAX_INPUT_PIXELS) {
+    throw new MediaValidationError(
+      `ابعاد تصویر بیش از حد مجاز است (حداکثر ${Math.round(MAX_INPUT_PIXELS / 1_000_000)} مگاپیکسل).`,
+    );
+  }
+
   let display: Buffer;
   let displayWidth: number;
   let displayHeight: number;
   try {
     // resolveWithObject ابعاد خروجی را بدون رمزگشایی دوباره برمی‌گرداند
-    const rendered = await sharp(buffer)
+    // سقف در سطح decoder هم اعمال می‌شود: اگر هدر ابعاد را کمتر از واقعیت
+    // گزارش کند، libvips خودش متوقف می‌شود و بررسی بالا دور زده نمی‌شود.
+    const rendered = await sharp(buffer, { limitInputPixels: MAX_INPUT_PIXELS })
       .rotate() // اعمال جهت EXIF پیش از حذف متادیتا
       .resize({ width: DISPLAY_WIDTH, withoutEnlargement: true })
       .webp({ quality: DISPLAY_QUALITY })

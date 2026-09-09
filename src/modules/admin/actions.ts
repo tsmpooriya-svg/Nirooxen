@@ -426,45 +426,61 @@ export async function saveProduct(
       return { status: "error", message: "شناسه یکی از تصاویر معتبر نیست. صفحه را تازه کنید و دوباره تلاش کنید." };
     }
 
-    let id = productId;
-
-    if (id) {
-      const [existing] = await db.select({ publishedAt: products.publishedAt }).from(products).where(eq(products.id, id)).limit(1);
-      await db
-        .update(products)
-        .set({ ...values, publishedAt: existing?.publishedAt ?? values.publishedAt })
-        .where(eq(products.id, id));
-    } else {
-      const [created] = await db.insert(products).values(values).returning({ id: products.id });
-      id = created!.id;
-    }
-
     /*
-      کلیدهای فعلی پیش از جایگزینی خوانده می‌شوند تا فایل دارایی‌هایی که مدیر از
-      فهرست برداشته، پس از ذخیرهٔ موفق از دیسک هم پاک شود. رکورد و فایل با هم
-      حذف می‌شوند، وگرنه هر ویرایش، فایل‌های بی‌ارجاع روی سرور جا می‌گذاشت.
+      کلیدهای فعلی و ردیف‌های مشخصات پیش از تراکنش آماده می‌شوند — هر دو فقط
+      خواندن و محاسبه‌اند. دلیلش دو چیز است: ورودی نامعتبرِ مشخصات باید پیش از
+      هر نوشتنی رد شود، و buildSpecRows نباید داخل تراکنش یک اتصال دوم از
+      استخر بگیرد (با استخر پر، همان‌جا قفل می‌شد).
+
+      برای محصول تازه هنوز شناسه‌ای وجود ندارد؛ ردیف‌ها با شناسهٔ واقعی داخل
+      تراکنش مهر می‌خورند و طبعاً تصویر قبلی هم ندارد.
     */
     const previousKeys = new Set(
-      (
-        await db
-          .select({ storageKey: productImages.storageKey })
-          .from(productImages)
-          .where(eq(productImages.productId, id!))
-      )
-        .map((row) => row.storageKey)
-        .filter((key): key is string => Boolean(key)),
+      productId
+        ? (
+            await db
+              .select({ storageKey: productImages.storageKey })
+              .from(productImages)
+              .where(eq(productImages.productId, productId))
+          )
+            .map((row) => row.storageKey)
+            .filter((key): key is string => Boolean(key))
+        : [],
     );
 
+    // از buildSpecRows عبور می‌کند تا مقادیر نوع‌دار و مقدار پایه ساخته شوند؛
+    // درج مستقیم، محصول را بی‌صدا از فیلترها حذف می‌کرد.
+    const specRows = await buildSpecRows(productId ?? "", specs);
+
     /*
-      حذف و درج دوباره باید یک واحد باشد: بدون تراکنش، اگر درج شکست بخورد حذف
-      کامیت شده و محصول همهٔ تصاویرش را از دست می‌دهد.
+      محصول، تصاویر و مشخصات یک واحد منطقی‌اند. اگر درج مشخصات شکست بخورد و
+      حذفشان جدا کامیت شده باشد، محصول بی‌صدا بدون هیچ مشخصه‌ای می‌ماند و از
+      فیلترهای کاتالوگ بیرون می‌افتد — دقیقاً همان حالتی که برای تصاویر هم
+      یک بار رخ داد. پس هر چهار نوشتن در یک تراکنش‌اند.
     */
-    await db.transaction(async (tx) => {
-      await tx.delete(productImages).where(eq(productImages.productId, id!));
+    const id = await db.transaction(async (tx) => {
+      let resolved = productId;
+
+      if (resolved) {
+        const [existing] = await tx
+          .select({ publishedAt: products.publishedAt })
+          .from(products)
+          .where(eq(products.id, resolved))
+          .limit(1);
+        await tx
+          .update(products)
+          .set({ ...values, publishedAt: existing?.publishedAt ?? values.publishedAt })
+          .where(eq(products.id, resolved));
+      } else {
+        const [created] = await tx.insert(products).values(values).returning({ id: products.id });
+        resolved = created!.id;
+      }
+
+      await tx.delete(productImages).where(eq(productImages.productId, resolved));
       if (images.length > 0) {
         await tx.insert(productImages).values(
           images.map((image, index) => ({
-            productId: id!,
+            productId: resolved!,
             url: image.url,
             storageKey: image.storageKey ?? null,
             width: image.width ?? null,
@@ -475,28 +491,37 @@ export async function saveProduct(
           })),
         );
       }
+
+      await tx.delete(productSpecs).where(eq(productSpecs.productId, resolved));
+      if (specRows.length > 0) {
+        await tx.insert(productSpecs).values(specRows.map((row) => ({ ...row, productId: resolved! })));
+      }
+
+      return resolved!;
     });
 
+    /*
+      فایل دارایی‌هایی که مدیر از فهرست برداشته، فقط پس از کامیت شدن تراکنش از
+      دیسک پاک می‌شوند؛ وگرنه یک rollback فایلی را نابود می‌کرد که رکوردش هنوز
+      هست. حذف فایل تراکنشی نیست، پس شکستش ذخیره را برنمی‌گرداند و فقط لاگ
+      می‌شود.
+    */
     for (const image of images) {
       if (image.storageKey) previousKeys.delete(image.storageKey);
     }
+    let orphaned = 0;
     for (const orphan of previousKeys) {
-      await deleteAssetByPrefix(orphan);
+      orphaned += await deleteAssetByPrefix(orphan);
     }
-
-    await db.delete(productSpecs).where(eq(productSpecs.productId, id!));
-    if (specs.length > 0) {
-      // از buildSpecRows عبور می‌کند تا مقادیر نوع‌دار و مقدار پایه ساخته
-      // شوند؛ درج مستقیم، محصول را بی‌صدا از فیلترها حذف می‌کرد.
-      const rows = await buildSpecRows(id!, specs);
-      await db.insert(productSpecs).values(rows);
+    if (orphaned > 0) {
+      console.error(`[admin] ذخیرهٔ محصول ${id} انجام شد اما ${orphaned} فایل دارایی روی دیسک باقی ماند.`);
     }
 
     await logActivity({
       userId: user.id,
       action: productId ? "update" : "create",
       entity: "product",
-      entityId: id!,
+      entityId: id,
       summary: `${productId ? "ویرایش" : "ایجاد"} محصول «${input.name}»`,
     });
 
@@ -504,7 +529,7 @@ export async function saveProduct(
     revalidatePath("/products");
     revalidatePath(`/products/${slug}`);
 
-    return { status: "success", message: productId ? "محصول به‌روزرسانی شد." : "محصول ایجاد شد.", id: id! };
+    return { status: "success", message: productId ? "محصول به‌روزرسانی شد." : "محصول ایجاد شد.", id };
   });
 }
 
@@ -513,7 +538,46 @@ export async function deleteProduct(productId: string): Promise<ActionState> {
     const user = await requireWritePermission("products");
     const [product] = await db.select({ name: products.name }).from(products).where(eq(products.id, productId)).limit(1);
 
+    /*
+      کلیدهای دارایی پیش از حذف خوانده می‌شوند، چون حذف محصول ردیف‌های
+      product_images را هم cascade می‌کند و بعد از آن دیگر معلوم نیست کدام فایل
+      به این محصول تعلق داشت.
+
+      فیلتر مالکیت لازم است: ردیف‌های قدیمی (پیش از افزوده شدن بررسی مالکیت در
+      saveProduct) ممکن است کلیدی از محصول دیگر داشته باشند و حذف محصول نباید
+      دارایی محصول دیگری را پاک کند. ردیف‌های میراثی با storage_key تهی —
+      فایلشان در public/ است — اصلاً وارد این فهرست نمی‌شوند.
+    */
+    const ownedKeys = [
+      ...new Set(
+        (
+          await db
+            .select({ storageKey: productImages.storageKey })
+            .from(productImages)
+            .where(eq(productImages.productId, productId))
+        )
+          .map((row) => row.storageKey)
+          .filter((key): key is string => Boolean(key) && isOwnProductAssetPrefix(key!, productId)),
+      ),
+    ];
+
     await db.delete(products).where(eq(products.id, productId));
+
+    /*
+      فایل‌ها فقط پس از کامیت شدن حذفِ پایگاه داده پاک می‌شوند. ترتیب عکس،
+      در صورت شکست تراکنش، دارایی محصولی را نابود می‌کرد که هنوز وجود دارد.
+      حذف فایل تراکنشی نیست، پس شکستش حذف محصول را برنمی‌گرداند؛ فقط لاگ
+      می‌شود و فایل به‌عنوان یتیمِ مستند باقی می‌ماند.
+    */
+    let orphaned = 0;
+    for (const key of ownedKeys) {
+      orphaned += await deleteAssetByPrefix(key);
+    }
+    if (orphaned > 0) {
+      console.error(
+        `[admin] حذف محصول ${productId} انجام شد اما ${orphaned} فایل دارایی روی دیسک باقی ماند.`,
+      );
+    }
 
     await logActivity({
       userId: user.id,
