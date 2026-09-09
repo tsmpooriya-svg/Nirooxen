@@ -40,6 +40,8 @@ import {
 } from "@/db/schema";
 import { buildSpecRows } from "@/modules/catalog/spec-writer";
 import { logActivity } from "@/lib/activity";
+import { deleteAssetByPrefix } from "@/lib/media/assets";
+import { isOwnProductAssetPrefix } from "@/lib/storage/keys";
 import { AuthError, destroyAllSessions, hashPassword, requireWritePermission } from "@/lib/auth";
 import { ORDER_PRIORITY, ORDER_STATUS } from "@/lib/constants";
 import { readingTime, slugify, stripHtml, truncate } from "@/lib/utils";
@@ -404,11 +406,25 @@ export async function saveProduct(
     };
 
     // تصاویر و مشخصات به‌صورت JSON از فرم می‌آیند
-    const images = safeJson<{ url: string; alt?: string }[]>(formData.get("images"), []);
+    const images = safeJson<
+      { url: string; alt?: string; storageKey?: string; width?: number; height?: number }[]
+    >(formData.get("images"), []);
     const specs = safeJson<{ groupName: string; label: string; value: string; unit?: string; isKey?: boolean }[]>(
       formData.get("specs"),
       [],
     );
+
+    /*
+      کلید ذخیره‌سازی از کلاینت برمی‌گردد و هنگام ذخیره مبنای حذف فایل است. اگر
+      کلید محصول دیگری پذیرفته شود، ویرایش بعدیِ همین محصول دارایی آن محصول را
+      پاک می‌کند. پس پیش از هر نوشتنی رد می‌شود.
+    */
+    const foreignAsset = images.some(
+      (image) => image.storageKey && !isOwnProductAssetPrefix(image.storageKey, productId ?? undefined),
+    );
+    if (foreignAsset) {
+      return { status: "error", message: "شناسه یکی از تصاویر معتبر نیست. صفحه را تازه کنید و دوباره تلاش کنید." };
+    }
 
     let id = productId;
 
@@ -423,18 +439,49 @@ export async function saveProduct(
       id = created!.id;
     }
 
-    // جایگزینی کامل تصاویر و مشخصات — ساده‌تر و قابل اتکاتر از diff جزئی
-    await db.delete(productImages).where(eq(productImages.productId, id!));
-    if (images.length > 0) {
-      await db.insert(productImages).values(
-        images.map((image, index) => ({
-          productId: id!,
-          url: image.url,
-          alt: image.alt ?? input.name,
-          position: index,
-          isPrimary: index === 0,
-        })),
-      );
+    /*
+      کلیدهای فعلی پیش از جایگزینی خوانده می‌شوند تا فایل دارایی‌هایی که مدیر از
+      فهرست برداشته، پس از ذخیرهٔ موفق از دیسک هم پاک شود. رکورد و فایل با هم
+      حذف می‌شوند، وگرنه هر ویرایش، فایل‌های بی‌ارجاع روی سرور جا می‌گذاشت.
+    */
+    const previousKeys = new Set(
+      (
+        await db
+          .select({ storageKey: productImages.storageKey })
+          .from(productImages)
+          .where(eq(productImages.productId, id!))
+      )
+        .map((row) => row.storageKey)
+        .filter((key): key is string => Boolean(key)),
+    );
+
+    /*
+      حذف و درج دوباره باید یک واحد باشد: بدون تراکنش، اگر درج شکست بخورد حذف
+      کامیت شده و محصول همهٔ تصاویرش را از دست می‌دهد.
+    */
+    await db.transaction(async (tx) => {
+      await tx.delete(productImages).where(eq(productImages.productId, id!));
+      if (images.length > 0) {
+        await tx.insert(productImages).values(
+          images.map((image, index) => ({
+            productId: id!,
+            url: image.url,
+            storageKey: image.storageKey ?? null,
+            width: image.width ?? null,
+            height: image.height ?? null,
+            alt: image.alt ?? input.name,
+            position: index,
+            isPrimary: index === 0,
+          })),
+        );
+      }
+    });
+
+    for (const image of images) {
+      if (image.storageKey) previousKeys.delete(image.storageKey);
+    }
+    for (const orphan of previousKeys) {
+      await deleteAssetByPrefix(orphan);
     }
 
     await db.delete(productSpecs).where(eq(productSpecs.productId, id!));

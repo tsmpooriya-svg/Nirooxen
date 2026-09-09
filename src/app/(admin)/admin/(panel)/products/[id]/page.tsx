@@ -46,7 +46,13 @@ export default async function EditProductPage({ params }: { params: Params }) {
     tags: product.tags.join("، "),
     metaTitle: product.metaTitle ?? "",
     metaDescription: product.metaDescription ?? "",
-    images: images.map((image) => ({ url: image.url, alt: image.alt ?? undefined })),
+    images: images.map((image) => ({
+      url: image.url,
+      alt: image.alt ?? undefined,
+      storageKey: image.storageKey ?? undefined,
+      width: image.width ?? undefined,
+      height: image.height ?? undefined,
+    })),
     specs: specs.map((spec) => ({
       groupName: spec.groupName,
       label: spec.label,

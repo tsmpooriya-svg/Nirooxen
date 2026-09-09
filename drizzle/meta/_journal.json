@@ -15,6 +15,13 @@
       "when": 1787450928376,
       "tag": "0001_plain_red_ghost",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788956570490,
+      "tag": "0002_fat_moon_knight",
+      "breakpoints": true
     }
   ]
 }

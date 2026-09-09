@@ -338,6 +338,13 @@ export const productImages = pgTable(
       .notNull()
       .references(() => products.id, { onDelete: "cascade" }),
     url: text("url").notNull(),
+    /*
+     * ارجاع مستقل از provider به دارایی آپلودشده — پیشوند مشترک نسخه‌ها.
+     * برای رکوردهای قدیمی که فایلشان در public/ است تهی می‌ماند و url مبنا است.
+     */
+    storageKey: text("storage_key"),
+    width: integer("width"),
+    height: integer("height"),
     alt: varchar("alt", { length: 220 }),
     position: integer("position").notNull().default(0),
     isPrimary: boolean("is_primary").notNull().default(false),

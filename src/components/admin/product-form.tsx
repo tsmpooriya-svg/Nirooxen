@@ -39,7 +39,7 @@ export type ProductFormValues = {
   tags: string;
   metaTitle: string;
   metaDescription: string;
-  images: { url: string; alt?: string }[];
+  images: { url: string; alt?: string; storageKey?: string; width?: number; height?: number }[];
   specs: { groupName: string; label: string; value: string; unit?: string; isKey?: boolean }[];
 };
 
@@ -289,7 +289,7 @@ export function ProductForm({
 
       {/* — تصاویر — */}
       <div className={cn(tab !== "media" && "hidden")}>
-        <ImageEditor images={images} onChange={setImages} />
+        <ImageEditor images={images} onChange={setImages} productId={values.id} />
       </div>
 
       {/* — سئو — */}
@@ -453,18 +453,79 @@ function SpecEditor({
 function ImageEditor({
   images,
   onChange,
+  productId,
 }: {
   images: ProductFormValues["images"];
   onChange: (next: ProductFormValues["images"]) => void;
+  productId?: string;
 }) {
+  const { toast } = useToast();
   const [url, setUrl] = React.useState("");
+  const [uploading, setUploading] = React.useState(false);
+  const fileRef = React.useRef<HTMLInputElement>(null);
+  const readOnly = useReadOnly();
+
+  async function onPick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !productId) return;
+
+    setUploading(true);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      body.append("productId", productId);
+      const response = await fetch("/api/admin/media", { method: "POST", body });
+      const result = (await response.json()) as {
+        url?: string;
+        storageKey?: string;
+        width?: number;
+        height?: number;
+        error?: string;
+      };
+      if (!response.ok || !result.url) {
+        toast({ title: "بارگذاری ناموفق", description: result.error ?? "خطای نامشخص", tone: "error" });
+        return;
+      }
+      onChange([
+        ...images,
+        { url: result.url, storageKey: result.storageKey, width: result.width, height: result.height },
+      ]);
+      toast({ title: "تصویر بارگذاری شد", tone: "success" });
+    } catch {
+      toast({ title: "بارگذاری ناموفق", description: "ارتباط با سرور برقرار نشد.", tone: "error" });
+    } finally {
+      setUploading(false);
+    }
+  }
 
   return (
     <div className="space-y-4">
       <p className="text-xs leading-6 text-[var(--fg-muted)]">
-        نشانی تصویر را وارد کنید یا یکی از تصاویر فنی آماده را انتخاب کنید. اولین تصویر، تصویر اصلی
-        محصول است.
+        تصویر را بارگذاری کنید، نشانی آن را وارد کنید یا یکی از تصاویر فنی آماده را انتخاب کنید. اولین
+        تصویر، تصویر اصلی محصول است.
       </p>
+
+      <div className="flex items-center gap-2">
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={onPick}
+          className="hidden"
+        />
+        <button
+          type="button"
+          disabled={readOnly || !productId || uploading}
+          onClick={() => fileRef.current?.click()}
+          className="h-10 rounded-md bg-[var(--brand)] px-4 text-xs font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)] disabled:opacity-60"
+        >
+          {uploading ? "در حال بارگذاری…" : "بارگذاری تصویر"}
+        </button>
+        <span className="text-micro text-[var(--fg-subtle)]">
+          {productId ? "JPEG، PNG یا WebP" : "برای بارگذاری، ابتدا محصول را ذخیره کنید"}
+        </span>
+      </div>
 
       <div className="flex gap-2">
         <input
