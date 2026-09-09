@@ -5,6 +5,7 @@ import * as React from "react";
 import { useActionState } from "react";
 
 import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
+import { useReadOnly } from "./shell";
 import { useToast } from "@/components/ui/toast";
 import { POST_STATUS } from "@/lib/constants";
 import { savePost, type ActionState } from "@/modules/admin/actions";
@@ -33,6 +34,7 @@ export function PostForm({ values }: { values: PostFormValues }) {
   const { toast } = useToast();
   const action = savePost.bind(null, values.id ?? null);
   const [state, formAction, pending] = useActionState(action, initialState);
+  const readOnly = useReadOnly();
 
   React.useEffect(() => {
     if (state.status === "idle") return;
@@ -105,14 +107,16 @@ export function PostForm({ values }: { values: PostFormValues }) {
               <Textarea id="metaDescription" name="metaDescription" rows={3} defaultValue={values.metaDescription} />
             </Field>
           </div>
-
-          <button
-            type="submit"
-            disabled={pending}
-            className="h-11 w-full rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)] disabled:opacity-60"
-          >
-            {pending ? "در حال ذخیره…" : "ذخیره مطلب"}
-          </button>
+          {!readOnly && (
+  
+            <button
+              type="submit"
+              disabled={pending}
+              className="h-11 w-full rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)] disabled:opacity-60"
+            >
+              {pending ? "در حال ذخیره…" : "ذخیره مطلب"}
+            </button>
+          )}
         </aside>
       </div>
     </form>

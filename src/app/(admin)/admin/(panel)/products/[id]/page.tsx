@@ -40,6 +40,7 @@ export default async function EditProductPage({ params }: { params: Params }) {
     leadTimeDays: product.leadTimeDays ? String(product.leadTimeDays) : "",
     minOrderQty: String(product.minOrderQty),
     warrantyMonths: product.warrantyMonths ? String(product.warrantyMonths) : "",
+    position: String(product.position ?? 0),
     isFeatured: product.isFeatured,
     isNew: product.isNew,
     tags: product.tags.join("، "),

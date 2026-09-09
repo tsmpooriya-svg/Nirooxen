@@ -23,6 +23,7 @@ const emptyValues: ProductFormValues = {
   leadTimeDays: "",
   minOrderQty: "1",
   warrantyMonths: "",
+  position: "0",
   isFeatured: false,
   isNew: true,
   tags: "",

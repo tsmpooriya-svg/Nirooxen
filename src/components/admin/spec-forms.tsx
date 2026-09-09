@@ -6,6 +6,7 @@ import { useActionState, useTransition } from "react";
 import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { ConfirmDialog, Modal } from "@/components/ui/modal";
 import { DialogTrigger, type TriggerConfig } from "@/components/admin/dialog-trigger";
+import { useReadOnly } from "./shell";
 import { useToast } from "@/components/ui/toast";
 import {
   deleteCategorySpec,
@@ -337,6 +338,7 @@ export function DeleteSpecButton({
 }) {
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
+  const readOnly = useReadOnly();
   const [pending, startTransition] = useTransition();
 
   function onConfirm() {
@@ -351,6 +353,8 @@ export function DeleteSpecButton({
     });
   }
 
+
+  if (readOnly) return null;
   return (
     <>
       <button

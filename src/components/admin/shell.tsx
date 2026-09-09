@@ -7,7 +7,7 @@ import * as React from "react";
 import { ThemeToggle } from "@/components/theme-provider";
 import { Logomark } from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
-import { USER_ROLE, can, type PermissionKey } from "@/lib/constants";
+import { USER_ROLE, can, isReadOnly, type PermissionKey } from "@/lib/constants";
 import type { SessionUser } from "@/lib/auth";
 import { cn, initials, toFaDigits } from "@/lib/utils";
 
@@ -129,6 +129,13 @@ const navGroups: { label: string; items: NavItem[] }[] = [
     ],
   },
 ];
+
+const ReadOnlyContext = React.createContext(false);
+
+/** نقش فقط-خواندنی: دکمه‌های تغییر نباید نمایش داده شوند. سرور مستقل بررسی می‌کند. */
+export function useReadOnly() {
+  return React.useContext(ReadOnlyContext);
+}
 
 export function AdminShell({
   user,
@@ -292,7 +299,9 @@ export function AdminShell({
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
+          <ReadOnlyContext.Provider value={isReadOnly(user.role)}>{children}</ReadOnlyContext.Provider>
+        </main>
       </div>
     </div>
   );

@@ -122,6 +122,7 @@ export const productFormSchema = z.object({
   warrantyMonths: z.coerce.number().int().min(0).max(240).optional(),
   isFeatured: checkbox.default(false),
   isNew: checkbox.default(false),
+  position: z.coerce.number().int().min(0).max(9999).default(0),
   tags: z.array(z.string().trim().max(48)).max(20).default([]),
   metaTitle: z.string().trim().max(190).optional(),
   metaDescription: z.string().trim().max(320).optional(),

@@ -5,6 +5,7 @@ import * as React from "react";
 import { useActionState } from "react";
 
 import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
+import { useReadOnly } from "./shell";
 import { useToast } from "@/components/ui/toast";
 import { PRICE_MODE, PRODUCT_STATUS, STOCK_STATUS } from "@/lib/constants";
 import { cn, toFaDigits } from "@/lib/utils";
@@ -32,6 +33,7 @@ export type ProductFormValues = {
   leadTimeDays: string;
   minOrderQty: string;
   warrantyMonths: string;
+  position: string;
   isFeatured: boolean;
   isNew: boolean;
   tags: string;
@@ -69,6 +71,7 @@ export function ProductForm({
 
   const action = saveProduct.bind(null, values.id ?? null);
   const [state, formAction, pending] = useActionState(action, initialState);
+  const readOnly = useReadOnly();
 
   const [priceMode, setPriceMode] = React.useState(values.priceMode);
   const [images, setImages] = React.useState(values.images);
@@ -247,6 +250,10 @@ export function ProductForm({
               <Input id="minOrderQty" name="minOrderQty" defaultValue={values.minOrderQty || "1"} dir="ltr" inputMode="numeric" className="text-start font-mono" />
             </Field>
 
+            <Field label="ترتیب نمایش" htmlFor="position">
+              <Input id="position" name="position" defaultValue={values.position} dir="ltr" inputMode="numeric" className="text-start font-mono" />
+            </Field>
+
             <Field label="گارانتی (ماه)" htmlFor="warrantyMonths">
               <Input id="warrantyMonths" name="warrantyMonths" defaultValue={values.warrantyMonths} dir="ltr" inputMode="numeric" className="text-start font-mono" />
             </Field>
@@ -300,13 +307,15 @@ export function ProductForm({
         <p className="text-xs text-[var(--fg-subtle)]">
           {values.id ? "ویرایش محصول موجود" : "ایجاد محصول جدید"}
         </p>
-        <button
-          type="submit"
-          disabled={pending}
-          className="h-11 rounded-md bg-[var(--brand)] px-6 text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)] disabled:opacity-60"
-        >
-          {pending ? "در حال ذخیره…" : "ذخیره محصول"}
-        </button>
+        {!readOnly && (
+          <button
+            type="submit"
+            disabled={pending}
+            className="h-11 rounded-md bg-[var(--brand)] px-6 text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)] disabled:opacity-60"
+          >
+            {pending ? "در حال ذخیره…" : "ذخیره محصول"}
+          </button>
+        )}
       </div>
     </form>
   );

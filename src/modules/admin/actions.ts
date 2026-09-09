@@ -333,6 +333,7 @@ export async function saveProduct(
       warrantyMonths: formData.get("warrantyMonths") || undefined,
       isFeatured: formData.get("isFeatured"),
       isNew: formData.get("isNew"),
+      position: formData.get("position") || 0,
       tags: String(formData.get("tags") ?? "")
         .split(",")
         .map((t) => t.trim())
@@ -368,6 +369,7 @@ export async function saveProduct(
       warrantyMonths: input.warrantyMonths ?? null,
       isFeatured: input.isFeatured,
       isNew: input.isNew,
+      position: input.position,
       tags: input.tags,
       metaTitle: input.metaTitle ?? null,
       metaDescription: input.metaDescription ?? null,
