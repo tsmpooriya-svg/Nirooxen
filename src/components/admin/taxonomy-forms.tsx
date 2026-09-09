@@ -8,6 +8,7 @@ import { DialogTrigger, type TriggerConfig } from "@/components/admin/dialog-tri
 import { ConfirmDialog, Modal } from "@/components/ui/modal";
 import { useReadOnly } from "./shell";
 import { useToast } from "@/components/ui/toast";
+import { toFaDigits } from "@/lib/utils";
 import { domainIcons } from "@/components/ui/icons";
 import { deleteBrand, deleteCategory, saveBrand, saveCategory, type ActionState } from "@/modules/admin/actions";
 
@@ -284,10 +285,12 @@ export function DeleteTaxonomyButton({
   kind,
   id,
   name,
+  productCount = 0,
 }: {
   kind: "category" | "brand";
   id: string;
   name: string;
+  productCount?: number;
 }) {
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -315,6 +318,11 @@ export function DeleteTaxonomyButton({
         onClose={() => setOpen(false)}
         loading={pending}
         title={`حذف «${name}»؟`}
+        description={
+          kind === "brand" && productCount > 0
+            ? `${toFaDigits(productCount)} محصول به این برند وصل است. با حذف برند، آن محصولات باقی می‌مانند ولی بدون برند می‌شوند.`
+            : undefined
+        }
         confirmLabel="حذف کن"
         onConfirm={() =>
           startTransition(async () => {

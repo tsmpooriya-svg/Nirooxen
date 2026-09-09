@@ -2,13 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import * as React from "react";
-import { useActionState } from "react";
+import { useActionState, useTransition } from "react";
 
+import { ConfirmDialog } from "@/components/ui/modal";
 import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { useReadOnly } from "./shell";
 import { useToast } from "@/components/ui/toast";
 import { POST_STATUS } from "@/lib/constants";
-import { savePost, type ActionState } from "@/modules/admin/actions";
+import { deletePost, savePost, type ActionState } from "@/modules/admin/actions";
 
 export type PostFormValues = {
   id?: string;
@@ -120,5 +121,52 @@ export function PostForm({ values }: { values: PostFormValues }) {
         </aside>
       </div>
     </form>
+  );
+}
+
+export function DeletePostButton({ id, title }: { id: string; title: string }) {
+  const { toast } = useToast();
+  const [open, setOpen] = React.useState(false);
+  const [pending, startTransition] = useTransition();
+  const readOnly = useReadOnly();
+
+  function onConfirm() {
+    startTransition(async () => {
+      const result = await deletePost(id);
+      toast({
+        title: result.status === "success" ? "حذف شد" : "خطا",
+        description: result.message,
+        tone: result.status === "success" ? "success" : "error",
+      });
+      if (result.status === "success") setOpen(false);
+    });
+  }
+
+  if (readOnly) return null;
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label={`حذف ${title}`}
+        className="grid size-8 place-items-center rounded-md text-[var(--fg-subtle)] transition-colors hover:text-[var(--danger-text)]"
+      >
+        <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6">
+          <path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5 5 13h6l.5-8.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      <ConfirmDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onConfirm={onConfirm}
+        loading={pending}
+        title={`حذف «${title}»؟`}
+        description="این مطلب از سایت حذف می‌شود. این عمل قابل بازگشت نیست."
+        confirmLabel="حذف مطلب"
+        tone="danger"
+      />
+    </>
   );
 }

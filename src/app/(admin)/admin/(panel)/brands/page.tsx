@@ -57,7 +57,7 @@ export default async function AdminBrandsPage() {
                     }}
                     trigger={{ kind: "icon", label: `ویرایش ${brand.name}` }}
                     />
-                  <DeleteTaxonomyButton kind="brand" id={brand.id} name={brand.name} />
+                  <DeleteTaxonomyButton kind="brand" id={brand.id} name={brand.name} productCount={brand.productCount} />
                 </div>
               </Td>
             </Tr>

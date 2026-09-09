@@ -41,7 +41,7 @@ import {
 import { buildSpecRows } from "@/modules/catalog/spec-writer";
 import { logActivity } from "@/lib/activity";
 import { AuthError, destroyAllSessions, hashPassword, requireWritePermission } from "@/lib/auth";
-import { ORDER_STATUS } from "@/lib/constants";
+import { ORDER_PRIORITY, ORDER_STATUS } from "@/lib/constants";
 import { readingTime, slugify, stripHtml, truncate } from "@/lib/utils";
 import {
   brandFormSchema,
@@ -158,6 +158,15 @@ export async function updateOrderPriority(orderId: string, priority: OrderPriori
       message: `اولویت پرونده تغییر کرد.`,
       meta: { priority },
     });
+
+    await logActivity({
+      userId: user.id,
+      action: "update",
+      entity: "order",
+      entityId: orderId,
+      summary: `اولویت سفارش به «${ORDER_PRIORITY[priority].label}» تغییر کرد.`,
+    });
+
     revalidatePath(`/admin/orders/${orderId}`);
     return { status: "success", message: "اولویت به‌روزرسانی شد." };
   });
@@ -209,6 +218,14 @@ export async function addOrderNote(orderId: string, body: string): Promise<Actio
     });
     await db.update(orders).set({ updatedAt: new Date() }).where(eq(orders.id, orderId));
 
+    await logActivity({
+      userId: user.id,
+      action: "update",
+      entity: "order",
+      entityId: orderId,
+      summary: "یادداشت به سفارش افزوده شد.",
+    });
+
     revalidatePath(`/admin/orders/${orderId}`);
     return { status: "success", message: "یادداشت ثبت شد." };
   });
@@ -223,6 +240,15 @@ export async function logOrderContact(orderId: string, note: string): Promise<Ac
       type: "CONTACTED",
       message: note.trim() || "تماس با مشتری برقرار شد.",
     });
+
+    await logActivity({
+      userId: user.id,
+      action: "update",
+      entity: "order",
+      entityId: orderId,
+      summary: "تماس با مشتری ثبت شد.",
+    });
+
     revalidatePath(`/admin/orders/${orderId}`);
     return { status: "success", message: "تماس ثبت شد." };
   });
