@@ -127,6 +127,12 @@ export async function createOrder(
             price: products.price,
             priceMode: products.priceMode,
             minOrderQty: products.minOrderQty,
+            imageUrl: sql<string | null>`(
+              select pi.url from product_images pi
+              where pi.product_id = products.id
+              order by pi.is_primary desc, pi.position asc
+              limit 1
+            )`,
           })
           .from(products)
           .where(and(eq(products.status, "PUBLISHED"), inArray(products.id, productIds)))
@@ -134,18 +140,36 @@ export async function createOrder(
 
     const productMap = new Map(dbProducts.map((p) => [p.id, p]));
 
-    const lines = input.items.map((item) => {
-      const product = item.productId ? productMap.get(item.productId) : undefined;
-      const quantity = Math.max(item.quantity, product?.minOrderQty ?? 1);
-      const unitPrice = product?.priceMode === "PUBLIC" ? product.price : null;
+    /*
+      هر قلم باید به یک محصول منتشرشده برسد. اگر شناسه‌ای وجود نداشته باشد یا به
+      محصول پیش‌نویس/بایگانی‌شده اشاره کند، کل درخواست رد می‌شود؛ در غیر این صورت
+      قلمی با product_id تهی و نامِ ارسالی کلاینت در پرونده ثبت می‌شد.
+    */
+    const resolved = input.items.map((item) =>
+      item.productId ? productMap.get(item.productId) : undefined,
+    );
+
+    if (resolved.some((product) => !product)) {
       return {
-        productId: product?.id ?? null,
-        productName: product?.name ?? item.productName,
-        productSku: product?.sku ?? item.productSku ?? null,
-        productSlug: product?.slug ?? item.productSlug ?? null,
-        imageUrl: item.imageUrl ?? null,
+        status: "error",
+        message:
+          "برخی از اقلام سبد شما دیگر در دسترس نیستند. لطفاً سبد را بازبینی کنید و دوباره تلاش کنید.",
+      };
+    }
+
+    const lines = input.items.map((item, index) => {
+      // پس از بررسی بالا، حتماً مقدار دارد
+      const product = resolved[index]!;
+      const quantity = Math.max(item.quantity, product.minOrderQty);
+      const unitPrice = product.priceMode === "PUBLIC" ? product.price : null;
+      return {
+        productId: product.id,
+        productName: product.name,
+        productSku: product.sku,
+        productSlug: product.slug,
+        imageUrl: product.imageUrl,
         quantity,
-        unit: product?.unit ?? item.unit ?? "دستگاه",
+        unit: product.unit,
         unitPrice,
         lineTotal: unitPrice ? unitPrice * quantity : null,
         note: item.note ?? null,
