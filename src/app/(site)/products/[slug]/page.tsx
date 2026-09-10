@@ -96,6 +96,8 @@ export default async function ProductPage({ params }: { params: Params }) {
             priceMode: product.priceMode,
             price: product.price,
             comparePrice: product.comparePrice,
+            priceConditionText: product.priceConditionText,
+            isPromotional: product.isPromotional,
             unit: product.unit,
             stockStatus: product.stockStatus,
             leadTimeDays: product.leadTimeDays,

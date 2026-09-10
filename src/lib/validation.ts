@@ -113,6 +113,14 @@ export const productFormSchema = z.object({
     .optional()
     .transform((v) => (v ? Number(v.replace(/,/g, "")) : undefined))
     .refine((v) => v === undefined || (Number.isFinite(v) && v >= 0), "قیمت معتبر نیست"),
+  /*
+     شرط قیمتی جدا از قیمت پایه نگه داشته می‌شود؛ افزودن درصد به price باعث
+     می‌شد قیمت منتشرشده با آنچه منبع چاپ کرده فرق کند.
+  */
+  priceConditionCode: z.string().trim().max(32).optional(),
+  priceConditionText: z.string().trim().max(200).optional(),
+  isPromotional: checkbox.default(false),
+  sourceRef: z.string().trim().max(64).optional(),
   unit: z.string().trim().max(32).default("دستگاه"),
   stockStatus: z
     .enum(["IN_STOCK", "LOW_STOCK", "ORDER_ONLY", "OUT_OF_STOCK", "DISCONTINUED"])

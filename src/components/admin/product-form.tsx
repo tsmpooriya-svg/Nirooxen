@@ -28,6 +28,10 @@ export type ProductFormValues = {
   priceMode: string;
   price: string;
   comparePrice: string;
+  priceConditionCode: string;
+  priceConditionText: string;
+  isPromotional: boolean;
+  sourceRef: string;
   unit: string;
   stockStatus: string;
   leadTimeDays: string;
@@ -257,6 +261,22 @@ export function ProductForm({
             <Field label="گارانتی (ماه)" htmlFor="warrantyMonths">
               <Input id="warrantyMonths" name="warrantyMonths" defaultValue={values.warrantyMonths} dir="ltr" inputMode="numeric" className="text-start font-mono" />
             </Field>
+
+            {/*
+              شرط قیمتی جدا از قیمت پایه نوشته می‌شود؛ قیمت پایه همان چیزی
+              می‌ماند که منبع اعلام کرده است.
+            */}
+            <Field label="کد شرط قیمت" htmlFor="priceConditionCode" hint="مثلاً SURCHARGE_3_PERCENT">
+              <Input id="priceConditionCode" name="priceConditionCode" defaultValue={values.priceConditionCode} dir="ltr" className="text-start font-mono text-xs" />
+            </Field>
+
+            <Field label="متن شرط قیمت" htmlFor="priceConditionText" hint="روی صفحه محصول، پایین عدد قیمت دیده می‌شود.">
+              <Input id="priceConditionText" name="priceConditionText" defaultValue={values.priceConditionText} />
+            </Field>
+
+            <Field label="ارجاع منبع (داخلی)" htmlFor="sourceRef" hint="فقط کد خنثی؛ در سایت نمایش داده نمی‌شود.">
+              <Input id="sourceRef" name="sourceRef" defaultValue={values.sourceRef} dir="ltr" className="text-start font-mono text-xs" />
+            </Field>
           </div>
         </fieldset>
 
@@ -278,6 +298,7 @@ export function ProductForm({
           <div className="flex flex-col justify-end gap-3 pb-1">
             <Checkbox name="isFeatured" defaultChecked={values.isFeatured} label="محصول شاخص (نمایش در صفحه اصلی)" />
             <Checkbox name="isNew" defaultChecked={values.isNew} label="نشان «جدید»" />
+            <Checkbox name="isPromotional" defaultChecked={values.isPromotional} label="فروش ویژه" />
           </div>
         </div>
       </div>

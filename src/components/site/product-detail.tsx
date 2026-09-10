@@ -27,6 +27,8 @@ export type ProductDetailProps = {
     shortDescription: string | null;
     description: string | null;
     priceMode: "PUBLIC" | "ON_REQUEST" | "CALL";
+    priceConditionText: string | null;
+    isPromotional: boolean;
     price: number | null;
     comparePrice: number | null;
     unit: string;
@@ -300,8 +302,15 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
                   <p className="font-display text-[1.625rem] font-extrabold text-[var(--fg-primary)]">
                     {formatPrice(product.price)}
                   </p>
+                  {/*
+                    شرط قیمتی همان‌طور که منبع اعلام کرده نمایش داده می‌شود و در
+                    عدد قیمت حل نشده است. اگر شرطی ثبت نشده باشد، همان جملهٔ
+                    عمومی قبلی می‌ماند.
+                  */}
                   <p className="mt-1 text-meta text-[var(--fg-subtle)]">
-                    قیمت برای هر {product.unit} — امکان تخفیف در تعداد بالا
+                    {product.priceConditionText
+                      ? `قیمت برای هر ${product.unit} — ${product.priceConditionText}`
+                      : `قیمت برای هر ${product.unit}`}
                   </p>
                 </>
               ) : (

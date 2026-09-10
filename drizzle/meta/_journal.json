@@ -22,6 +22,13 @@
       "when": 1788956570490,
       "tag": "0002_fat_moon_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789058789567,
+      "tag": "0003_solid_dark_beast",
+      "breakpoints": true
     }
   ]
 }

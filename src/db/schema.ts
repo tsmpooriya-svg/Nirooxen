@@ -295,6 +295,16 @@ export const products = pgTable(
     price: integer("price"),
     comparePrice: integer("compare_price"),
     currency: varchar("currency", { length: 8 }).notNull().default("IRT"),
+
+    /*
+     * شرط قیمتی — مثل «افزایش ۳٪» یا «تخفیف بر اساس تعداد». عمداً از price جدا
+     * است: قیمت پایه هرگز نباید شرط را در خود حل کند. در tags هم نمی‌آید چون
+     * tags عمومی است و در جست‌وجو و محصولات مرتبط مشارکت می‌کند.
+     */
+    priceConditionCode: varchar("price_condition_code", { length: 32 }),
+    priceConditionText: varchar("price_condition_text", { length: 200 }),
+    /** فروش ویژه — بدون هیچ قیمت مقایسه‌ای ساختگی */
+    isPromotional: boolean("is_promotional").notNull().default(false),
     unit: varchar("unit", { length: 32 }).notNull().default("دستگاه"),
 
     stockStatus: stockStatusEnum("stock_status").notNull().default("ORDER_ONLY"),
@@ -316,6 +326,12 @@ export const products = pgTable(
 
     metaTitle: varchar("meta_title", { length: 190 }),
     metaDescription: text("meta_description"),
+
+    /*
+     * ارجاع خنثای منبع داده — فقط کد داخلی. هرگز نباید نام فروشنده، کانال،
+     * شماره تماس یا نشانی در آن بیاید و در هیچ مسیر عمومی خوانده نمی‌شود.
+     */
+    sourceRef: varchar("source_ref", { length: 64 }),
 
     publishedAt: timestamp("published_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -367,6 +383,46 @@ export const productImages = pgTable(
  * مقدار پایه هنگام ذخیره محاسبه و در `product_specs.value_base` نگهداری
  * می‌شود تا کوئری بازه‌ای بتواند از ایندکس استفاده کند.
  */
+/**
+ * مشاهدات قیمت از منابع مختلف و تاریخ‌های مختلف. قیمت جاری محصول در
+ * products.price می‌ماند؛ این جدول تاریخچه را نگه می‌دارد تا با هر به‌روزرسانی
+ * قیمت، مشاهدهٔ قبلی از بین نرود. هیچ مسیر عمومی از آن نمی‌خواند.
+ */
+export const productPriceObservations = pgTable(
+  "product_price_observations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    /** کد خنثای منبع — بدون هویت فروشنده */
+    sourceRef: varchar("source_ref", { length: 64 }).notNull(),
+    /*
+     * تاریخ چاپ‌شدهٔ منبع؛ ممکن است فقط ماه و سال باشد. رشتهٔ خالی یعنی منبع
+     * تاریخی چاپ نکرده — عمداً NOT NULL است، چون در ایندکس یکتا مقدار NULL با
+     * NULL برابر شمرده نمی‌شود و ورود دوباره ردیف تکراری می‌ساخت.
+     */
+    sourceDate: varchar("source_date", { length: 16 }).notNull().default(""),
+    /** مقدار دقیقاً همان‌طور که در منبع چاپ شده — هرگز اصلاح نمی‌شود */
+    rawPrice: varchar("raw_price", { length: 32 }),
+    /** عدد پاک‌شده پیش از تبدیل واحد */
+    normalizedPrice: numeric("normalized_price", { precision: 20, scale: 0 }),
+    /** ضریب مقیاس بخش منبع (مثلاً ۱۰۰۰ برای فهرست هزارتومانی) */
+    priceScale: integer("price_scale").notNull().default(1),
+    /** مقدار نهایی به تومان — همان واحدی که products.price دارد */
+    finalPrice: integer("final_price"),
+    currency: varchar("currency", { length: 8 }),
+    priceStatus: varchar("price_status", { length: 32 }),
+    conditionCode: varchar("condition_code", { length: 32 }),
+    observedAt: timestamp("observed_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    /** یک منبع در یک تاریخ فقط یک مشاهده برای هر محصول دارد — ورود دوباره بی‌اثر است */
+    uniqueIndex("price_obs_unique").on(t.productId, t.sourceRef, t.sourceDate),
+    index("price_obs_product_idx").on(t.productId, t.sourceDate),
+  ],
+);
+
 export const units = pgTable(
   "units",
   {
@@ -914,6 +970,11 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   images: many(productImages),
   specs: many(productSpecs),
   documents: many(productDocuments),
+  priceObservations: many(productPriceObservations),
+}));
+
+export const productPriceObservationsRelations = relations(productPriceObservations, ({ one }) => ({
+  product: one(products, { fields: [productPriceObservations.productId], references: [products.id] }),
 }));
 
 export const productImagesRelations = relations(productImages, ({ one }) => ({
