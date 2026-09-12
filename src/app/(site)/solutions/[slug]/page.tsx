@@ -10,7 +10,7 @@ import { DomainIcon } from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
 import { solutions } from "@/config/solutions";
 import { JsonLd, pageMetadata } from "@/lib/seo";
-import { absoluteUrl, toFaDigits } from "@/lib/utils";
+import { absoluteUrl, decodeRouteParam, toFaDigits } from "@/lib/utils";
 import { getSolutionDetail } from "@/modules/solutions/queries";
 
 export const revalidate = 3600;
@@ -25,7 +25,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const detail = await getSolutionDetail(slug);
   if (!detail) return pageMetadata({ title: "راهکار پیدا نشد", path: `/solutions/${slug}`, noIndex: true });
 
@@ -37,7 +38,8 @@ export async function generateMetadata({
 }
 
 export default async function SolutionPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const detail = await getSolutionDetail(slug);
   if (!detail) notFound();
 

@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/site/product-card";
 import { ProductDetail } from "@/components/site/product-detail";
 import { SectionHeading } from "@/components/site/section";
 import { JsonLd, pageMetadata, productJsonLd } from "@/lib/seo";
+import { decodeRouteParam } from "@/lib/utils";
 import {
   getAllProductSlugs,
   getCategoryPath,
@@ -27,7 +28,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const data = await getProductBySlug(slug);
   if (!data) return pageMetadata({ title: "محصول یافت نشد", path: `/products/${slug}`, noIndex: true });
 
@@ -41,7 +43,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function ProductPage({ params }: { params: Params }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const data = await getProductBySlug(slug);
   if (!data) notFound();
 

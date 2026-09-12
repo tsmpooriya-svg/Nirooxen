@@ -6,7 +6,7 @@ import { after } from "next/server";
 
 import { Breadcrumb } from "@/components/site/breadcrumb";
 import { JsonLd, articleJsonLd, pageMetadata } from "@/lib/seo";
-import { formatDate, toFaDigits } from "@/lib/utils";
+import { decodeRouteParam, formatDate, toFaDigits } from "@/lib/utils";
 import {
   getAllPostSlugs,
   getPostBySlug,
@@ -24,7 +24,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const data = await getPostBySlug(slug);
   if (!data) return pageMetadata({ title: "مطلب یافت نشد", path: `/news/${slug}`, noIndex: true });
 
@@ -40,7 +41,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function PostPage({ params }: { params: Params }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const data = await getPostBySlug(slug);
   if (!data) notFound();
 

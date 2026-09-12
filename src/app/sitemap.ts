@@ -34,38 +34,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticRoutes,
     ...solutions.map((solution) => ({
-      url: `${base}/solutions/${solution.slug}`,
+      url: encodeURI(`${base}/solutions/${solution.slug}`),
       changeFrequency: "monthly" as const,
       priority: 0.8,
     })),
     ...categories.flatMap((category) => [
-      { url: `${base}/products?category=${category.slug}`, changeFrequency: "weekly" as const, priority: 0.8 },
+      { url: encodeURI(`${base}/products?category=${category.slug}`), changeFrequency: "weekly" as const, priority: 0.8 },
       ...category.children.map((child) => ({
-        url: `${base}/products?category=${child.slug}`,
+        url: encodeURI(`${base}/products?category=${child.slug}`),
         changeFrequency: "weekly" as const,
         priority: 0.7,
       })),
     ]),
     ...products.map((product) => ({
-      url: `${base}/products/${product.slug}`,
+      url: encodeURI(`${base}/products/${product.slug}`),
       lastModified: product.updatedAt,
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })),
     ...brands.map((brand) => ({
-      url: `${base}/brands/${brand.slug}`,
+      url: encodeURI(`${base}/brands/${brand.slug}`),
       lastModified: brand.updatedAt,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...posts.map((post) => ({
-      url: `${base}/news/${post.slug}`,
+      url: encodeURI(`${base}/news/${post.slug}`),
       lastModified: post.updatedAt,
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
     ...projects.map((project) => ({
-      url: `${base}/projects#${project.slug}`,
+      url: encodeURI(`${base}/projects#${project.slug}`),
       lastModified: project.updatedAt,
       changeFrequency: "yearly" as const,
       priority: 0.4,

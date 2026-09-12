@@ -5,7 +5,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { PageHeader } from "@/components/site/breadcrumb";
 import { ProductCard } from "@/components/site/product-card";
 import { pageMetadata } from "@/lib/seo";
-import { toFaDigits } from "@/lib/utils";
+import { decodeRouteParam, toFaDigits } from "@/lib/utils";
 import { getBrandBySlug, getBrands, listProducts } from "@/modules/catalog/queries";
 
 type Params = Promise<{ slug: string }>;
@@ -18,7 +18,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const brand = await getBrandBySlug(slug);
   if (!brand) return pageMetadata({ title: "برند یافت نشد", path: `/brands/${slug}`, noIndex: true });
 
@@ -30,7 +31,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function BrandPage({ params }: { params: Params }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const brand = await getBrandBySlug(slug);
   if (!brand || !brand.isActive) notFound();
 
