@@ -1,0 +1,1323 @@
+{
+ "categories": [
+  {
+   "slug": "agri-machinery",
+   "name": "ماشین‌آلات کشاورزی",
+   "parent": null,
+   "icon": "motor-pump",
+   "position": 10
+  },
+  {
+   "slug": "brush-cutters",
+   "name": "علف‌تراش",
+   "parent": "agri-machinery",
+   "icon": "motor-pump",
+   "position": 1
+  },
+  {
+   "slug": "tillers",
+   "name": "تیلر و کولتیواتور",
+   "parent": "agri-machinery",
+   "icon": "motor-pump",
+   "position": 2
+  },
+  {
+   "slug": "sprayers",
+   "name": "سمپاش",
+   "parent": "agri-machinery",
+   "icon": "drop",
+   "position": 3
+  },
+  {
+   "slug": "equipment-accessories",
+   "name": "لوازم جانبی",
+   "parent": null,
+   "icon": "install",
+   "position": 11
+  },
+  {
+   "slug": "pressure-washers",
+   "name": "کارواش",
+   "parent": "equipment-accessories",
+   "icon": "drop",
+   "position": 1
+  },
+  {
+   "slug": "fuel-transfer",
+   "name": "گازوییل‌کش",
+   "parent": "equipment-accessories",
+   "icon": "pump",
+   "position": 2
+  }
+ ],
+ "categoryFilters": {
+  "brush-cutters": [
+   "power",
+   "weight"
+  ],
+  "tillers": [
+   "power",
+   "weight"
+  ],
+  "sprayers": [
+   "volume",
+   "power"
+  ],
+  "pressure-washers": [
+   "max_pressure",
+   "power_input",
+   "voltage"
+  ],
+  "fuel-transfer": [
+   "voltage",
+   "flow"
+  ]
+ },
+ "products": [
+  {
+   "name": "شناور ۷۰ متری یک اینچ زاگرس 4SKM( ۱۵متر کابل )",
+   "slug": "zagros-4096e817",
+   "model": null,
+   "brandFa": "زاگرس",
+   "categorySlug": "submersible-pumps",
+   "shortDescription": "شناور ۷۰ متری یک اینچ زاگرس 4SKM( ۱۵متر کابل )",
+   "description": "قیمت این کالا در فهرست منبع خوانا نبود یا عددی پرت داشت، پس عمداً خالی مانده و روی «استعلام» تنظیم شده است. مشخصات فنی زیر همان چیزی است که در منبع چاپ شده بود.",
+   "specs": [],
+   "tags": [
+    "پمپ شناور",
+    "زاگرس"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/submersible-pump.svg"
+  },
+  {
+   "name": "شناور ۷۰ متری یک اینچ راین 4SKM( ۱۵متر کابل )",
+   "slug": "rain-b616c453",
+   "model": null,
+   "brandFa": "راین",
+   "categorySlug": "submersible-pumps",
+   "shortDescription": "شناور ۷۰ متری یک اینچ راین 4SKM( ۱۵متر کابل )",
+   "description": "قیمت این کالا در فهرست منبع خوانا نبود یا عددی پرت داشت، پس عمداً خالی مانده و روی «استعلام» تنظیم شده است. مشخصات فنی زیر همان چیزی است که در منبع چاپ شده بود.",
+   "specs": [],
+   "tags": [
+    "پمپ شناور",
+    "راین"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/submersible-pump.svg"
+  },
+  {
+   "name": "شناور ۱۰۰ متری یک اینچ زاگرس 4SKM( ۱۵متر کابل )",
+   "slug": "39ab7d69",
+   "model": null,
+   "brandFa": "زاگرس",
+   "categorySlug": "submersible-pumps",
+   "shortDescription": "شناور ۱۰۰ متری یک اینچ زاگرس 4SKM( ۱۵متر کابل )",
+   "description": "قیمت این کالا در فهرست منبع خوانا نبود یا عددی پرت داشت، پس عمداً خالی مانده و روی «استعلام» تنظیم شده است. مشخصات فنی زیر همان چیزی است که در منبع چاپ شده بود.",
+   "specs": [],
+   "tags": [
+    "پمپ شناور",
+    "زاگرس"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/submersible-pump.svg"
+  },
+  {
+   "name": "شناور ۱۰۰ متری یک اینچ راین 4SKM( ۱۵متر کابل )",
+   "slug": "rain-850c2895",
+   "model": null,
+   "brandFa": "راین",
+   "categorySlug": "submersible-pumps",
+   "shortDescription": "شناور ۱۰۰ متری یک اینچ راین 4SKM( ۱۵متر کابل )",
+   "description": "قیمت این کالا در فهرست منبع خوانا نبود یا عددی پرت داشت، پس عمداً خالی مانده و روی «استعلام» تنظیم شده است. مشخصات فنی زیر همان چیزی است که در منبع چاپ شده بود.",
+   "specs": [],
+   "tags": [
+    "پمپ شناور",
+    "راین"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/submersible-pump.svg"
+  },
+  {
+   "name": "شناور ۱۱۵ متری یک اینچ زاگرس 4SKM( ۱۵متر کابل )",
+   "slug": "zagros-f848e11a",
+   "model": null,
+   "brandFa": "زاگرس",
+   "categorySlug": "submersible-pumps",
+   "shortDescription": "شناور ۱۱۵ متری یک اینچ زاگرس 4SKM( ۱۵متر کابل )",
+   "description": "قیمت این کالا در فهرست منبع خوانا نبود یا عددی پرت داشت، پس عمداً خالی مانده و روی «استعلام» تنظیم شده است. مشخصات فنی زیر همان چیزی است که در منبع چاپ شده بود.",
+   "specs": [],
+   "tags": [
+    "پمپ شناور",
+    "زاگرس"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/submersible-pump.svg"
+  },
+  {
+   "name": "شناور ۱۲۰ متری یک اینچ راین 4SKM( ۱۵متر کابل )",
+   "slug": "rain-8a705e9a",
+   "model": null,
+   "brandFa": "راین",
+   "categorySlug": "submersible-pumps",
+   "shortDescription": "شناور ۱۲۰ متری یک اینچ راین 4SKM( ۱۵متر کابل )",
+   "description": "قیمت این کالا در فهرست منبع خوانا نبود یا عددی پرت داشت، پس عمداً خالی مانده و روی «استعلام» تنظیم شده است. مشخصات فنی زیر همان چیزی است که در منبع چاپ شده بود.",
+   "specs": [],
+   "tags": [
+    "پمپ شناور",
+    "راین"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/submersible-pump.svg"
+  },
+  {
+   "name": "الکتروپمپ دو پروانه ای بی آر ۵.۵ اسب سه فاز مدل CDA 5.50 T.L",
+   "slug": "abr-cda-5-50-t-l-8512ffcd",
+   "model": "CDA 5.50 T.L",
+   "brandFa": "ای بی آر",
+   "categorySlug": "twin-impeller-pumps",
+   "shortDescription": "الکتروپمپ دو پروانه ای بی آر ۵.۵ اسب سه فاز مدل CDA 5.50 T.L",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 5.5,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    },
+    {
+     "kind": "text",
+     "key": "phase",
+     "value": "سه فاز",
+     "group": "موتور",
+     "label": "فاز برق"
+    }
+   ],
+   "tags": [
+    "دو پروانه",
+    "ای بی آر",
+    "مدل CDA 5.50 T.L"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/centrifugal-pump.svg"
+  },
+  {
+   "name": "الکتروپمپ دو پروانه ای بی آر ۱۰ اسب سه فاز مدل CDA 10.00 T.L",
+   "slug": "abr-cda-10-00-t-l-0911cf2e",
+   "model": "CDA 10.00 T.L",
+   "brandFa": "ای بی آر",
+   "categorySlug": "twin-impeller-pumps",
+   "shortDescription": "الکتروپمپ دو پروانه ای بی آر ۱۰ اسب سه فاز مدل CDA 10.00 T.L",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 10.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    },
+    {
+     "kind": "text",
+     "key": "phase",
+     "value": "سه فاز",
+     "group": "موتور",
+     "label": "فاز برق"
+    }
+   ],
+   "tags": [
+    "دو پروانه",
+    "ای بی آر",
+    "مدل CDA 10.00 T.L"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/centrifugal-pump.svg"
+  },
+  {
+   "name": "الکتروپمپ دو پروانه ای بی آر ۱۵ اسب سه فاز مدل CDA 15.00 T.L",
+   "slug": "abr-cda-15-00-t-l-67fd77ab",
+   "model": "CDA 15.00 T.L",
+   "brandFa": "ای بی آر",
+   "categorySlug": "twin-impeller-pumps",
+   "shortDescription": "الکتروپمپ دو پروانه ای بی آر ۱۵ اسب سه فاز مدل CDA 15.00 T.L",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 15.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    },
+    {
+     "kind": "text",
+     "key": "phase",
+     "value": "سه فاز",
+     "group": "موتور",
+     "label": "فاز برق"
+    }
+   ],
+   "tags": [
+    "دو پروانه",
+    "ای بی آر",
+    "مدل CDA 15.00 T.L"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/centrifugal-pump.svg"
+  },
+  {
+   "name": "الکتروپمپ سطحی ای بی آر ۲ اسب تک فاز مدل CMD 2.00 M.L",
+   "slug": "abr-cmd-2-00-m-l-81a86ffd",
+   "model": "CMD 2.00 M.L",
+   "brandFa": "ای بی آر",
+   "categorySlug": "pumps",
+   "shortDescription": "الکتروپمپ سطحی ای بی آر ۲ اسب تک فاز مدل CMD 2.00 M.L",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 2.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    },
+    {
+     "kind": "text",
+     "key": "phase",
+     "value": "تک فاز",
+     "group": "موتور",
+     "label": "فاز برق"
+    }
+   ],
+   "tags": [
+    "ای بی آر",
+    "مدل CMD 2.00 M.L"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/centrifugal-pump.svg"
+  },
+  {
+   "name": "الکتروپمپ سطحی ای بی آر ۲ اسب سه فاز مدل CMD 2.00 T.L",
+   "slug": "abr-cmd-2-00-t-l-440ec0b7",
+   "model": "CMD 2.00 T.L",
+   "brandFa": "ای بی آر",
+   "categorySlug": "pumps",
+   "shortDescription": "الکتروپمپ سطحی ای بی آر ۲ اسب سه فاز مدل CMD 2.00 T.L",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 2.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    },
+    {
+     "kind": "text",
+     "key": "phase",
+     "value": "سه فاز",
+     "group": "موتور",
+     "label": "فاز برق"
+    }
+   ],
+   "tags": [
+    "ای بی آر",
+    "مدل CMD 2.00 T.L"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/centrifugal-pump.svg"
+  },
+  {
+   "name": "الکتروپمپ سطحی ای بی آر ۳ اسب سه فاز مدل CMD 3.00 T.L",
+   "slug": "abr-cmd-3-00-t-l-3ee35166",
+   "model": "CMD 3.00 T.L",
+   "brandFa": "ای بی آر",
+   "categorySlug": "pumps",
+   "shortDescription": "الکتروپمپ سطحی ای بی آر ۳ اسب سه فاز مدل CMD 3.00 T.L",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 3.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    },
+    {
+     "kind": "text",
+     "key": "phase",
+     "value": "سه فاز",
+     "group": "موتور",
+     "label": "فاز برق"
+    }
+   ],
+   "tags": [
+    "ای بی آر",
+    "مدل CMD 3.00 T.L"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/centrifugal-pump.svg"
+  },
+  {
+   "name": "الکتروپمپ سطحی ای بی آر ۴ اسب سه فاز مدل CMD 4.00 T.L",
+   "slug": "abr-cmd-4-00-t-l-0a6b1b71",
+   "model": "CMD 4.00 T.L",
+   "brandFa": "ای بی آر",
+   "categorySlug": "pumps",
+   "shortDescription": "الکتروپمپ سطحی ای بی آر ۴ اسب سه فاز مدل CMD 4.00 T.L",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 4.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    },
+    {
+     "kind": "text",
+     "key": "phase",
+     "value": "سه فاز",
+     "group": "موتور",
+     "label": "فاز برق"
+    }
+   ],
+   "tags": [
+    "ای بی آر",
+    "مدل CMD 4.00 T.L"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/centrifugal-pump.svg"
+  },
+  {
+   "name": "الکتروپمپ سطحی ای بی آر ۱ اسب تک فاز مدل CMR 1.00 M.L",
+   "slug": "abr-cmr-1-00-m-l-27ae37ad",
+   "model": "CMR 1.00 M.L",
+   "brandFa": "ای بی آر",
+   "categorySlug": "pumps",
+   "shortDescription": "الکتروپمپ سطحی ای بی آر ۱ اسب تک فاز مدل CMR 1.00 M.L",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 1.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    },
+    {
+     "kind": "text",
+     "key": "phase",
+     "value": "تک فاز",
+     "group": "موتور",
+     "label": "فاز برق"
+    }
+   ],
+   "tags": [
+    "ای بی آر",
+    "مدل CMR 1.00 M.L"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/centrifugal-pump.svg"
+  },
+  {
+   "name": "۱ اسب بشقابی استیل",
+   "slug": "suvarx-63773588",
+   "model": null,
+   "brandFa": "سوارکس",
+   "categorySlug": "centrifugal-pumps",
+   "shortDescription": "۱ اسب بشقابی استیل",
+   "description": "قیمت این کالا در فهرست منبع خوانا نبود یا عددی پرت داشت، پس عمداً خالی مانده و روی «استعلام» تنظیم شده است. مشخصات فنی زیر همان چیزی است که در منبع چاپ شده بود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 1.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    }
+   ],
+   "tags": [
+    "بشقابی",
+    "سوارکس"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/centrifugal-pump.svg"
+  },
+  {
+   "name": "موتور برق ۲.۲ کیلووات بنزینی هندل — ویگو",
+   "slug": "vigo-39da6d4b",
+   "model": null,
+   "brandFa": "ویگو",
+   "categorySlug": "power-generators",
+   "shortDescription": "موتور برق ۲.۲ کیلووات بنزینی هندل — ویگو",
+   "description": "قیمت این کالا در فهرست منبع خوانا نبود یا عددی پرت داشت، پس عمداً خالی مانده و روی «استعلام» تنظیم شده است. مشخصات فنی زیر همان چیزی است که در منبع چاپ شده بود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 2.2,
+     "unit": "kw",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    }
+   ],
+   "tags": [
+    "موتور برق",
+    "ویگو"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/power-generator.svg"
+  },
+  {
+   "name": "موتور برق ۲.۲ کیلووات بنزینی هندل — ناکایو",
+   "slug": "nakayo-c2d38a07",
+   "model": null,
+   "brandFa": "ناکایو",
+   "categorySlug": "power-generators",
+   "shortDescription": "موتور برق ۲.۲ کیلووات بنزینی هندل — ناکایو",
+   "description": "قیمت این کالا در فهرست منبع خوانا نبود یا عددی پرت داشت، پس عمداً خالی مانده و روی «استعلام» تنظیم شده است. مشخصات فنی زیر همان چیزی است که در منبع چاپ شده بود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 2.2,
+     "unit": "kw",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    }
+   ],
+   "tags": [
+    "موتور برق",
+    "ناکایو"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/power-generator.svg"
+  },
+  {
+   "name": "تیلر (کولتیواتور) موتوری مدل T-900",
+   "slug": "tokyo-t-900-ae24ddfa",
+   "model": "T-900",
+   "brandFa": null,
+   "categorySlug": "tillers",
+   "shortDescription": "تیلر (کولتیواتور) موتوری مدل T-900",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 7.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    }
+   ],
+   "tags": [
+    "تیلر",
+    "مدل T-900"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "منبع ۵۰ لیتری (افقی)",
+   "slug": "f7e823cb",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "pressure-vessels",
+   "shortDescription": "منبع ۵۰ لیتری (افقی)",
+   "description": "قیمت این کالا در فهرست منبع خوانا نبود یا عددی پرت داشت، پس عمداً خالی مانده و روی «استعلام» تنظیم شده است. مشخصات فنی زیر همان چیزی است که در منبع چاپ شده بود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "volume",
+     "value": 50.0,
+     "unit": "l",
+     "group": "ظرفیت",
+     "label": "حجم",
+     "isKey": true
+    }
+   ],
+   "tags": [
+    "منبع تحت فشار"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "الکتروپمپ نیم اسب وتو مدل PM 45",
+   "slug": "vetto-pm-45-46beeb72",
+   "model": "PM 45",
+   "brandFa": "وتو",
+   "categorySlug": "pumps",
+   "shortDescription": "الکتروپمپ نیم اسب وتو مدل PM 45",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 0.5,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    },
+    {
+     "kind": "text",
+     "key": "impeller_material",
+     "value": "برنجی",
+     "group": "ساختار",
+     "label": "جنس پروانه"
+    }
+   ],
+   "tags": [
+    "الکتروپمپ سطحی",
+    "وتو",
+    "مدل PM 45"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/centrifugal-pump.svg"
+  },
+  {
+   "name": "الکتروپمپ یک اسب وتو مدل PM 80",
+   "slug": "vetto-pm-80-3b912f2d",
+   "model": "PM 80",
+   "brandFa": "وتو",
+   "categorySlug": "pumps",
+   "shortDescription": "الکتروپمپ یک اسب وتو مدل PM 80",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 1.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    },
+    {
+     "kind": "text",
+     "key": "impeller_material",
+     "value": "برنجی",
+     "group": "ساختار",
+     "label": "جنس پروانه"
+    }
+   ],
+   "tags": [
+    "الکتروپمپ سطحی",
+    "وتو",
+    "مدل PM 80"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/centrifugal-pump.svg"
+  },
+  {
+   "name": "ست کنترل ساده وتو مدل DSK-1.2-vetto",
+   "slug": "vetto-dsk-1-2-vetto-4ca29b0d",
+   "model": "DSK-1.2-vetto",
+   "brandFa": "وتو",
+   "categorySlug": "control-sets",
+   "shortDescription": "ست کنترل ساده وتو مدل DSK-1.2-vetto",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [],
+   "tags": [
+    "ست کنترل",
+    "وتو",
+    "مدل DSK-1.2-vetto"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/control-set.svg"
+  },
+  {
+   "name": "کلید آب اسکواردی وتو مدل BSK-2",
+   "slug": "vetto-bsk-2-de193b08",
+   "model": "BSK-2",
+   "brandFa": "وتو",
+   "categorySlug": "pressure-switches",
+   "shortDescription": "کلید آب اسکواردی وتو مدل BSK-2",
+   "description": "نام این کالا در فهرست منبع کوتاه چاپ شده بود؛ نام کامل از ترکیب برند، نوع کالا و کد مدلِ خودِ همان فهرست ساخته شده است. قیمت روی «استعلام» است تا از پنل تأیید شود.",
+   "specs": [],
+   "tags": [
+    "کلید اتوماتیک",
+    "وتو",
+    "مدل BSK-2"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/pressure-switch.svg"
+  },
+  {
+   "name": "تیوپ منبع تحت فشار ۵۰۰ Lit zilmet",
+   "slug": "zilmet-ca19744b",
+   "model": null,
+   "brandFa": "زیلمت",
+   "categorySlug": "vessel-diaphragms",
+   "shortDescription": "تیوپ منبع تحت فشار ۵۰۰ Lit zilmet",
+   "description": "قیمت این کالا در فهرست منبع خوانا نبود یا عددی پرت داشت، پس عمداً خالی مانده و روی «استعلام» تنظیم شده است. مشخصات فنی زیر همان چیزی است که در منبع چاپ شده بود.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "volume",
+     "value": 500.0,
+     "unit": "l",
+     "group": "ظرفیت",
+     "label": "حجم",
+     "isKey": true
+    }
+   ],
+   "tags": [
+    "تیوپ منبع",
+    "زیلمت"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/pressure-tank.svg"
+  },
+  {
+   "name": "سمپاش ۲۰ لیتری دستی راین پمپ استیل (کمربندبزرگ) ۶۳۲۰ LO",
+   "slug": "rain-8fd9270b",
+   "model": null,
+   "brandFa": "راین",
+   "categorySlug": "sprayers",
+   "shortDescription": "سمپاش ۲۰ لیتری دستی راین پمپ استیل (کمربندبزرگ) ۶۳۲۰ LO",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "volume",
+     "value": 20.0,
+     "unit": "l",
+     "group": "ظرفیت",
+     "label": "حجم",
+     "isKey": true
+    }
+   ],
+   "tags": [
+    "سمپاش",
+    "راین"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 2790000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "سرنازل برنجی (کمربندبزرگ) LO",
+   "slug": "5aebe363",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "sprayers",
+   "shortDescription": "سرنازل برنجی (کمربندبزرگ) LO",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "سمپاش"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 2622000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "گازوییل‌کش ۱۲ ولت هاچاسو",
+   "slug": "hachaso-9f01a39f",
+   "model": null,
+   "brandFa": "هاچاسو",
+   "categorySlug": "fuel-transfer",
+   "shortDescription": "گازوییل‌کش ۱۲ ولت هاچاسو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "گازوییل‌کش",
+    "هاچاسو"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 5500000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش پشتی وگو",
+   "slug": "vego-d2f0ddb8",
+   "model": null,
+   "brandFa": "وگو",
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش پشتی وگو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش",
+    "وگو"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 13200000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش دوشی وگو",
+   "slug": "vego-9369b637",
+   "model": null,
+   "brandFa": "وگو",
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش دوشی وگو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش",
+    "وگو"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 11100000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش دوشی دلتا",
+   "slug": "delta-43e5a0f4",
+   "model": null,
+   "brandFa": "دلتا",
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش دوشی دلتا",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش",
+    "دلتا"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 12990000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "کارواش ۱۷۰ بار خانگی هافل سیم مس دینامی",
+   "slug": "hafel-44625f30",
+   "model": null,
+   "brandFa": "هافل",
+   "categorySlug": "pressure-washers",
+   "shortDescription": "کارواش ۱۷۰ بار خانگی هافل سیم مس دینامی",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "کارواش",
+    "هافل"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 9500000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "کارواش نیمه صنعتی ۱۵۰۰ وات اسپینا",
+   "slug": "espina-fbed54f2",
+   "model": null,
+   "brandFa": "اسپینا",
+   "categorySlug": "pressure-washers",
+   "shortDescription": "کارواش نیمه صنعتی ۱۵۰۰ وات اسپینا",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "کارواش",
+    "اسپینا"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 8900000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "کارواش ۱۶۵ بار اسپینا",
+   "slug": "espina-09830082",
+   "model": null,
+   "brandFa": "اسپینا",
+   "categorySlug": "pressure-washers",
+   "shortDescription": "کارواش ۱۶۵ بار اسپینا",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "موتور پمپ",
+    "اسپینا"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 14595000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "کارواش ۱۰۰ بار اسپینا",
+   "slug": "espina-4e7496f1",
+   "model": null,
+   "brandFa": "اسپینا",
+   "categorySlug": "pressure-washers",
+   "shortDescription": "کارواش ۱۰۰ بار اسپینا",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "موتور پمپ",
+    "اسپینا"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 8694000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش دوشی ویگو",
+   "slug": "vigo-a10ee1a7",
+   "model": null,
+   "brandFa": "ویگو",
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش دوشی ویگو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش",
+    "ویگو"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 11550000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش دوشی آلبرو",
+   "slug": "f32cb515",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش دوشی آلبرو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 11605000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش دوشی لوزانو",
+   "slug": "a5da568e",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش دوشی لوزانو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 11660000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش دوشی اسپینا",
+   "slug": "espina-31897e9c",
+   "model": null,
+   "brandFa": "اسپینا",
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش دوشی اسپینا",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش",
+    "اسپینا"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 11715000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش چندکاره ویگو",
+   "slug": "vigo-df7085b5",
+   "model": null,
+   "brandFa": "ویگو",
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش چندکاره ویگو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش",
+    "ویگو"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 25777000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش چندکاره آلبرو",
+   "slug": "93da5be8",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش چندکاره آلبرو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 25900000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش متوسط ویگو",
+   "slug": "vigo-a4e6e1d1",
+   "model": null,
+   "brandFa": "ویگو",
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش متوسط ویگو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش",
+    "ویگو"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 13650000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش متوسط آلبرو",
+   "slug": "abd68f9c",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش متوسط آلبرو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 13715000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش متوسط برونل",
+   "slug": "af00c730",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش متوسط برونل",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 13780000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش متوسط اسپینا",
+   "slug": "espina-6312d15f",
+   "model": null,
+   "brandFa": "اسپینا",
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش متوسط اسپینا",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش",
+    "اسپینا"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 13845000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش بلند ویگو",
+   "slug": "vigo-98bcb581",
+   "model": null,
+   "brandFa": "ویگو",
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش بلند ویگو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش",
+    "ویگو"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 18459000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش بلند آلبرو",
+   "slug": "5aa07244",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش بلند آلبرو",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 18546000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش بلند برونل",
+   "slug": "7101f998",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش بلند برونل",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 18634000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش بلند اسپینا",
+   "slug": "espina-306114fc",
+   "model": null,
+   "brandFa": "اسپینا",
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش بلند اسپینا",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش",
+    "اسپینا"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "PUBLIC",
+   "price": 18722000,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "تیلر کولتیواتور دیزلی ۵ اسب 173F لاستیک 400x۸",
+   "slug": "tokyo-8f671327",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "tillers",
+   "shortDescription": "تیلر کولتیواتور دیزلی ۵ اسب 173F لاستیک 400x۸",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 5.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    }
+   ],
+   "tags": [
+    "تیلر"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "تیلر کولتیواتور دیزلی ۷.۵ اسب هندلی 178F لاستیک 500x۱۰",
+   "slug": "tokyo-5afd599c",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "tillers",
+   "shortDescription": "تیلر کولتیواتور دیزلی ۷.۵ اسب هندلی 178F لاستیک 500x۱۰",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 7.5,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    }
+   ],
+   "tags": [
+    "تیلر"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "تیلر کولتیواتور دیزلی ۷.۵ اسب استارتی 178FE لاستیک 500x۱۰",
+   "slug": "tokyo-2269b3bb",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "tillers",
+   "shortDescription": "تیلر کولتیواتور دیزلی ۷.۵ اسب استارتی 178FE لاستیک 500x۱۰",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 7.5,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    }
+   ],
+   "tags": [
+    "تیلر"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "تیلر کولتیواتور دیزلی ۹ اسب هندلی 186FE لاستیک 500x۱۲",
+   "slug": "tokyo-5d6e64e5",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "tillers",
+   "shortDescription": "تیلر کولتیواتور دیزلی ۹ اسب هندلی 186FE لاستیک 500x۱۲",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [
+    {
+     "kind": "num",
+     "key": "power",
+     "value": 9.0,
+     "unit": "hp",
+     "group": "موتور",
+     "label": "توان موتور",
+     "isKey": true
+    }
+   ],
+   "tags": [
+    "تیلر"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش ۵۲ سی سی زاگ",
+   "slug": "zog-56ee1f83",
+   "model": null,
+   "brandFa": null,
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش ۵۲ سی سی زاگ",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/generic.svg"
+  },
+  {
+   "name": "علف تراش (برش دهنده علف) موتوری",
+   "slug": "zog-bg-q143-ed967c1c",
+   "model": "BG-Q143",
+   "brandFa": null,
+   "categorySlug": "brush-cutters",
+   "shortDescription": "علف تراش (برش دهنده علف) موتوری",
+   "description": "مشخصات و قیمت این کالا از فهرست رسمی تأمین‌کننده برداشته شده است.",
+   "specs": [],
+   "tags": [
+    "علف‌تراش",
+    "مدل BG-Q143"
+   ],
+   "unit": "دستگاه",
+   "priceMode": "ON_REQUEST",
+   "price": null,
+   "image": "/images/products/generic.svg"
+  }
+ ]
+}
