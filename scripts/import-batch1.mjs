@@ -66,12 +66,32 @@ const CATEGORY_FILTERS = {
   "power-generators": ["power", "phase", "voltage"],
 };
 
-/** تصویر جانشین بر پایهٔ دسته — عکس واقعی بعداً از پنل جایگزین می‌شود */
-const PLACEHOLDER = {
-  "power-generators": "/images/products/generic.svg",
-  "vessel-diaphragms": "/images/products/generic.svg",
+/**
+ * طرح هر دسته — عکس واقعی محصول بعداً از پنل جایگزین می‌شود.
+ * طرح‌ها همان مجموعهٔ تیرهٔ سایت‌اند، پس کارت‌ها یکدست می‌مانند و دست‌کم نوع
+ * کالا از روی تصویر خوانده می‌شود، نه یک قاب یکسان برای همه.
+ */
+const IMAGE_BY_CATEGORY = {
+  "centrifugal-pumps": "/images/products/centrifugal-pump.svg",
+  "self-priming-pumps": "/images/products/centrifugal-pump.svg",
+  "twin-impeller-pumps": "/images/products/centrifugal-pump.svg",
+  "peripheral-pumps": "/images/products/centrifugal-pump.svg",
+  "pumps": "/images/products/centrifugal-pump.svg",
+  "submersible-pumps": "/images/products/submersible-pump.svg",
+  "vertical-multistage": "/images/products/booster-set.svg",
+  "circulators": "/images/products/electro-pump.svg",
+  "engine-pumps": "/images/products/engine-pump.svg",
+  "power-generators": "/images/products/power-generator.svg",
+  "control-sets": "/images/products/control-set.svg",
+  "pressure-gauges": "/images/products/pressure-gauge.svg",
+  "pressure-switches": "/images/products/pressure-switch.svg",
+  "instruments": "/images/products/pressure-gauge.svg",
+  "pressure-vessels": "/images/products/pressure-tank.svg",
+  "vessel-diaphragms": "/images/products/pressure-tank.svg",
+  "fittings": "/images/products/pipe-fitting.svg",
+  "check-valves": "/images/products/gate-valve.svg",
 };
-const DEFAULT_PLACEHOLDER = "/images/products/generic.svg";
+const DEFAULT_IMAGE = "/images/products/generic.svg";
 
 const FA = "۰۱۲۳۴۵۶۷۸۹";
 const faNum = (n) => String(n).replace(/[0-9]/g, (d) => FA[Number(d)]);
@@ -263,14 +283,14 @@ try {
     }
 
     /*
-     * تصویر جانشین — دستهٔ ۱ هیچ عکس واقعی محصولی ندارد. جای‌گزین گذاشته
+     * طرح دسته — دستهٔ ۱ هیچ عکس واقعی محصولی ندارد. طرح نوع کالا گذاشته
      * می‌شود تا کارت محصول در فهرست‌ها خالی نماند؛ با رسیدن عکس واقعی از
      * پنل مدیریت جایگزین می‌شود.
      */
     await q(
       "insert into product_images (product_id, url, alt, position, is_primary)" +
         " values ($1,$2,$3,0,true)",
-      [productId, PLACEHOLDER[p.categorySlug] ?? DEFAULT_PLACEHOLDER, p.name],
+      [productId, IMAGE_BY_CATEGORY[p.categorySlug] ?? DEFAULT_IMAGE, p.name],
     );
     stat.imageRows++;
   }

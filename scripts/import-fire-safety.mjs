@@ -33,7 +33,9 @@ const DATA =
   process.argv.find((a) => a.startsWith("--data="))?.slice(7) ??
   fileURLToPath(new URL("./data/fire-safety-catalog.json", import.meta.url));
 
-const PLACEHOLDER = "/images/products/fire-generic.svg";
+/* تصویر هر محصول در دادهٔ کاتالوگ آمده و طرحِ خانوادهٔ خودش است؛
+   fire-generic فقط پشتیبانِ خانواده‌ای است که طرح اختصاصی ندارد. */
+const FALLBACK_IMAGE = "/images/products/fire-generic.svg";
 
 /* ستون value متن دیدنی است و بقیهٔ سایت ارقام فارسی نشان می‌دهد؛
    value_num عدد واقعی را برای فیلتر و مرتب‌سازی نگه می‌دارد. */
@@ -197,11 +199,11 @@ try {
       stat.specRows++;
     }
 
-    /* تصویر جانشین تا رسیدن عکس واقعی از پنل */
+    /* طرح خانوادگی تا رسیدن عکس واقعی محصول از پنل */
     await q(
       "insert into product_images (product_id, url, alt, position, is_primary)" +
         " values ($1,$2,$3,0,true)",
-      [productId, PLACEHOLDER, p.name],
+      [productId, p.image ?? FALLBACK_IMAGE, p.name],
     );
     stat.imageRows++;
   }
