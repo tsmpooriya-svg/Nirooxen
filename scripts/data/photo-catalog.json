@@ -1,0 +1,2618 @@
+[
+ {
+  "name": "الکتروپمپ تک فاز هیوندای HB-210",
+  "slug": "hyundai-hb-210",
+  "model": "HB-210",
+  "brandFa": "هیوندای",
+  "categorySlug": "pumps",
+  "shortDescription": "الکتروپمپ سطحی تک فاز هیوندای، مدل HB-210",
+  "description": "الکتروپمپ سطحی تک‌فاز برای آبرسانی ساختمان و مصارف عمومی. مشخصات فنی زیر همان چیزی است که در فهرست رسمی سازنده کنار همین مدل چاپ شده؛ عکس محصول نیز از همان فهرست برداشته شده است.",
+  "specs": [
+   {
+    "kind": "num",
+    "key": "power",
+    "value": 2.0,
+    "unit": "hp",
+    "group": "موتور",
+    "label": "توان موتور",
+    "isKey": true
+   },
+   {
+    "kind": "num",
+    "key": "flow",
+    "value": 120.0,
+    "unit": "lpm",
+    "group": "عملکرد",
+    "label": "دبی",
+    "isKey": true
+   },
+   {
+    "kind": "num",
+    "key": "head",
+    "value": 50.0,
+    "unit": "m",
+    "group": "عملکرد",
+    "label": "هد",
+    "isKey": true
+   },
+   {
+    "kind": "text",
+    "key": null,
+    "value": "۱.۲۵ اینچ / ۱ اینچ",
+    "group": "ابعاد",
+    "label": "ورودی / خروجی"
+   },
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "الکتروپمپ",
+   "پمپ آب",
+   "هیوندای",
+   "مدل HB-210"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/hyundai-hb.webp",
+  "imageScope": "model"
+ },
+ {
+  "name": "الکتروپمپ تک فاز هیوندای HM-45",
+  "slug": "hyundai-hm-45",
+  "model": "HM-45",
+  "brandFa": "هیوندای",
+  "categorySlug": "pumps",
+  "shortDescription": "الکتروپمپ سطحی تک فاز هیوندای، مدل HM-45",
+  "description": "الکتروپمپ سطحی تک‌فاز برای آبرسانی ساختمان و مصارف عمومی. مشخصات فنی زیر همان چیزی است که در فهرست رسمی سازنده کنار همین مدل چاپ شده؛ عکس محصول نیز از همان فهرست برداشته شده است.",
+  "specs": [
+   {
+    "kind": "num",
+    "key": "power",
+    "value": 0.5,
+    "unit": "hp",
+    "group": "موتور",
+    "label": "توان موتور",
+    "isKey": true
+   },
+   {
+    "kind": "num",
+    "key": "flow",
+    "value": 38.0,
+    "unit": "lpm",
+    "group": "عملکرد",
+    "label": "دبی",
+    "isKey": true
+   },
+   {
+    "kind": "num",
+    "key": "head",
+    "value": 38.0,
+    "unit": "m",
+    "group": "عملکرد",
+    "label": "هد",
+    "isKey": true
+   },
+   {
+    "kind": "text",
+    "key": null,
+    "value": "۱ اینچ / ۱ اینچ",
+    "group": "ابعاد",
+    "label": "ورودی / خروجی"
+   },
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "الکتروپمپ",
+   "پمپ آب",
+   "هیوندای",
+   "مدل HM-45"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/hyundai-hm-45.webp",
+  "imageScope": "model"
+ },
+ {
+  "name": "الکتروپمپ تک فاز هیوندای HC-100",
+  "slug": "hyundai-hc-100",
+  "model": "HC-100",
+  "brandFa": "هیوندای",
+  "categorySlug": "pumps",
+  "shortDescription": "الکتروپمپ سطحی تک فاز هیوندای، مدل HC-100",
+  "description": "الکتروپمپ سطحی تک‌فاز برای آبرسانی ساختمان و مصارف عمومی. مشخصات فنی زیر همان چیزی است که در فهرست رسمی سازنده کنار همین مدل چاپ شده؛ عکس محصول نیز از همان فهرست برداشته شده است.",
+  "specs": [
+   {
+    "kind": "num",
+    "key": "power",
+    "value": 1.0,
+    "unit": "hp",
+    "group": "موتور",
+    "label": "توان موتور",
+    "isKey": true
+   },
+   {
+    "kind": "num",
+    "key": "flow",
+    "value": 110.0,
+    "unit": "lpm",
+    "group": "عملکرد",
+    "label": "دبی",
+    "isKey": true
+   },
+   {
+    "kind": "num",
+    "key": "head",
+    "value": 32.0,
+    "unit": "m",
+    "group": "عملکرد",
+    "label": "هد",
+    "isKey": true
+   },
+   {
+    "kind": "text",
+    "key": null,
+    "value": "۱.۲۵ اینچ / ۱ اینچ",
+    "group": "ابعاد",
+    "label": "ورودی / خروجی"
+   },
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "الکتروپمپ",
+   "پمپ آب",
+   "هیوندای",
+   "مدل HC-100"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/hyundai-hc-100.webp",
+  "imageScope": "model"
+ },
+ {
+  "name": "الکتروپمپ تک فاز هیوندای HAM-100",
+  "slug": "hyundai-ham-100",
+  "model": "HAM-100",
+  "brandFa": "هیوندای",
+  "categorySlug": "pumps",
+  "shortDescription": "الکتروپمپ سطحی تک فاز هیوندای، مدل HAM-100",
+  "description": "الکتروپمپ سطحی تک‌فاز برای آبرسانی ساختمان و مصارف عمومی. مشخصات فنی زیر همان چیزی است که در فهرست رسمی سازنده کنار همین مدل چاپ شده؛ عکس محصول نیز از همان فهرست برداشته شده است.",
+  "specs": [
+   {
+    "kind": "num",
+    "key": "power",
+    "value": 1.0,
+    "unit": "hp",
+    "group": "موتور",
+    "label": "توان موتور",
+    "isKey": true
+   },
+   {
+    "kind": "num",
+    "key": "flow",
+    "value": 50.0,
+    "unit": "lpm",
+    "group": "عملکرد",
+    "label": "دبی",
+    "isKey": true
+   },
+   {
+    "kind": "num",
+    "key": "head",
+    "value": 50.0,
+    "unit": "m",
+    "group": "عملکرد",
+    "label": "هد",
+    "isKey": true
+   },
+   {
+    "kind": "text",
+    "key": null,
+    "value": "۱ اینچ / ۱ اینچ",
+    "group": "ابعاد",
+    "label": "ورودی / خروجی"
+   },
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "الکتروپمپ",
+   "پمپ آب",
+   "هیوندای",
+   "مدل HAM-100"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/hyundai-ham-100.webp",
+  "imageScope": "model"
+ },
+ {
+  "name": "الکتروپمپ تک فاز هیوندای HB-160",
+  "slug": "hyundai-hb-160",
+  "model": "HB-160",
+  "brandFa": "هیوندای",
+  "categorySlug": "pumps",
+  "shortDescription": "الکتروپمپ سطحی تک فاز هیوندای، مدل HB-160",
+  "description": "الکتروپمپ سطحی تک‌فاز برای آبرسانی ساختمان و مصارف عمومی. مشخصات فنی زیر همان چیزی است که در فهرست رسمی سازنده کنار همین مدل چاپ شده؛ عکس محصول نیز از همان فهرست برداشته شده است.",
+  "specs": [
+   {
+    "kind": "num",
+    "key": "power",
+    "value": 1.5,
+    "unit": "hp",
+    "group": "موتور",
+    "label": "توان موتور",
+    "isKey": true
+   },
+   {
+    "kind": "num",
+    "key": "flow",
+    "value": 105.0,
+    "unit": "lpm",
+    "group": "عملکرد",
+    "label": "دبی",
+    "isKey": true
+   },
+   {
+    "kind": "num",
+    "key": "head",
+    "value": 45.0,
+    "unit": "m",
+    "group": "عملکرد",
+    "label": "هد",
+    "isKey": true
+   },
+   {
+    "kind": "text",
+    "key": null,
+    "value": "۱.۲۵ اینچ / ۱ اینچ",
+    "group": "ابعاد",
+    "label": "ورودی / خروجی"
+   },
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "الکتروپمپ",
+   "پمپ آب",
+   "هیوندای",
+   "مدل HB-160"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/hyundai-hb.webp",
+  "imageScope": "model"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 18/4",
+  "slug": "tavantak-tmr-18-4",
+  "model": "TMR 18/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 18/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 18/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 18/4 F",
+  "slug": "tavantak-tmr-18-4-f",
+  "model": "TMR 18/4 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 18/4 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 18/4 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 34/4",
+  "slug": "tavantak-tmr-34-4",
+  "model": "TMR 34/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 34/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 34/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 34/4 F",
+  "slug": "tavantak-tmr-34-4-f",
+  "model": "TMR 34/4 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 34/4 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 34/4 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 50/4",
+  "slug": "tavantak-tmr-50-4",
+  "model": "TMR 50/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 50/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 50/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 50/4 F",
+  "slug": "tavantak-tmr-50-4-f",
+  "model": "TMR 50/4 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 50/4 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 50/4 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 65/4",
+  "slug": "tavantak-tmr-65-4",
+  "model": "TMR 65/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 65/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 65/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 80/4",
+  "slug": "tavantak-tmr-80-4",
+  "model": "TMR 80/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 80/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 80/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 16/6",
+  "slug": "tavantak-tmr-16-6",
+  "model": "TMR 16/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 16/6",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 16/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 16/6 F",
+  "slug": "tavantak-tmr-16-6-f",
+  "model": "TMR 16/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 16/6 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 16/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 30/6",
+  "slug": "tavantak-tmr-30-6",
+  "model": "TMR 30/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 30/6",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 30/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 30/6 F",
+  "slug": "tavantak-tmr-30-6-f",
+  "model": "TMR 30/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 30/6 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 30/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 40/6",
+  "slug": "tavantak-tmr-40-6",
+  "model": "TMR 40/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 40/6",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 40/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 40/6 F",
+  "slug": "tavantak-tmr-40-6-f",
+  "model": "TMR 40/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 40/6 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 40/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 51/6",
+  "slug": "tavantak-tmr-51-6",
+  "model": "TMR 51/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 51/6",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 51/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TMR 62/6",
+  "slug": "tavantak-tmr-62-6",
+  "model": "TMR 62/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TMR 62/6",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TMR توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TMR 62/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tmr.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 18/4",
+  "slug": "tavantak-tpt-18-4",
+  "model": "TPT 18/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 18/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 18/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 18/4 F",
+  "slug": "tavantak-tpt-18-4-f",
+  "model": "TPT 18/4 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 18/4 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 18/4 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 34/4",
+  "slug": "tavantak-tpt-34-4",
+  "model": "TPT 34/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 34/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 34/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 34/4 F",
+  "slug": "tavantak-tpt-34-4-f",
+  "model": "TPT 34/4 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 34/4 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 34/4 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 50/4",
+  "slug": "tavantak-tpt-50-4",
+  "model": "TPT 50/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 50/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 50/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 50/4 3PH",
+  "slug": "tavantak-tpt-50-4-3ph",
+  "model": "TPT 50/4 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 50/4 3PH",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 50/4 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 50/4 F",
+  "slug": "tavantak-tpt-50-4-f",
+  "model": "TPT 50/4 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 50/4 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 50/4 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 65/4",
+  "slug": "tavantak-tpt-65-4",
+  "model": "TPT 65/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 65/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 65/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 65/4 3PH",
+  "slug": "tavantak-tpt-65-4-3ph",
+  "model": "TPT 65/4 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 65/4 3PH",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 65/4 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 65/4 F",
+  "slug": "tavantak-tpt-65-4-f",
+  "model": "TPT 65/4 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 65/4 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 65/4 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 80/4",
+  "slug": "tavantak-tpt-80-4",
+  "model": "TPT 80/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 80/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 80/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 80/4 3PH",
+  "slug": "tavantak-tpt-80-4-3ph",
+  "model": "TPT 80/4 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 80/4 3PH",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 80/4 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 80/4 F",
+  "slug": "tavantak-tpt-80-4-f",
+  "model": "TPT 80/4 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 80/4 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 80/4 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 100/4",
+  "slug": "tavantak-tpt-100-4",
+  "model": "TPT 100/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 100/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 100/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 100/4 3PH",
+  "slug": "tavantak-tpt-100-4-3ph",
+  "model": "TPT 100/4 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 100/4 3PH",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 100/4 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 100/4 F",
+  "slug": "tavantak-tpt-100-4-f",
+  "model": "TPT 100/4 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 100/4 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 100/4 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 15/6",
+  "slug": "tavantak-tpt-15-6",
+  "model": "TPT 15/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 15/6",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 15/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 15/6 F",
+  "slug": "tavantak-tpt-15-6-f",
+  "model": "TPT 15/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 15/6 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 15/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 27/6",
+  "slug": "tavantak-tpt-27-6",
+  "model": "TPT 27/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 27/6",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 27/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 27/6 F",
+  "slug": "tavantak-tpt-27-6-f",
+  "model": "TPT 27/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 27/6 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 27/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 40/6",
+  "slug": "tavantak-tpt-40-6",
+  "model": "TPT 40/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 40/6",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 40/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 40/6 3PH",
+  "slug": "tavantak-tpt-40-6-3ph",
+  "model": "TPT 40/6 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 40/6 3PH",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 40/6 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 40/6 F",
+  "slug": "tavantak-tpt-40-6-f",
+  "model": "TPT 40/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 40/6 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 40/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 51/6",
+  "slug": "tavantak-tpt-51-6",
+  "model": "TPT 51/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 51/6",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 51/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 51/6 3PH",
+  "slug": "tavantak-tpt-51-6-3ph",
+  "model": "TPT 51/6 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 51/6 3PH",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 51/6 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 51/6 F",
+  "slug": "tavantak-tpt-51-6-f",
+  "model": "TPT 51/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 51/6 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 51/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 62/6",
+  "slug": "tavantak-tpt-62-6",
+  "model": "TPT 62/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 62/6",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 62/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 62/6 3PH",
+  "slug": "tavantak-tpt-62-6-3ph",
+  "model": "TPT 62/6 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 62/6 3PH",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 62/6 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 62/6 F",
+  "slug": "tavantak-tpt-62-6-f",
+  "model": "TPT 62/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 62/6 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 62/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 75/6",
+  "slug": "tavantak-tpt-75-6",
+  "model": "TPT 75/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 75/6",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 75/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 75/6 3PH",
+  "slug": "tavantak-tpt-75-6-3ph",
+  "model": "TPT 75/6 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 75/6 3PH",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 75/6 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 75/6 F",
+  "slug": "tavantak-tpt-75-6-f",
+  "model": "TPT 75/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 75/6 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 75/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 27/8",
+  "slug": "tavantak-tpt-27-8",
+  "model": "TPT 27/8",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 27/8",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 27/8"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 27/8 F",
+  "slug": "tavantak-tpt-27-8-f",
+  "model": "TPT 27/8 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 27/8 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 27/8 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 40/8",
+  "slug": "tavantak-tpt-40-8",
+  "model": "TPT 40/8",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 40/8",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 40/8"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 40/8 F",
+  "slug": "tavantak-tpt-40-8-f",
+  "model": "TPT 40/8 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 40/8 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 40/8 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 50/8",
+  "slug": "tavantak-tpt-50-8",
+  "model": "TPT 50/8",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 50/8",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 50/8"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 50/8 3PH",
+  "slug": "tavantak-tpt-50-8-3ph",
+  "model": "TPT 50/8 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 50/8 3PH",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 50/8 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 50/8 F",
+  "slug": "tavantak-tpt-50-8-f",
+  "model": "TPT 50/8 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 50/8 F",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 50/8 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 80/8 3PH",
+  "slug": "tavantak-tpt-80-8-3ph",
+  "model": "TPT 80/8 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 80/8 3PH",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 80/8 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPT 100/8 3PH",
+  "slug": "tavantak-tpt-100-8-3ph",
+  "model": "TPT 100/8 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPT 100/8 3PH",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPT توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPT 100/8 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpt.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPN 115/4",
+  "slug": "tavantak-tpn-115-4",
+  "model": "TPN 115/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPN 115/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPN توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPN 115/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpn.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPN 135/4",
+  "slug": "tavantak-tpn-135-4",
+  "model": "TPN 135/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPN 135/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPN توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPN 135/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpn.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "کف‌کش توان تک مدل TPN 155/4",
+  "slug": "tavantak-tpn-155-4",
+  "model": "TPN 155/4",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "کف‌کش تک‌فاز توان تک، مدل TPN 155/4",
+  "description": "کف‌کش تک‌فاز از خانوادهٔ TPN توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "کف‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPN 155/4"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpn.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPD 12/6",
+  "slug": "tavantak-tpd-12-6",
+  "model": "TPD 12/6",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPD 12/6",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPD توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPD 12/6"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpd.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPD 12/6 F",
+  "slug": "tavantak-tpd-12-6-f",
+  "model": "TPD 12/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPD 12/6 F",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPD توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPD 12/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpd.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPD 20/6 3PH",
+  "slug": "tavantak-tpd-20-6-3ph",
+  "model": "TPD 20/6 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPD 20/6 3PH",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPD توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPD 20/6 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpd.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPD 20/6 F",
+  "slug": "tavantak-tpd-20-6-f",
+  "model": "TPD 20/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPD 20/6 F",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPD توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPD 20/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpd.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPD 35/6 3PH",
+  "slug": "tavantak-tpd-35-6-3ph",
+  "model": "TPD 35/6 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPD 35/6 3PH",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPD توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPD 35/6 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpd.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPD 35/6 F",
+  "slug": "tavantak-tpd-35-6-f",
+  "model": "TPD 35/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPD 35/6 F",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPD توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPD 35/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpd.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPD 12/8",
+  "slug": "tavantak-tpd-12-8",
+  "model": "TPD 12/8",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPD 12/8",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPD توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPD 12/8"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpd.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPD 12/8 F",
+  "slug": "tavantak-tpd-12-8-f",
+  "model": "TPD 12/8 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPD 12/8 F",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPD توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPD 12/8 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpd.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPD 20/8 3PH",
+  "slug": "tavantak-tpd-20-8-3ph",
+  "model": "TPD 20/8 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPD 20/8 3PH",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPD توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPD 20/8 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpd.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPD 20/8 F",
+  "slug": "tavantak-tpd-20-8-f",
+  "model": "TPD 20/8 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPD 20/8 F",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPD توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPD 20/8 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpd.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPD 32/8 3PH",
+  "slug": "tavantak-tpd-32-8-3ph",
+  "model": "TPD 32/8 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPD 32/8 3PH",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPD توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPD 32/8 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpd.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPB 15/6 3PH",
+  "slug": "tavantak-tpb-15-6-3ph",
+  "model": "TPB 15/6 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPB 15/6 3PH",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPB توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPB 15/6 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpb.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPB 15/6 F",
+  "slug": "tavantak-tpb-15-6-f",
+  "model": "TPB 15/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPB 15/6 F",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPB توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPB 15/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpb.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPB 15/8 3PH",
+  "slug": "tavantak-tpb-15-8-3ph",
+  "model": "TPB 15/8 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPB 15/8 3PH",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPB توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPB 15/8 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpb.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPB 15/8 F",
+  "slug": "tavantak-tpb-15-8-f",
+  "model": "TPB 15/8 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPB 15/8 F",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPB توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPB 15/8 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpb.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPB 25/6 3PH",
+  "slug": "tavantak-tpb-25-6-3ph",
+  "model": "TPB 25/6 3PH",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPB 25/6 3PH",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPB توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPB 25/6 3PH"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpb.webp",
+  "imageScope": "family"
+ },
+ {
+  "name": "لجن‌کش توان تک مدل TPB 25/6 F",
+  "slug": "tavantak-tpb-25-6-f",
+  "model": "TPB 25/6 F",
+  "brandFa": "توان تک",
+  "categorySlug": "submersible-pumps",
+  "shortDescription": "لجن‌کش تک‌فاز توان تک، مدل TPB 25/6 F",
+  "description": "لجن‌کش تک‌فاز از خانوادهٔ TPB توان تک. مدل و نام از فهرست رسمی سازنده برداشته شده است. مشخصات عددی (توان، دبی، هد) در آن فهرست برای این مدل چاپ نشده بود و عمداً خالی مانده تا بعداً از پنل و از روی برگهٔ فنی خود دستگاه پر شود.",
+  "specs": [
+   {
+    "kind": "text",
+    "key": "phase",
+    "value": "تک فاز",
+    "group": "موتور",
+    "label": "فاز برق"
+   },
+   {
+    "kind": "bool",
+    "key": "float_switch",
+    "value": true,
+    "group": "ساختار",
+    "label": "فلوتر",
+    "isKey": true
+   }
+  ],
+  "tags": [
+   "لجن‌کش",
+   "پمپ شناور",
+   "توان تک",
+   "مدل TPB 25/6 F"
+  ],
+  "unit": "دستگاه",
+  "image": "/images/products/catalog/tavantak-tpb.webp",
+  "imageScope": "family"
+ }
+]
