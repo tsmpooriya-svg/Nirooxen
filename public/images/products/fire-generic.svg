@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-label="FIRE SAFETY EQUIPMENT">
+  <defs>
+    <linearGradient id="fbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#fff1ef"/>
+    </linearGradient>
+    <radialGradient id="fglow" cx="50%" cy="44%" r="58%">
+      <stop offset="0" stop-color="#e02a1e" stop-opacity=".10"/>
+      <stop offset="1" stop-color="#e02a1e" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="fgrid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0v24" fill="none" stroke="#c01a10" stroke-opacity=".07" stroke-width="1"/>
+    </pattern>
+    <pattern id="fhazard" width="28" height="28" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <rect width="14" height="28" fill="#e02a1e" fill-opacity=".85"/>
+      <rect x="14" width="14" height="28" fill="#ffffff"/>
+    </pattern>
+  </defs>
+
+  <rect width="480" height="360" fill="url(#fbg)"/>
+  <rect width="480" height="360" fill="url(#fgrid)"/>
+  <rect width="480" height="360" fill="url(#fglow)"/>
+
+  <!-- نوار خطر بالا و پایین، همان قرارداد رنگی تابلوهای ایمنی -->
+  <rect y="0" width="480" height="8" fill="url(#fhazard)"/>
+  <rect y="352" width="480" height="8" fill="url(#fhazard)"/>
+
+  <!-- طرح‌وارهٔ خاموش‌کننده: بدنه، شیر، شیلنگ -->
+  <g fill="none" stroke="#c01a10" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="205" y="120" width="70" height="130" rx="16" stroke-opacity=".55"/>
+    <path d="M222 120V104h36v16" stroke-opacity=".55"/>
+    <path d="M228 104V94h24v10" stroke-opacity=".45"/>
+    <path d="M258 112h26c10 0 16 7 16 16v14" stroke-opacity=".4"/>
+    <path d="M300 142c0 12-9 18-9 30v24" stroke-opacity=".3"/>
+    <path d="M213 168h54" stroke-opacity=".22"/>
+    <path d="M213 196h54" stroke-opacity=".22"/>
+  </g>
+
+  <!-- علامت شعله، ساده و تخت -->
+  <path d="M152 214c0-18 12-26 12-40 0-8-3-13-3-13 16 6 24 20 24 34 0 16-12 27-12 27s-21-1-21-8Z"
+        fill="#e02a1e" fill-opacity=".16"/>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11"
+     fill="#99120a" fill-opacity=".5" letter-spacing="2">
+    <text x="24" y="332">FIRE SAFETY</text>
+    <text x="456" y="332" text-anchor="end">NIROOXEN</text>
+  </g>
+</svg>

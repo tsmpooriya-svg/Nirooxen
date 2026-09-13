@@ -1196,3 +1196,105 @@ html[data-loader="seen"] .loader-root {
   .loader-root[data-exit="true"] .loader-stage { animation: none; }
   @keyframes loader-fade-out { to { opacity: 0; visibility: hidden; } }
 }
+
+/* --------------------------------------------------------------------------
+   12. EMBER SCOPE — the fire-safety family's own skin
+   --------------------------------------------------------------------------
+   تجهیزات آتش‌نشانی، برخلاف بقیهٔ کاتالوگ، زبان رنگی خودش را دارد: سفید و قرمز،
+   همان قراردادی که روی کپسول، تابلو و نوار خطر جا افتاده است. به‌جای ساختن
+   کامپوننت تازه، فقط توکن‌ها را داخل .ember-scope بازنویسی می‌کنیم؛ هر کامپوننت
+   مشترکی که از var(--brand) و var(--bg-*) استفاده می‌کند، همان‌جا قرمز می‌شود.
+
+   بازنویسی عمداً به هر دو تم می‌چسبد (بدون قید data-theme): این صفحه در حالت
+   تیره هم باید روشن بماند، وگرنه قرارداد رنگی‌اش می‌شکند.
+   -------------------------------------------------------------------------- */
+.ember-scope {
+  --ember-50: #fff5f4;
+  --ember-100: #ffe4e1;
+  --ember-200: #ffc6c0;
+  --ember-300: #ff9d94;
+  --ember-400: #f76057;
+  --ember-500: #e02a1e;
+  --ember-600: #c01a10;
+  --ember-700: #99120a;
+  --ember-800: #730d07;
+  --ember-900: #4d0905;
+
+  color-scheme: light;
+
+  --bg-base: #ffffff;
+  --bg-sunken: var(--ember-50);
+  --bg-elev-1: #ffffff;
+  --bg-elev-2: var(--ember-50);
+  --bg-elev-3: var(--ember-100);
+  --bg-inset: var(--ember-50);
+  --bg-glass: rgb(255 255 255 / 0.82);
+  --bg-glass-strong: rgb(255 255 255 / 0.94);
+
+  --fg-primary: #1a0705;
+  --fg-secondary: #4a211c;
+  --fg-muted: #7a4038;
+  --fg-subtle: #9c6058;
+  --fg-inverse: #ffffff;
+  --fg-on-brand: #ffffff;
+
+  --brand: var(--ember-600);
+  --brand-hover: var(--ember-700);
+  --brand-pressed: var(--ember-800);
+  --brand-text: var(--ember-700);
+  --brand-soft: rgb(224 42 30 / 0.08);
+  --brand-soft-hover: rgb(224 42 30 / 0.14);
+  --brand-ring: rgb(224 42 30 / 0.5);
+  --brand-chip: var(--ember-100);
+
+  --border-hairline: rgb(122 32 24 / 0.09);
+  --border-subtle: rgb(122 32 24 / 0.14);
+  --border-default: rgb(122 32 24 / 0.2);
+  --border-strong: rgb(122 32 24 / 0.32);
+  --border-brand: rgb(224 42 30 / 0.45);
+
+  --grid-line: rgb(192 26 16 / 0.07);
+  --glow-brand: rgb(224 42 30 / 0.3);
+  --shadow-brand: 0 14px 44px -14px rgb(192 26 16 / 0.45);
+  --noise-opacity: 0.028;
+  --grain-blend: multiply;
+  --blueprint-mask: radial-gradient(140% 100% at 50% 0%, #000 45%, transparent 92%);
+
+  background: var(--bg-base);
+  color: var(--fg-primary);
+}
+
+@layer utilities {
+  /* نوار خطر — همان راه‌راه مورب قرمز و سفیدِ تابلوهای ایمنی */
+  .hazard-band {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--ember-500) 0 18px,
+      #ffffff 18px 36px
+    );
+  }
+
+  /* نسخهٔ ریز همان نوار، برای عنصرهای چند ده پیکسلی که راه‌راه درشت در آن‌ها
+     فقط یک لکهٔ قرمز دیده می‌شود */
+  .hazard-band-sm {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--ember-500) 0 5px,
+      #ffffff 5px 10px
+    );
+  }
+
+  /* هالهٔ گرما پشت تیتر — گرادیان شعاعی گرم، نه عکس */
+  .ember-glow {
+    background-image:
+      radial-gradient(60% 52% at 78% 8%, rgb(224 42 30 / 0.16), transparent 68%),
+      radial-gradient(46% 40% at 12% 92%, rgb(247 96 87 / 0.12), transparent 70%);
+  }
+
+  /* شمارهٔ بزرگ کم‌رنگ کنار عنوان بخش‌ها */
+  .ember-index {
+    font-family: var(--font-mono);
+    color: var(--ember-500);
+    opacity: 0.22;
+  }
+}

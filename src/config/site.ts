@@ -153,6 +153,7 @@ export const mainNav = [
   { title: "صفحه اصلی", href: "/" },
   { title: "محصولات", href: "/products", hasMegaMenu: true },
   { title: "راهکارها", href: "/solutions" },
+  { title: "آتش‌نشانی", href: "/fire-safety" },
   { title: "برندها", href: "/brands", collapse: "always" },
   { title: "خدمات", href: "/services", collapse: "xl" },
   { title: "پروژه‌ها", href: "/projects", collapse: "always" },
@@ -168,6 +169,7 @@ export const footerNav = [
     links: [
       { title: "محصولات", href: "/products" },
       { title: "راهکارها", href: "/solutions" },
+      { title: "تجهیزات آتش‌نشانی", href: "/fire-safety" },
       { title: "برندها", href: "/brands" },
       { title: "خدمات فنی", href: "/services" },
       { title: "پروژه‌های اجراشده", href: "/projects" },

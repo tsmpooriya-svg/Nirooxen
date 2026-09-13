@@ -58,7 +58,14 @@ export type ProductCardData = {
   keySpecs: { label: string; value: string; unit: string | null }[];
 };
 
-export type CategoryNode = Category & { children: Category[]; productCount: number };
+/**
+ * شاخهٔ درخت دسته‌بندی. زیرشاخه‌ها هم شمارش محصول خودشان را همراه دارند —
+ * getCategoryTree آن‌ها را از همان فهرستِ شمارش‌شده برمی‌دارد.
+ */
+export type CategoryNode = Category & {
+  children: (Category & { productCount: number })[];
+  productCount: number;
+};
 
 /* -------------------------------------------------------------------------- */
 /*  دسته‌بندی‌ها                                                                */
