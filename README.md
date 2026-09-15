@@ -207,6 +207,30 @@ node scripts/import-rest-batch1.mjs   --dry   # باقی‌ماندهٔ دسته
 `saveProduct` در پنل دارد. هر چهار اسکریپت از `guard-destructive.mjs` عبور
 می‌کنند.
 
+#### انتشار محصولات
+
+واردکننده‌ها محصول را `DRAFT` می‌گذارند تا انتشار تصمیم انسان بماند.
+`publish-products.mjs` همان تصمیم را اجرا می‌کند. برخلاف اسکریپت‌های داده‌ای از
+`guard-destructive` عبور نمی‌کند — اجرایش روی production کارِ عادی است — و
+به‌جای آن پیش‌فرضش «آزمایشی» است: بدون `--apply` هیچ چیزی نوشته نمی‌شود.
+
+```
+node scripts/publish-products.mjs                      # پیش‌نمایش + گزارش کیفیت
+node scripts/publish-products.mjs --apply              # انتشار همه
+node scripts/publish-products.mjs --category=tanks --apply
+node scripts/publish-products.mjs --with-photo --apply
+node scripts/publish-products.mjs --unpublish --category=tanks --apply
+```
+
+صافی‌ها اجازه می‌دهند موجی منتشر کنید: `--category` (نامک دسته یا والدش)،
+`--brand`، `--min-specs=N`، `--with-price`، `--with-photo`،
+`--with-description`، `--limit=N`.
+
+پیش از نوشتن گزارش می‌دهد چند محصولِ انتخاب‌شده مشخصهٔ فنی، توضیح، برند یا عکس
+واقعی ندارند — تا پیش از آنکه صفحه‌ای نیم‌بند روی سایت بیاید، ببینیدش.
+`published_at` تنها بار نخست تنظیم می‌شود، پس انتشار دوبارهٔ یک محصول تاریخ
+اصلی‌اش را جابه‌جا نمی‌کند.
+
 #### زنجیرهٔ تصویر محصول
 
 چهار ابزار که پشت سر هم عکس واقعی را از منبع تا پایگاه داده می‌برند. هیچ‌کدام
