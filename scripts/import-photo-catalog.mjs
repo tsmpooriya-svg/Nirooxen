@@ -24,10 +24,11 @@ import { assertSafeTarget } from "./guard-destructive.mjs";
 const DRY = process.argv.includes("--dry");
 if (!DRY) assertSafeTarget("import-photo-catalog");
 
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { Client } from "pg";
+
+import { brandSlug, latinFor } from "./lib/brand-slug.mjs";
 
 const DATA =
   process.argv.find((a) => a.startsWith("--data="))?.slice(7) ??
@@ -60,19 +61,21 @@ try {
     (await q("select id, slug from categories")).map((c) => [c.slug, c.id]),
   );
 
-  /* برندها — فقط نامی که منبع چاپ کرده؛ املای لاتین حدس زده نمی‌شود */
-  const brandBy = Object.fromEntries(
-    (await q("select id, name from brands")).map((b) => [b.name, b.id]),
-  );
+  /* برندها — فقط نامی که منبع چاپ کرده؛ املای لاتین از جدول تأییدشده می‌آید */
+  const brandRows = await q("select id, name, slug from brands");
+  const brandBy = Object.fromEntries(brandRows.map((b) => [b.name, b.id]));
+  /* نامک‌های گرفته‌شده — تا املای لاتینِ مشترک دو برند را بی‌صدا یکی نکند */
+  const takenSlugs = Object.fromEntries(brandRows.map((b) => [b.slug, b.name]));
   const wanted = [...new Set(products.map((p) => p.brandFa).filter(Boolean))];
   for (const name of wanted) {
     if (brandBy[name]) continue;
-    const slug = "brand-" + createHash("sha256").update(name, "utf8").digest("hex").slice(0, 24);
+    const slug = brandSlug(name, null, takenSlugs);
+    takenSlugs[slug] = name;
     const row = (
       await q(
-        "insert into brands (name, slug, is_active) values ($1,$2,true)" +
+        "insert into brands (name, slug, latin_name, is_active) values ($1,$2,$3,true)" +
           " on conflict (slug) do nothing returning id",
-        [name, slug],
+        [name, slug, latinFor(name, null)],
       )
     )[0];
     if (row) { brandBy[name] = row.id; stat.brandsAdded++; continue; }

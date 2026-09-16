@@ -24,10 +24,11 @@ import { assertSafeTarget } from "./guard-destructive.mjs";
 // حالت آزمایشی چیزی نمی‌نویسد، پس آزاد است.
 if (!process.argv.includes("--dry")) assertSafeTarget("import-batch1");
 
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { Client } from "pg";
+
+import { brandSlug, latinFor } from "./lib/brand-slug.mjs";
 
 const DRY = process.argv.includes("--dry");
 const DATA =
@@ -169,24 +170,25 @@ try {
 
   /* 5 ── برندها؛ فقط نامی که منبع چاپ کرده. لوگو/کشور جعل نمی‌شود. */
   const products = JSON.parse(readFileSync(DATA, "utf8"));
-  const brandBy = Object.fromEntries(
-    (await q("select id, name from brands")).map((b) => [b.name, b.id]),
-  );
+  const brandRows = await q("select id, name, slug from brands");
+  const brandBy = Object.fromEntries(brandRows.map((b) => [b.name, b.id]));
+  /* نامک‌های گرفته‌شده — تا املای لاتینِ مشترک دو برند را بی‌صدا یکی نکند */
+  const takenSlugs = Object.fromEntries(brandRows.map((b) => [b.slug, b.name]));
+  /* املای لاتین از خود کاتالوگ؛ هر برندی که ندارد از جدول brand-slug می‌آید */
+  const latinBy = {};
+  for (const p of products) {
+    if (p.brandFa && p.brandLatin && !latinBy[p.brandFa]) latinBy[p.brandFa] = p.brandLatin;
+  }
   const wantedBrands = [...new Set(products.map((p) => p.brandFa).filter(Boolean))];
   for (const name of wantedBrands) {
     if (brandBy[name]) continue;
-    /*
-     * نامک برند از چکیدهٔ نام ساخته می‌شود، نه از آوانویسی. املای لاتین برندها
-     * هنوز تأیید انسانی نشده و حدس زدنش ممنوع است؛ latin_name عمداً خالی می‌ماند
-     * تا بعداً از پنل پر شود. چکیده باید کامل باشد: بریدن بایت‌های نخست نامِ
-     * فارسی فقط چهار حرف اول را نگه می‌دارد و برندهای هم‌آغاز را روی هم می‌اندازد.
-     */
-    const slug = "brand-" + createHash("sha256").update(name, "utf8").digest("hex").slice(0, 24);
+    const slug = brandSlug(name, latinBy[name], takenSlugs);
+    takenSlugs[slug] = name;
     const row = (
       await q(
-        "insert into brands (name, slug, is_active) values ($1,$2,true)" +
+        "insert into brands (name, slug, latin_name, is_active) values ($1,$2,$3,true)" +
           " on conflict (slug) do nothing returning id",
-        [name, slug],
+        [name, slug, latinFor(name, latinBy[name])],
       )
     )[0];
     if (row) { brandBy[name] = row.id; stat.brandsAdded++; continue; }
