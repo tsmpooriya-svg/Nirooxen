@@ -20,6 +20,7 @@
  *      --with-price                    فقط محصولی که قیمت عمومی دارد
  *      --with-photo                    فقط محصولی که عکس واقعی دارد، نه طرح
  *      --with-description              فقط محصولی که توضیح دارد
+ *      --published-since=<زمان>        فقط محصولی که از این زمان به بعد منتشر شده
  *      --limit=50                      حداکثر این تعداد
  *
  *  بازگرداندن — هر انتشاری قابل برگشت است:
@@ -55,6 +56,8 @@ if (val("category")) {
   where.push(`(c.slug = $${params.length} or pc.slug = $${params.length})`);
 }
 if (val("brand")) push("b.name = ?", val("brand"));
+// مرز زمانی — بازگرداندنِ دقیقاً یک اجرا به این تکیه می‌کند
+if (val("published-since")) push("p.published_at >= ?::timestamptz", val("published-since"));
 if (has("with-price")) where.push("p.price_mode = 'PUBLIC' and p.price is not null");
 if (has("with-description")) where.push("coalesce(p.description, '') <> ''");
 if (has("with-photo")) {
@@ -126,6 +129,13 @@ if (!APPLY) {
 const ids = rows.map((r) => r.id);
 try {
   await q("BEGIN");
+  /*
+   * لحظهٔ تراکنش از خود پایگاه داده گرفته می‌شود، نه از ساعت Node. مقدار
+   * published_at که پایین‌تر با now() نوشته می‌شود دقیقاً همین است، پس
+   * دستور بازگردانی که در انتها چاپ می‌کنیم عیناً همین ردیف‌ها را می‌گیرد
+   * و نه یکی بیشتر.
+   */
+  const [{ now: runAt }] = await q("select now() as now");
   const updated = await q(
     UNDO
       ? `update products set status = 'DRAFT', updated_at = now()
@@ -153,9 +163,27 @@ try {
   );
   await q("COMMIT");
   console.log(`\n  ✓ ${verb} شد: ${updated.length} محصول`);
+  /*
+   * صافی زمانی همیشه در دستور بازگردانی می‌آید. بدون آن، یک اجرای بدون صافی
+   * دستوری چاپ می‌کرد که هر محصول منتشرشده‌ای را برمی‌گرداند — از جمله
+   * محصولاتی که پیش از این اجرا منتشر بودند و ربطی به آن نداشتند.
+   */
+  const flags = argv.filter((a) => a !== "--apply" && a !== "--unpublish");
   console.log(`\n  برای بازگرداندن همین‌ها:`);
-  console.log(`     node scripts/publish-products.mjs --unpublish ` +
-    argv.filter((a) => a !== "--apply" && a !== "--unpublish").join(" ") + ` --apply\n`);
+  if (UNDO) {
+    /*
+     * بازگرداندن نمی‌کند published_at را پاک کند، پس اگر این اجرا خودش صافی
+     * زمانی داشته، همان صافی برای انتشار دوبارهٔ دقیقاً همین ردیف‌ها کافی است.
+     */
+    console.log(`     node scripts/publish-products.mjs ${flags.join(" ")} --apply\n`);
+  } else {
+    const rest = flags.filter((a) => !a.startsWith("--published-since="));
+    console.log(
+      `     node scripts/publish-products.mjs --unpublish` +
+        ` --published-since=${runAt.toISOString()}` +
+        `${rest.length ? " " + rest.join(" ") : ""} --apply\n`,
+    );
+  }
 } catch (error) {
   await q("ROLLBACK");
   console.error("\n✖ خطا — هیچ تغییری اعمال نشد:", error.message);
