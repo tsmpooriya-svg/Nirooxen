@@ -9,6 +9,14 @@
  *
  *  قاعده: هدف باید یا صریحاً محلی باشد، یا اپراتور صریحاً تأیید کند.
  *
+ *  تأییدِ صریح با ALLOW_DESTRUCTIVE_DB_SCRIPTS=1 داده می‌شود و هر دو بررسی —
+ *  NODE_ENV و میزبان — را پوشش می‌دهد. پیش‌تر فقط بررسی میزبان را کنار
+ *  می‌گذاشت، و نتیجه‌اش این بود که روی سرور واقعی هیچ راهی برای اجرای آگاهانهٔ
+ *  اسکریپت‌های واردکنندهٔ کاتالوگ نمی‌ماند: آنجا NODE_ENV همیشه production است
+ *  و DATABASE_URL هم به 127.0.0.1 اشاره می‌کند، پس بررسی میزبان اصلاً فعال
+ *  نمی‌شد تا override به کار بیاید. در هر دو حالت هشدار چاپ می‌شود، پس اجرای
+ *  ناخواسته همچنان در خروجی دیده می‌شود.
+ *
  *  استفاده به‌صورت کتابخانه:
  *      import { assertSafeTarget } from "./guard-destructive.mjs";
  *      assertSafeTarget("replace-watertank-images");
@@ -48,8 +56,16 @@ export function assertSafeTarget(label) {
     process.exit(1);
   };
 
+  const confirmed = process.env[OVERRIDE] === "1";
+
   if (process.env.NODE_ENV === "production") {
-    reject("NODE_ENV برابر production است.");
+    if (!confirmed) {
+      reject(
+        "NODE_ENV برابر production است.",
+        `اگر این اجرا عمدی است: ${OVERRIDE}=1 node scripts/…`,
+      );
+    }
+    console.warn(`⚠ «${label}» با NODE_ENV=production اجرا می‌شود (${OVERRIDE}=1).`);
   }
 
   const connectionString = process.env.DATABASE_URL?.trim();
@@ -63,7 +79,7 @@ export function assertSafeTarget(label) {
   }
 
   if (!LOCAL_HOSTS.has(host)) {
-    if (process.env[OVERRIDE] === "1") {
+    if (confirmed) {
       console.warn(`⚠ «${label}» روی میزبان غیرمحلی «${host}» اجرا می‌شود (${OVERRIDE}=1).`);
       return;
     }
