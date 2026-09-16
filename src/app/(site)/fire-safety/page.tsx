@@ -109,12 +109,34 @@ const SCENARIOS = [
   },
 ];
 
+/* -------------------------------------------------------------------------- */
+/*  آیکون گروه‌ها                                                              */
+/* -------------------------------------------------------------------------- */
+/**
+ * همان طرح‌هایی که روی کارت محصول هم می‌نشینند. فهرست یازده‌تایی گروه‌ها بدون
+ * تصویر فقط یازده خط متن است؛ با آیکون، چشم گروه را از شکلش پیدا می‌کند نه از
+ * خواندن. هر نامکی که اینجا نباشد به طرح عمومی می‌افتد.
+ */
+const GROUP_ICON: Record<string, string> = {
+  "fire-extinguishers": "fire-extinguisher-powder",
+  "fire-cabinets": "fire-cabinet",
+  "fire-hoses-reels": "fire-hose-reel",
+  "fire-nozzles": "fire-nozzle",
+  "fire-valves": "fire-valve",
+  "fire-sprinklers": "fire-sprinkler",
+  "fire-detection": "fire-detector",
+  "fire-ppe": "fire-ppe-helmet",
+  "fire-tools": "fire-tool",
+  "first-aid": "fire-first-aid",
+  "safety-traffic": "fire-cone",
+};
+
 export default async function FireSafetyPage() {
   const tree = await getCategoryTree();
   const root = tree.find((c) => c.slug === ROOT_SLUG);
   const groups = root?.children ?? [];
 
-  const { items: products } = await listProducts({
+  const { items: products, total } = await listProducts({
     category: ROOT_SLUG,
     pageSize: 8,
     sort: "newest",
@@ -179,6 +201,29 @@ export default async function FireSafetyPage() {
               </Link>
             </div>
           </Reveal>
+
+          {total > 0 && (
+            <Reveal delay={320}>
+              {/* عددها از خودِ کاتالوگ می‌آیند، نه از متن تبلیغاتی */}
+              <dl className="mt-14 grid max-w-xl grid-cols-3 gap-px overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--border-subtle)]">
+                {[
+                  { k: "کالای این خانواده", v: toFaDigits(total) },
+                  { k: "گروه کالا", v: toFaDigits(groups.length) },
+                  { k: "کلاس آتش", v: toFaDigits(FIRE_CLASSES.length) },
+                ].map((stat) => (
+                  <div
+                    key={stat.k}
+                    className="flex flex-col-reverse bg-[var(--bg-elev-1)] px-4 py-5 text-center"
+                  >
+                    <dt className="mt-1.5 text-xs text-[var(--fg-muted)]">{stat.k}</dt>
+                    <dd className="font-display text-3xl font-extrabold text-[var(--brand)]">
+                      {stat.v}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          )}
         </div>
       </header>
 
@@ -196,17 +241,23 @@ export default async function FireSafetyPage() {
               <Reveal key={fc.code} delay={i * 70}>
                 <Link
                   href={fc.href}
-                  className="group flex h-full flex-col rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-6 transition-all duration-300 hover:border-[var(--border-brand)] hover:shadow-[var(--shadow-brand)]"
+                  className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-6 transition-all duration-300 hover:border-[var(--border-brand)] hover:shadow-[var(--shadow-brand)]"
                 >
-                  <div className="flex items-baseline justify-between">
-                    <span className="font-mono text-4xl font-bold text-[var(--brand)]">
+                  <span
+                    className="hazard-band-sm absolute inset-x-0 top-0 h-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    aria-hidden
+                  />
+                  <div className="flex items-start justify-between">
+                    {/* حرف کلاس، نشانهٔ استانداردِ روی خودِ کپسول است؛ اندازه و
+                        قاب گرفتنش آن را از یک حرف تزئینی جدا می‌کند */}
+                    <span className="grid size-14 shrink-0 place-items-center rounded-xl bg-[var(--brand)] font-mono text-2xl font-bold text-[var(--fg-on-brand)] shadow-[var(--shadow-brand)] transition-transform duration-300 group-hover:-translate-y-0.5">
                       {fc.code}
                     </span>
                     <span className="ember-index text-5xl font-bold">
                       {toFaDigits(i + 1)}
                     </span>
                   </div>
-                  <h3 className="font-display mt-3 text-lg font-bold">{fc.title}</h3>
+                  <h3 className="font-display mt-4 text-lg font-bold">{fc.title}</h3>
                   <p className="mt-2 text-sm leading-7 text-[var(--fg-muted)]">
                     {fc.examples}
                   </p>
@@ -237,9 +288,26 @@ export default async function FireSafetyPage() {
                 <Reveal key={g.id} delay={i * 50}>
                   <Link
                     href={`/products?category=${g.slug}`}
-                    className="group flex items-center justify-between gap-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] px-5 py-4 transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)]"
+                    className="group flex items-center justify-between gap-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-3 pe-5 transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)]"
                   >
-                    <span className="font-medium">{g.name}</span>
+                    <span className="flex min-w-0 items-center gap-3.5">
+                      {/* همان طرح‌های ۴۸۰×۳۶۰ کارت محصول‌اند و پس‌زمینه و شبکهٔ
+                          خودشان را دارند؛ با نسبت اصلی نمایش داده می‌شوند، چون
+                          در قاب مربعی کوچک فقط یک لکهٔ کم‌رنگ می‌شوند. طرح ثابت
+                          و سبک است و بهینه‌سازی تصویر چیزی به آن اضافه نمی‌کند. */}
+                      <span className="w-[4.5rem] shrink-0 overflow-hidden rounded-md border border-[var(--border-hairline)]">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`/images/products/${GROUP_ICON[g.slug] ?? "fire-generic"}.svg`}
+                          alt=""
+                          width={480}
+                          height={360}
+                          loading="lazy"
+                          className="block h-auto w-full"
+                        />
+                      </span>
+                      <span className="truncate font-medium">{g.name}</span>
+                    </span>
                     {g.productCount > 0 && (
                       <span className="shrink-0 rounded-full bg-[var(--brand-chip)] px-2.5 py-1 font-mono text-xs text-[var(--brand-text)]">
                         {toFaDigits(g.productCount)}
