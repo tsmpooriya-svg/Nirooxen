@@ -247,17 +247,17 @@ export default async function FireSafetyPage() {
                     className="hazard-band-sm absolute inset-x-0 top-0 h-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     aria-hidden
                   />
-                  <div className="flex items-start justify-between">
-                    {/* حرف کلاس، نشانهٔ استانداردِ روی خودِ کپسول است؛ اندازه و
-                        قاب گرفتنش آن را از یک حرف تزئینی جدا می‌کند */}
-                    <span className="grid size-14 shrink-0 place-items-center rounded-xl bg-[var(--brand)] font-mono text-2xl font-bold text-[var(--fg-on-brand)] shadow-[var(--shadow-brand)] transition-transform duration-300 group-hover:-translate-y-0.5">
+                  <div className="flex items-baseline justify-between">
+                    {/* حرف کلاس، نشانهٔ استانداردِ روی خودِ کپسول است — بدون قاب،
+                        همان‌طور که روی برچسب کپسول چاپ می‌شود */}
+                    <span className="font-mono text-4xl font-bold text-[var(--brand)]">
                       {fc.code}
                     </span>
                     <span className="ember-index text-5xl font-bold">
                       {toFaDigits(i + 1)}
                     </span>
                   </div>
-                  <h3 className="font-display mt-4 text-lg font-bold">{fc.title}</h3>
+                  <h3 className="font-display mt-3 text-lg font-bold">{fc.title}</h3>
                   <p className="mt-2 text-sm leading-7 text-[var(--fg-muted)]">
                     {fc.examples}
                   </p>

@@ -3,6 +3,7 @@ import { LoadingScreen, loaderGateScript } from "@/components/site/loading-scree
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { SiteSettingsProvider } from "@/components/site/settings-provider";
+import { ThemeHint } from "@/components/theme-provider";
 import { JsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { getCategoryTree } from "@/modules/catalog/queries";
 import { getSiteSettings } from "@/modules/settings/queries";
@@ -36,6 +37,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <main id="main">{children}</main>
         <SiteFooter settings={settings} />
         {settings.features.cart && <CartPanel />}
+        {/* فقط سایت عمومی — پنل مدیریت راهنمای تم نمی‌خواهد */}
+        <ThemeHint />
       </SiteSettingsProvider>
     </>
   );
