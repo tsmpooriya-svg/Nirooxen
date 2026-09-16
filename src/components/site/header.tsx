@@ -340,12 +340,20 @@ export function SiteHeader({
             <ThemeToggle className="hidden sm:grid" />
             <a
               href={`tel:${settings.contact.mobileRaw}`}
-              className="hidden h-10 items-center gap-2 rounded-md bg-[var(--brand)] px-4 text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)] xl:flex"
+              title="مشاوره رایگان"
+              aria-label="مشاوره رایگان"
+              /*
+               * زیر ۱۴۰۰ پیکسل فقط آیکون. جای نوار در ۱۲۸۰ برای ناوبری کامل،
+               * جستجو و برچسب این دکمه با هم کافی نیست؛ پیش از این برچسب دو
+               * خط می‌شد و دکمه به‌هم‌ریخته دیده می‌شد. حالا یا کامل جا می‌شود
+               * یا مربعِ تمیزِ آیکون می‌ماند.
+               */
+              className="hidden h-10 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-[var(--brand)] px-3 text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)] xl:flex min-[1400px]:px-5"
             >
-              <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <svg viewBox="0 0 16 16" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M3 2.5h2.5l1 3-1.6 1a8 8 0 0 0 3.6 3.6l1-1.6 3 1V13a1 1 0 0 1-1.1 1A11 11 0 0 1 2 3.6 1 1 0 0 1 3 2.5Z" />
               </svg>
-              مشاوره رایگان
+              <span className="hidden min-[1400px]:inline">مشاوره رایگان</span>
             </a>
 
             <button

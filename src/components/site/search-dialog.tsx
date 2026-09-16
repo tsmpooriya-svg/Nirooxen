@@ -142,13 +142,13 @@ export function SearchDialog() {
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         aria-label="جستجوی محصولات"
-        className="group flex h-10 items-center gap-2 rounded-md border border-[var(--border-subtle)] px-3 text-[var(--fg-muted)] transition-all duration-300 hover:border-[var(--border-brand)] hover:text-[var(--brand)] md:w-56 lg:w-64"
+        className="group flex h-10 items-center gap-2 rounded-md border border-[var(--border-subtle)] px-3 text-[var(--fg-muted)] transition-all duration-300 hover:border-[var(--border-brand)] hover:text-[var(--brand)] md:w-56 lg:w-64 2xl:w-80"
       >
         <svg viewBox="0 0 20 20" className="size-[18px] shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6">
           <circle cx="9" cy="9" r="6" />
           <path d="m13.5 13.5 3.5 3.5" strokeLinecap="round" />
         </svg>
-        <span className="hidden flex-1 text-start text-meta md:block">جستجوی محصول…</span>
+        <span className="hidden flex-1 truncate text-start text-meta md:block">جستجوی محصول…</span>
         <kbd className="hidden shrink-0 rounded-xs border border-[var(--border-subtle)] px-1.5 py-0.5 font-mono text-micro text-[var(--fg-subtle)] lg:block">
           Ctrl K
         </kbd>
