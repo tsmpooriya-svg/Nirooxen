@@ -1,11 +1,12 @@
 import { and, asc, desc, eq, or, sql, type AnyColumn, type SQL } from "drizzle-orm";
 import { headers } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 
 import { db } from "@/db";
 import { brands, categories, products } from "@/db/schema";
 import { getClientIp } from "@/lib/auth";
 import { RATE_LIMITS, rateLimit } from "@/lib/rate-limit";
+import { logSearch } from "@/lib/search-log";
 import {
   escapeLikePattern,
   matchesPattern,
@@ -137,6 +138,9 @@ export async function GET(request: Request) {
     console.error("[search] پرس‌وجوی جستجو ناموفق بود:", error);
     return NextResponse.json({ items: [], error: "UNAVAILABLE" }, { status: 503 });
   }
+
+  // پاسخ منتظر درج نمی‌ماند؛ ثبت پس از ارسال انجام می‌شود
+  after(() => logSearch(phrase, items.length, "dialog"));
 
   return NextResponse.json(
     { items },

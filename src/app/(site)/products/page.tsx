@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { Suspense } from "react";
 
 import { Reveal } from "@/components/motion/reveal";
@@ -8,6 +9,7 @@ import { PageHeader } from "@/components/site/breadcrumb";
 import { ProductCard } from "@/components/site/product-card";
 import { ProductFilters, ProductToolbar } from "@/components/site/product-filters";
 import { Pagination } from "@/components/ui/pagination";
+import { logSearch } from "@/lib/search-log";
 import { ProductCardSkeleton } from "@/components/ui/skeleton";
 import { pageMetadata } from "@/lib/seo";
 import { SPEC_PARAM_PREFIX, parseSpecParams } from "@/lib/spec-filter-params";
@@ -109,6 +111,15 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
       filters.category ? getCategoryBySlug(filters.category) : Promise.resolve(null),
       filters.brand ? getBrandBySlug(filters.brand) : Promise.resolve(null),
     ]);
+
+  /*
+    فقط صفحهٔ نخست ثبت می‌شود: ورق زدن نتایج، جست‌وجوی تازه نیست و شمارش را
+    باد می‌کند. ثبت با after انجام می‌شود تا پاسخ منتظر یک درج نماند.
+  */
+  if (filters.q && filters.page === 1) {
+    const term = filters.q;
+    after(() => logSearch(term, total, "catalog"));
+  }
 
   if (filters.page > pageCount) redirect(hrefForPage(pageCount));
 

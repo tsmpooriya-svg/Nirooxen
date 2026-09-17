@@ -1,10 +1,12 @@
 "use server";
 
 import { headers } from "next/headers";
+import { after } from "next/server";
 
 import { db } from "@/db";
 import { contactMessages } from "@/db/schema";
 import { getClientIp } from "@/lib/auth";
+import { newMessageMessage, notifyStaff } from "@/lib/notify";
 import { RATE_LIMITS, rateLimit } from "@/lib/rate-limit";
 import { contactInputSchema, toFieldErrors, type FieldErrors } from "@/lib/validation";
 
@@ -56,6 +58,11 @@ export async function sendContactMessage(
       message: parsed.data.message,
       ip,
     });
+
+    // همان قاعدهٔ ثبت سفارش: پس از پاسخ، و بدون اینکه شکستش به کاربر برسد
+    after(() =>
+      notifyStaff(newMessageMessage({ name: parsed.data.name, phone: parsed.data.phone })),
+    );
 
     return {
       status: "success",

@@ -16,8 +16,10 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 
 import { db } from "@/db";
+import { newOrderMessage, notifyStaff } from "@/lib/notify";
 import {
   counters,
   customers,
@@ -259,6 +261,23 @@ export async function createOrder(
 
     revalidatePath("/admin");
     revalidatePath("/admin/orders");
+
+    /*
+      اعلان پس از ارسال پاسخ به مشتری فرستاده می‌شود: نه او منتظر سرویس پیامک
+      می‌ماند، و نه قطعی آن سرویس درخواستی را که همین حالا ثبت شده از بین
+      می‌برد. اگر پیامک تنظیم نشده باشد، notifyStaff بی‌صدا برمی‌گردد.
+    */
+    after(() =>
+      notifyStaff(
+        newOrderMessage({
+          type: input.type,
+          number,
+          contactName: input.contactName,
+          contactPhone: input.contactPhone,
+          itemCount: lines.length,
+        }),
+      ),
+    );
 
     return {
       status: "success",

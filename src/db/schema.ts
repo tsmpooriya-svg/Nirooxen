@@ -929,6 +929,36 @@ export const activityLogs = pgTable(
   ],
 );
 
+/**
+ * جست‌وجوهای بازدیدکنندگان.
+ *
+ * ارزش این جدول در ردیف‌هایی است که resultCount صفر دارند: عبارتی که مشتری
+ * دنبالش گشته و چیزی پیدا نکرده، یا یعنی آن کالا را نداریم، یا داریم و نامش
+ * با زبان مشتری نمی‌خواند. هیچ‌کدام را از جای دیگری نمی‌شود فهمید.
+ *
+ * عبارت پس از همان یکسان‌سازی‌ای ذخیره می‌شود که خودِ جست‌وجو رویش کار می‌کند،
+ * وگرنه «كپسول» عربی و «کپسول» فارسی دو ردیف جدا می‌شدند و شمارش بی‌معنا.
+ * هیچ چیزی که کاربر را شناسایی کند اینجا نوشته نمی‌شود — نه IP، نه نشست.
+ */
+export const searchQueries = pgTable(
+  "search_queries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** عبارت یکسان‌شده؛ همان چیزی که با ستون‌ها مقایسه شده */
+    term: varchar("term", { length: 120 }).notNull(),
+    resultCount: integer("result_count").notNull(),
+    /** dialog = جست‌وجوی سریع Ctrl+K · catalog = صافی صفحهٔ محصولات */
+    source: varchar("source", { length: 16 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("search_queries_created_idx").on(t.createdAt),
+    index("search_queries_term_idx").on(t.term),
+    // گزارش «بی‌نتیجه‌ها» همیشه روی همین دو ستون فیلتر می‌کند
+    index("search_queries_empty_idx").on(t.resultCount, t.createdAt),
+  ],
+);
+
 /** شمارنده اتمی برای تولید شماره سفارش بدون تداخل */
 export const counters = pgTable("counters", {
   key: varchar("key", { length: 48 }).primaryKey(),
@@ -1080,6 +1110,7 @@ export type Post = typeof posts.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type ActivityLog = typeof activityLogs.$inferSelect;
+export type SearchQuery = typeof searchQueries.$inferSelect;
 export type Setting = typeof settings.$inferSelect;
 export type Media = typeof media.$inferSelect;
 

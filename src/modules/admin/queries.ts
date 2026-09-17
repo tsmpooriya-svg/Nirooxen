@@ -23,6 +23,7 @@ import {
   productSpecs,
   products,
   projects,
+  searchQueries,
   settings,
   specDefinitions,
   units,
@@ -630,6 +631,44 @@ export async function listUsers() {
 
 export async function getSettings() {
   return db.select().from(settings).orderBy(asc(settings.group), asc(settings.key));
+}
+
+/**
+ * آنچه بازدیدکنندگان جست‌وجو کرده‌اند.
+ *
+ * دو فهرست برمی‌گردد و فهرست دوم مهم‌تر است: عبارت‌هایی که هیچ نتیجه‌ای
+ * نداشته‌اند. هر کدامشان یا کالایی است که نداریم، یا کالایی که داریم و نامش
+ * با زبان مشتری نمی‌خواند — و هیچ‌کدام را از جای دیگری نمی‌شود فهمید.
+ */
+export async function getSearchInsights(days = 30) {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const base = gte(searchQueries.createdAt, since);
+
+  const columns = {
+    term: searchQueries.term,
+    hits: count(),
+    lastAt: sql<Date>`max(${searchQueries.createdAt})`,
+  };
+
+  const [top, empty, totalRow] = await Promise.all([
+    db
+      .select({ ...columns, avgResults: sql<number>`round(avg(${searchQueries.resultCount}))::int` })
+      .from(searchQueries)
+      .where(base)
+      .groupBy(searchQueries.term)
+      .orderBy(desc(count()))
+      .limit(15),
+    db
+      .select(columns)
+      .from(searchQueries)
+      .where(and(base, eq(searchQueries.resultCount, 0)))
+      .groupBy(searchQueries.term)
+      .orderBy(desc(count()))
+      .limit(15),
+    db.select({ total: count() }).from(searchQueries).where(base),
+  ]);
+
+  return { top, empty, total: totalRow[0]?.total ?? 0, days };
 }
 
 export async function listActivityLogs(filters: { entity?: string; page?: number } = {}) {
