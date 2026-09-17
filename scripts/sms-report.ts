@@ -33,15 +33,54 @@ async function main() {
 
   const { status, body } = await deliveryReport(packId);
   console.log(`\n── گزارش بستهٔ ${packId} (HTTP ${status}) ──`);
+
+  let rows: Row[] | null = null;
   try {
-    console.log(JSON.stringify(JSON.parse(body), null, 2));
+    const parsed = JSON.parse(body) as { data?: unknown };
+    console.log(JSON.stringify(parsed, null, 2));
+    rows = Array.isArray(parsed.data) ? (parsed.data as Row[]) : null;
   } catch {
     console.log(body);
   }
-  console.log(
-    "\n  deliveryState را ببینید: رسیده، نرسیده، یا هنوز در صف.\n" +
-      "  «پذیرفته ولی نرسیده» معمولاً یعنی نوع خط با نوع پیام نمی‌خواند.\n",
-  );
+
+  if (!rows?.length) {
+    console.log("\n  ردیفی برای این بسته برنگشت.\n");
+    return;
+  }
+
+  /*
+    پیش‌تر اینجا نوشته شده بود «deliveryState را ببینید» — و در نخستین اجرای
+    واقعی آن فیلد null بود. خالی بودنش معنای خودش را دارد و نباید با «نرسید»
+    یکی گرفته شود، پس همان‌جا ترجمه‌اش می‌کنیم.
+  */
+  console.log("\n── خلاصه ──");
+  for (const row of rows) {
+    console.log(`  ${row.mobile ?? "?"} → ${describe(row.deliveryState)}`);
+  }
+
+  if (rows.every((r) => r.deliveryState === null || r.deliveryState === undefined)) {
+    console.log(
+      "\n  هیچ گزارش تحویلی نیامده. این هنوز شکست نیست — گزارش اپراتور معمولاً\n" +
+        "  چند دقیقه طول می‌کشد. چند دقیقه بعد همین دستور را دوباره بزنید.\n" +
+        "  اگر بعد از نیم ساعت هم null ماند، نوع خط را در پنل sms.ir ببینید:\n" +
+        "  خط تبلیغاتی به شماره‌ای که پیامک تبلیغاتی را مسدود کرده تحویل نمی‌شود.\n",
+    );
+  }
+}
+
+type Row = { mobile?: number | string; deliveryState?: number | null };
+
+/**
+ * وضعیت تحویل به زبان آدمیزاد.
+ *
+ * فقط دو حالتی که معنایشان قطعی است نام‌گذاری شده‌اند؛ بقیه با عدد خودشان
+ * چاپ می‌شوند تا اگر سرویس کدی افزود، اینجا حدسِ غلط ننشیند.
+ */
+function describe(state?: number | null): string {
+  if (state === null || state === undefined) return "هنوز گزارشی نیامده";
+  if (state === 1) return "رسید";
+  if (state === 2) return "نرسید";
+  return `وضعیت ${state}`;
 }
 
 main();
