@@ -106,8 +106,8 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
     <>
       {/* pb برای اینکه نوار چسبان موبایل روی محتوای انتهای صفحه نیفتد */}
       <div className="grid gap-8 pb-24 lg:grid-cols-[minmax(0,1fr)_26rem] lg:gap-12 lg:pb-0">
-        {/* ستون تصویر و محتوا */}
-        <div className="min-w-0">
+        {/* گالری */}
+        <div className="min-w-0 lg:col-start-1 lg:row-start-1">
           {/* گالری */}
           <div className="brackets relative overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-inset)]">
             <div className="relative aspect-4/3">
@@ -157,103 +157,13 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
             </div>
           )}
 
-          {/*
-            تب مشخصات / توضیحات.
-
-            محصولی که نه مشخصهٔ فنی دارد و نه توضیح، هیچ تبی هم ندارد؛ بدون این
-            شرط، فقط خطِ زیرِ نوار تب و یک فضای خالی رندر می‌شد — یک خط افقیِ
-            بی‌دلیل وسط صفحه. چنین محصولاتی کم نیستند، چون بخشی از کاتالوگ هنوز
-            مشخصات فنی ندارد.
-          */}
-          {(specGroups.length > 0 || product.description) && (
-          <div className="mt-10">
-            <div
-              role="tablist"
-              aria-label="اطلاعات محصول"
-              className="flex gap-1 border-b border-[var(--border-hairline)]"
-            >
-              {specGroups.length > 0 && (
-                <TabButton active={activeTab === "specs"} onClick={() => setActiveTab("specs")}>
-                  مشخصات فنی
-                </TabButton>
-              )}
-              {product.description && (
-                <TabButton active={activeTab === "description"} onClick={() => setActiveTab("description")}>
-                  توضیحات و کاربرد
-                </TabButton>
-              )}
-            </div>
-
-            <div className="pt-6">
-              {activeTab === "specs" && specGroups.length > 0 && (
-                <div role="tabpanel" className="space-y-8">
-                  {specGroups.map((group) => (
-                    <section key={group.name}>
-                      <h3 className="eyebrow mb-4 flex items-center gap-2.5">
-                        <span className="inline-block h-px w-6 bg-[var(--brand)]" aria-hidden />
-                        {group.name}
-                      </h3>
-                      <dl className="overflow-hidden rounded-lg border border-[var(--border-subtle)]">
-                        {group.items.map((spec, index) => (
-                          <div
-                            key={spec.id}
-                            className={cn(
-                              "flex items-start gap-4 px-4 py-3 text-meta",
-                              index % 2 === 0 ? "bg-[var(--bg-elev-1)]" : "bg-[var(--bg-elev-2)]",
-                            )}
-                          >
-                            <dt className="w-40 shrink-0 text-[var(--fg-muted)]">{spec.label}</dt>
-                            <dd className="flex-1 font-medium text-[var(--fg-primary)]">
-                              {spec.value}
-                              {spec.unit && (
-                                <span className="font-normal text-[var(--fg-muted)]">
-                                  {withUnitGap(spec.value, spec.unit)}
-                                </span>
-                              )}
-                            </dd>
-                          </div>
-                        ))}
-                      </dl>
-                    </section>
-                  ))}
-                </div>
-              )}
-
-              {activeTab === "description" && product.description && (
-                <div role="tabpanel" className="max-w-3xl">
-                  {product.description.split("\n\n").map((paragraph, index) => {
-                    if (paragraph.startsWith("### ")) {
-                      return (
-                        <h3 key={index} className="mb-3 mt-7 font-display text-base font-bold first:mt-0">
-                          {paragraph.replace("### ", "")}
-                        </h3>
-                      );
-                    }
-                    if (paragraph.startsWith("> ")) {
-                      return (
-                        <blockquote
-                          key={index}
-                          className="my-6 border-s-2 border-[var(--brand)] bg-[var(--brand-soft)] px-5 py-4 text-sm leading-8 text-[var(--fg-secondary)]"
-                        >
-                          {paragraph.replace("> ", "")}
-                        </blockquote>
-                      );
-                    }
-                    return (
-                      <p key={index} className="mb-4 text-sm leading-9 text-[var(--fg-secondary)]">
-                        {paragraph}
-                      </p>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-          )}
         </div>
 
         {/* ستون خرید — چسبان روی دسکتاپ */}
-        <aside ref={buyPanelRef} className="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:h-fit">
+        <aside
+          ref={buyPanelRef}
+          className="lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-fit"
+        >
           <div className="edge-lit rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2 font-mono text-micro text-[var(--fg-subtle)]">
               {brand && (
@@ -413,6 +323,102 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
             )}
           </div>
         </aside>
+
+        <div className="min-w-0 lg:col-start-1 lg:row-start-2">
+          {/*
+            تب مشخصات / توضیحات.
+
+            محصولی که نه مشخصهٔ فنی دارد و نه توضیح، هیچ تبی هم ندارد؛ بدون این
+            شرط، فقط خطِ زیرِ نوار تب و یک فضای خالی رندر می‌شد — یک خط افقیِ
+            بی‌دلیل وسط صفحه. چنین محصولاتی کم نیستند، چون بخشی از کاتالوگ هنوز
+            مشخصات فنی ندارد.
+          */}
+          {(specGroups.length > 0 || product.description) && (
+          <div>
+            <div
+              role="tablist"
+              aria-label="اطلاعات محصول"
+              className="flex gap-1 border-b border-[var(--border-hairline)]"
+            >
+              {specGroups.length > 0 && (
+                <TabButton active={activeTab === "specs"} onClick={() => setActiveTab("specs")}>
+                  مشخصات فنی
+                </TabButton>
+              )}
+              {product.description && (
+                <TabButton active={activeTab === "description"} onClick={() => setActiveTab("description")}>
+                  توضیحات و کاربرد
+                </TabButton>
+              )}
+            </div>
+
+            <div className="pt-6">
+              {activeTab === "specs" && specGroups.length > 0 && (
+                <div role="tabpanel" className="space-y-8">
+                  {specGroups.map((group) => (
+                    <section key={group.name}>
+                      <h3 className="eyebrow mb-4 flex items-center gap-2.5">
+                        <span className="inline-block h-px w-6 bg-[var(--brand)]" aria-hidden />
+                        {group.name}
+                      </h3>
+                      <dl className="overflow-hidden rounded-lg border border-[var(--border-subtle)]">
+                        {group.items.map((spec, index) => (
+                          <div
+                            key={spec.id}
+                            className={cn(
+                              "flex items-start gap-4 px-4 py-3 text-meta",
+                              index % 2 === 0 ? "bg-[var(--bg-elev-1)]" : "bg-[var(--bg-elev-2)]",
+                            )}
+                          >
+                            <dt className="w-40 shrink-0 text-[var(--fg-muted)]">{spec.label}</dt>
+                            <dd className="flex-1 font-medium text-[var(--fg-primary)]">
+                              {spec.value}
+                              {spec.unit && (
+                                <span className="font-normal text-[var(--fg-muted)]">
+                                  {withUnitGap(spec.value, spec.unit)}
+                                </span>
+                              )}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </section>
+                  ))}
+                </div>
+              )}
+
+              {activeTab === "description" && product.description && (
+                <div role="tabpanel" className="max-w-3xl">
+                  {product.description.split("\n\n").map((paragraph, index) => {
+                    if (paragraph.startsWith("### ")) {
+                      return (
+                        <h3 key={index} className="mb-3 mt-7 font-display text-base font-bold first:mt-0">
+                          {paragraph.replace("### ", "")}
+                        </h3>
+                      );
+                    }
+                    if (paragraph.startsWith("> ")) {
+                      return (
+                        <blockquote
+                          key={index}
+                          className="my-6 border-s-2 border-[var(--brand)] bg-[var(--brand-soft)] px-5 py-4 text-sm leading-8 text-[var(--fg-secondary)]"
+                        >
+                          {paragraph.replace("> ", "")}
+                        </blockquote>
+                      );
+                    }
+                    return (
+                      <p key={index} className="mb-4 text-sm leading-9 text-[var(--fg-secondary)]">
+                        {paragraph}
+                      </p>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+          )}
+        </div>
       </div>
 
       <Modal
