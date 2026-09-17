@@ -109,11 +109,11 @@ function familyKey(label: string, stem: string): string {
   return latin ? `${latin}-${hash}` : hash;
 }
 
-function familyOf(row: Row): { key: string; label: string } {
+function familyOf(row: Row): { key: string; label: string; stem: string; category: string } {
   const stem = modelStem(row.model) || nameStem(row.name);
   const parts = [row.brand ?? "بی‌برند", row.category, stem].filter(Boolean);
   const label = parts.join(" · ");
-  return { key: familyKey(label, stem), label };
+  return { key: familyKey(label, stem), label, stem, category: row.category };
 }
 
 async function main() {
@@ -134,12 +134,28 @@ async function main() {
 
   const families = new Map<
     string,
-    { key: string; label: string; products: { id: string; name: string }[]; withPhoto: number }
+    {
+      key: string;
+      label: string;
+      stem: string;
+      category: string;
+      brand: string;
+      products: { id: string; name: string }[];
+      withPhoto: number;
+    }
   >();
 
   for (const row of rows) {
-    const { key, label } = familyOf(row);
-    const entry = families.get(key) ?? { key, label, products: [], withPhoto: 0 };
+    const { key, label, stem, category } = familyOf(row);
+    const entry = families.get(key) ?? {
+      key,
+      label,
+      stem,
+      category,
+      brand: row.brand ?? "بی‌برند",
+      products: [],
+      withPhoto: 0,
+    };
     entry.products.push({ id: row.id, name: row.name });
     if (row.has_photo) entry.withPhoto += 1;
     families.set(key, entry);
@@ -181,6 +197,47 @@ async function main() {
     console.log(`     ${String(count).padStart(4)} عکس  →  ${(target * 100).toFixed(0)}٪ محصولات`);
   }
 
+  /*
+    نامزدهای ادغام: خانواده‌هایی که دسته و ریشهٔ یکسان دارند و فقط برندشان فرق
+    می‌کند — «موتور برق بنزینی» ویگو و پارامونت و ناکایو، یا «کفکش فلوتر» پنج
+    برند ایرانی. اگر ظاهرشان نزدیک باشد، یک عکس هر چند تا را می‌پوشاند و این
+    بزرگ‌ترین صرفه‌جویی ممکن در کل کار است.
+
+    تصمیمش با آدم است، نه اسکریپت: دو برند از یک قلم گاهی یک ریخته‌گری با
+    برچسب متفاوت‌اند و گاهی واقعاً فرق دارند. اینجا فقط نشان داده می‌شود که
+    کجا ارزش نگاه کردن دارد و چقدر صرفه دارد.
+  */
+  const byShape = new Map<string, typeof sorted>();
+  for (const family of sorted) {
+    if (!family.stem) continue;
+    const shape = `${family.category}|${family.stem}`;
+    byShape.set(shape, [...(byShape.get(shape) ?? []), family]);
+  }
+  const candidates = [...byShape.values()]
+    .filter((group) => group.length > 1)
+    .map((group) => ({
+      group,
+      products: group.reduce((n, f) => n + f.products.length, 0),
+      saved: group.length - 1,
+    }))
+    .sort((a, b) => b.products - a.products)
+    .slice(0, 12);
+
+  if (candidates.length > 0) {
+    console.log("\n  ── جای ادغام: یک قلم، چند برند ──");
+    console.log("  اگر ظاهرشان نزدیک است، در photo-plan.json فیلد photo همه را یک نام بگذارید.\n");
+    console.log("     محصول  عکسِ صرفه‌جویی   قلم");
+    for (const c of candidates) {
+      console.log(
+        `     ${String(c.products).padStart(5)}  ${String(c.saved).padStart(12)}   ` +
+          `${c.group[0]!.category} · ${c.group[0]!.stem}`,
+      );
+      console.log(`            ${c.group.map((f) => f.brand).join("، ")}`);
+    }
+    const totalSaved = candidates.reduce((n, c) => n + c.saved, 0);
+    console.log(`\n     جمعاً ${totalSaved} عکس کمتر، اگر همه را ادغام کنید.\n`);
+  }
+
   const tail = sorted.filter((f) => f.products.length <= 2);
   console.log(
     `\n  دمِ فهرست: ${tail.length} خانواده با یک یا دو محصول` +
@@ -201,6 +258,8 @@ async function main() {
       key: f.key,
       photo: "",
       label: f.label,
+      brand: f.brand,
+      stem: f.stem,
       productCount: f.products.length,
       withPhoto: f.withPhoto,
       /* برای اینکه هنگام بازبینی معلوم باشد این خانواده واقعاً یک چیز است */
