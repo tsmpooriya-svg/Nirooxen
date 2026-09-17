@@ -76,6 +76,26 @@ async function main() {
     واقعی آن فیلد null بود. خالی بودنش معنای خودش را دارد و نباید با «نرسید»
     یکی گرفته شود، پس همان‌جا ترجمه‌اش می‌کنیم.
   */
+  /*
+    اگر جای پارامترها در متن ارسالی هنوز خام مانده — یعنی چیزی مثل #CODE# در
+    خودِ پیام دیده می‌شود — نام پارامترهایی که فرستاده‌ایم با نام‌های قالب یکی
+    نبوده. سرویس چنین ارسالی را می‌پذیرد و هزینه هم حساب می‌کند، ولی پیامی که
+    نصفش جای خالی است تحویل نمی‌شود. این را یک بار با چشم پیدا کردیم؛ دیگر
+    نباید لازم باشد.
+  */
+  const unfilled = new Set<string>();
+  for (const row of rows) {
+    for (const m of row.messageText?.match(/#[A-Za-z0-9_]+#/g) ?? []) unfilled.add(m);
+  }
+  if (unfilled.size) {
+    console.error(
+      `\n  ✖ جای این پارامترها در متن پر نشده: ${[...unfilled].join("، ")}\n` +
+        "    یعنی قالبی که فرستادیم پارامترهای دیگری می‌خواهد. یا شناسهٔ قالب\n" +
+        "    مال قالب دیگری است، یا نام پارامترها در src/lib/notify.ts با قالب\n" +
+        "    نمی‌خواند. متن قالب در همین گزارش، بالاتر، چاپ شده است.",
+    );
+  }
+
   console.log("\n── خلاصه ──");
   for (const row of rows) {
     console.log(`  ${row.mobile ?? "?"} → ${describe(row.deliveryState)}`);
@@ -92,7 +112,12 @@ async function main() {
   }
 }
 
-type Row = { mobile?: number | string; deliveryState?: number | null; sendDateTime?: number };
+type Row = {
+  mobile?: number | string;
+  deliveryState?: number | null;
+  sendDateTime?: number;
+  messageText?: string;
+};
 
 /**
  * وضعیت تحویل به زبان آدمیزاد.
