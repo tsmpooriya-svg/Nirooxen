@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/components/admin/ui";
+import { RecordDeleteButton } from "@/components/admin/record-delete";
 import { Pagination } from "@/components/ui/pagination";
 import type { OrderStatus, OrderType } from "@/db/schema";
 import { ORDER_PRIORITY, ORDER_SOURCE, ORDER_STATUS, ORDER_TYPE } from "@/lib/constants";
@@ -103,7 +104,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
 
       <Panel padded={false}>
         <DataTable
-          head={["شماره / اولویت", "مشتری", "نوع و منبع", "وضعیت", "کارشناس", "مبلغ", "ثبت"]}
+          head={["شماره / اولویت", "مشتری", "نوع و منبع", "وضعیت", "کارشناس", "مبلغ", "ثبت", ""]}
           empty={items.length === 0}
         >
           {items.map((order) => (
@@ -165,6 +166,10 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                 <span className="mt-0.5 block text-micro text-[var(--fg-subtle)]">
                   {formatDateTime(order.createdAt)}
                 </span>
+              </Td>
+
+              <Td className="w-12">
+                <RecordDeleteButton kind="order" id={order.id} name={order.number} />
               </Td>
             </Tr>
           ))}

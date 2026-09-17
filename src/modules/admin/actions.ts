@@ -257,6 +257,36 @@ export async function logOrderContact(orderId: string, note: string): Promise<Ac
 }
 
 /** ثبت قیمت اعلامی برای اقلام و انتقال پرونده به وضعیت «قیمت اعلام شد» */
+export async function deleteOrder(orderId: string): Promise<ActionState> {
+  return guard(async () => {
+    const user = await requireWritePermission("orders");
+    const [order] = await db
+      .select({ number: orders.number, contactName: orders.contactName })
+      .from(orders)
+      .where(eq(orders.id, orderId))
+      .limit(1);
+    if (!order) return { status: "error", message: "این سفارش پیدا نشد؛ شاید قبلاً حذف شده باشد." };
+
+    /*
+      اقلام، رویدادها و پرداخت‌های سفارش با کلید خارجی cascade پاک می‌شوند؛
+      اینجا دستی حذفشان نمی‌کنیم تا تنها یک جای حقیقت برای این رفتار بماند.
+    */
+    await db.delete(orders).where(eq(orders.id, orderId));
+
+    await logActivity({
+      userId: user.id,
+      action: "delete",
+      entity: "order",
+      entityId: orderId,
+      summary: `حذف سفارش ${order.number} («${order.contactName}»)`,
+    });
+
+    revalidatePath("/admin/orders");
+    revalidatePath("/admin");
+    return { status: "success", message: `سفارش ${order.number} حذف شد.` };
+  });
+}
+
 export async function submitQuote(
   orderId: string,
   prices: { itemId: string; price: number }[],
@@ -863,6 +893,52 @@ export async function saveCustomer(
 /*  اخبار                                                                       */
 /* ========================================================================== */
 
+export async function deleteCustomer(customerId: string): Promise<ActionState> {
+  return guard(async () => {
+    const user = await requireWritePermission("customers");
+    const [customer] = await db
+      .select({ fullName: customers.fullName })
+      .from(customers)
+      .where(eq(customers.id, customerId))
+      .limit(1);
+    if (!customer) return { status: "error", message: "این مشتری پیدا نشد؛ شاید قبلاً حذف شده باشد." };
+
+    /*
+      سفارش‌های مشتری پاک نمی‌شوند: کلید خارجی‌شان set null است، پس سفارش با
+      همان نام و شمارهٔ تماسِ ثبت‌شده در خودش می‌ماند و فقط اتصالش به پروندهٔ
+      مشتری قطع می‌شود. سابقهٔ فروش نباید با حذف یک پرونده از بین برود.
+      یادداشت‌های مشتری اما cascade پاک می‌شوند، چون بیرون از آن پرونده معنایی
+      ندارند.
+    */
+    const detached = await db
+      .select({ id: orders.id })
+      .from(orders)
+      .where(eq(orders.customerId, customerId));
+
+    await db.delete(customers).where(eq(customers.id, customerId));
+
+    await logActivity({
+      userId: user.id,
+      action: "delete",
+      entity: "customer",
+      entityId: customerId,
+      summary:
+        `حذف مشتری «${customer.fullName}»` +
+        (detached.length > 0 ? ` — ${detached.length} سفارش بدون مشتری ماند` : ""),
+    });
+
+    revalidatePath("/admin/customers");
+    revalidatePath("/admin/orders");
+    return {
+      status: "success",
+      message:
+        detached.length > 0
+          ? `مشتری حذف شد. ${detached.length} سفارش باقی ماند و بدون مشتری شد.`
+          : "مشتری حذف شد.",
+    };
+  });
+}
+
 export async function savePost(
   postId: string | null,
   _prev: ActionState,
@@ -1353,6 +1429,56 @@ export async function saveUser(
 
     revalidatePath("/admin/users");
     return { status: "success", message: "کاربر ذخیره شد." };
+  });
+}
+
+export async function deleteUser(userId: string): Promise<ActionState> {
+  return guard(async () => {
+    const actor = await requireWritePermission("users");
+
+    if (userId === actor.id) {
+      return { status: "error", message: "نمی‌توانید حساب خودتان را حذف کنید." };
+    }
+
+    const [target] = await db
+      .select({ name: users.name, role: users.role })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    if (!target) return { status: "error", message: "این کاربر پیدا نشد؛ شاید قبلاً حذف شده باشد." };
+
+    /*
+      حذف آخرین مدیر ارشدِ فعال یعنی قفل شدن پنل روی همه. بررسی روی «فعال»
+      انجام می‌شود، نه صرفاً نقش: یک OWNER غیرفعال نمی‌تواند وارد شود، پس
+      جانشین حساب نمی‌آید.
+    */
+    if (target.role === "OWNER") {
+      const others = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(and(eq(users.role, "OWNER"), eq(users.isActive, true), sql`${users.id} <> ${userId}`));
+      if (others.length === 0) {
+        return { status: "error", message: "این تنها مدیر ارشد فعال است و حذفش پنل را بدون مدیر می‌گذارد." };
+      }
+    }
+
+    /*
+      نشست‌ها با کلید خارجی cascade پاک می‌شوند، ولی صریح باطلشان می‌کنیم تا
+      اگر روزی آن کلید عوض شد، کاربرِ حذف‌شده با کوکی قدیمی داخل نماند.
+    */
+    await destroyAllSessions(userId);
+    await db.delete(users).where(eq(users.id, userId));
+
+    await logActivity({
+      userId: actor.id,
+      action: "delete",
+      entity: "user",
+      entityId: userId,
+      summary: `حذف کاربر پنل «${target.name}»`,
+    });
+
+    revalidatePath("/admin/users");
+    return { status: "success", message: "کاربر حذف شد." };
   });
 }
 
