@@ -28,7 +28,9 @@
     "db:specs:dry": "tsx scripts/backfill-specs.mjs --dry-run",
     "db:apply": "node scripts/apply-migration.mjs",
     "db:backdrops": "tsx scripts/detect-image-backdrops.ts --apply",
-    "db:backdrops:dry": "tsx scripts/detect-image-backdrops.ts"
+    "db:backdrops:dry": "tsx scripts/detect-image-backdrops.ts",
+    "photos:plan": "tsx scripts/photo-plan.ts",
+    "photos:apply": "tsx scripts/apply-family-photos.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

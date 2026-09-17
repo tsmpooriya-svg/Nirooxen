@@ -55,3 +55,7 @@ next-env.d.ts
 /playwright-report/
 /blob-report/
 /.playwright/
+
+# فایل‌های کاری اپراتور برای عکس محصولات
+/photos/
+/photo-plan.json
