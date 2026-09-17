@@ -77,15 +77,28 @@ const FA_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
 const toFaDigits = (text) => text.replace(/[0-9]/g, (d) => FA_DIGITS[Number(d)]);
 
 /**
+ * مشخصه‌های بله/خیر جملهٔ «با …» را می‌شکنند: «با فلوتر دارد» فارسی نیست.
+ * این‌ها جدا و با «دارای …» و «بدون …» نوشته می‌شوند.
+ */
+const YES = new Set(["دارد", "بله"]);
+const NO = new Set(["ندارد", "خیر"]);
+
+/**
  * «حداکثر آبدهی ۶۰ لیتر بر دقیقه» — برچسب، مقدار، واحد؛ همان‌طور که در جدول
  * مشخصات همان صفحه نوشته شده، فقط پشت سر هم.
  */
 function phrase(spec) {
   const value = String(spec.value ?? "").trim();
   if (!value) return null;
+  if (YES.has(value)) return { kind: "flag", text: `دارای ${spec.label.trim()}` };
+  if (NO.has(value)) return { kind: "flag", text: `بدون ${spec.label.trim()}` };
   const unit = (spec.unit ?? "").trim();
-  return toFaDigits(`${spec.label.trim()} ${value}${unit ? ` ${unit}` : ""}`);
+  return { kind: "measure", text: toFaDigits(`${spec.label.trim()} ${value}${unit ? ` ${unit}` : ""}`) };
 }
+
+/** «الف، ب و ج» */
+const joinFa = (list) =>
+  list.length === 1 ? list[0] : `${list.slice(0, -1).join("، ")} و ${list[list.length - 1]}`;
 
 function describe(row) {
   const list = (byProduct.get(row.id) ?? []).map(phrase).filter(Boolean).slice(0, MAX_SPECS);
@@ -107,10 +120,14 @@ function describe(row) {
     .filter(Boolean)
     .join(" ");
 
-  const tail =
-    list.length === 1 ? list[0] : `${list.slice(0, -1).join("، ")} و ${list[list.length - 1]}`;
+  const measures = list.filter((x) => x.kind === "measure").map((x) => x.text);
+  const flags = list.filter((x) => x.kind === "flag").map((x) => x.text);
 
-  return `${head}، با ${tail}.`;
+  const parts = [];
+  if (measures.length) parts.push(`با ${joinFa(measures)}`);
+  if (flags.length) parts.push(joinFa(flags));
+
+  return `${head}، ${parts.join("، ")}.`;
 }
 
 const planned = [];
