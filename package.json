@@ -13,7 +13,7 @@
     "start": "next start",
     "preflight": "node scripts/preflight.mjs",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.e2e.json",
     "test:e2e": "playwright test",
     "db:generate": "drizzle-kit generate",
     "db:push": "node scripts/guard-destructive.mjs db:push && drizzle-kit push",
