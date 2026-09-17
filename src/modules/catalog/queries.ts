@@ -9,7 +9,15 @@
  */
 import "server-only";
 
-import { and, asc, count, desc, eq, gte, ilike, inArray, isNotNull, lte, ne, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNotNull, lte, ne, or, sql, type SQL } from "drizzle-orm";
+
+import {
+  FOLD_FROM,
+  FOLD_TO,
+  escapeLikePattern,
+  matchesPattern,
+  searchTokens,
+} from "@/lib/search-text";
 import { cache } from "react";
 
 import { db } from "@/db";
@@ -252,15 +260,24 @@ export async function listProducts(filters: ProductFilters = {}) {
 
   const conditions = [eq(products.status, "PUBLISHED")];
 
-  if (q?.trim()) {
-    const term = `%${q.trim()}%`;
+  /*
+    همان قاعده‌ای که دیالوگ Ctrl+K دارد: یکسان‌سازی حروف و ارقام، فرار دادن
+    کاراکترهای الگوی ILIKE، و تطبیق واژه‌به‌واژه به‌جای یک عبارت یکپارچه.
+
+    پیش از این اینجا یک ILIKE خام روی متن خام بود؛ نتیجه‌اش این می‌شد که یک
+    عبارت در جستجوی سریع پیدا می‌شد و در همین صفحه نه. تطبیق واژه‌به‌واژه هم
+    لازم است چون با حذف نیم‌فاصله، «آتش‌نشانی» در پایگاه داده یک واژهٔ چسبیده
+    می‌شود در حالی که کاربر آن را با فاصله می‌نویسد.
+  */
+  for (const token of searchTokens(q ?? "")) {
+    const pattern = `%${escapeLikePattern(token)}%`;
     conditions.push(
       or(
-        ilike(products.name, term),
-        ilike(products.model, term),
-        ilike(products.sku, term),
-        ilike(products.shortDescription, term),
-        sql`${products.tags}::text ilike ${term}`,
+        matchesPattern(products.name, pattern),
+        matchesPattern(products.model, pattern),
+        matchesPattern(products.sku, pattern),
+        matchesPattern(products.shortDescription, pattern),
+        sql`translate(coalesce(${products.tags}::text, ''), ${FOLD_FROM}, ${FOLD_TO}) ilike ${pattern}`,
       )!,
     );
   }

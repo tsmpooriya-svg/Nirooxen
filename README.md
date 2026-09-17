@@ -382,10 +382,47 @@ production نباید بار تصاویر روی Node بیفتد. پیکربند
 
 ### پشتیبان‌گیری
 
-مخزن هیچ سازوکار پشتیبان‌گیری ندارد؛ این کار کاملاً بر عهده زیرساخت است. پیش از
-انتشار، برای PostgreSQL یک پشتیبان‌گیری زمان‌بندی‌شده برقرار کنید و **بازیابی را
-یک بار واقعاً آزمایش کنید**؛ پشتیبان آزمایش‌نشده پشتیبان نیست. تصاویر و فایل‌های
-ایستا در همین مخزن نگهداری می‌شوند و از راه استقرار برمی‌گردند.
+`deploy/backup-nirooxen.sh` هر شب دو چیز را برمی‌دارد، چون هیچ‌کدام بدون دیگری
+کامل نیست:
+
+* **پایگاه داده** با `pg_dump --format=custom` — محصولات، سفارش‌ها، مشتریان، کاربران
+* **پوشهٔ `MEDIA_STORAGE_ROOT`** به‌صورت `tar.gz` — تصاویری که از پنل آپلود شده‌اند
+  و در پایگاه داده نیستند
+
+طرح‌های پیش‌فرض محصولات (`public/images/products/`) در خود مخزن‌اند و از راه
+استقرار برمی‌گردند؛ ولی هر چه از پنل آپلود شود فقط در پوشهٔ مدیا زندگی می‌کند.
+
+```bash
+sudo cp deploy/nirooxen-backup.{service,timer} /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now nirooxen-backup.timer
+
+sudo systemctl start nirooxen-backup.service     # اجرای دستی
+journalctl -u nirooxen-backup -n 20 --no-pager   # نتیجه
+systemctl list-timers nirooxen-backup            # اجرای بعدی
+```
+
+اسکریپت پس از گرفتن دامپ آن را می‌خواند و تعداد جدول‌هایش را می‌شمارد؛ اگر باز
+نشد یا کمتر از حد انتظار بود، **با خطا می‌ایستد، فایل نیمه‌کاره را پاک می‌کند و
+به نسخه‌های قبلی دست نمی‌زند**. چرخش نسخه‌ها فقط پس از همین تأیید انجام می‌شود،
+پس یک شبِ خراب، پشتیبان‌های سالم را نمی‌برد.
+
+متغیرها با محیط قابل تغییرند: `DB_NAME`، `BACKUP_DIR` (پیش‌فرض
+`/var/backups/nirooxen`)، `MEDIA_DIR`، `KEEP_DAYS` (پیش‌فرض ۱۴)، `MIN_TABLES`.
+
+**بازگردانی** — پوشهٔ پشتیبان فقط برای `root` خواندنی است، پس فایل با `root`
+خوانده و به `pg_restore` خورانده می‌شود:
+
+```bash
+sudo -u postgres createdb nirooxen_restore
+sudo runuser -u postgres -- pg_restore --dbname=nirooxen_restore \
+  --no-owner --no-privileges --exit-on-error \
+  < /var/backups/nirooxen/db-YYYYMMDD-HHMMSS.dump
+
+sudo tar -xzf /var/backups/nirooxen/media-YYYYMMDD-HHMMSS.tar.gz -C /var/lib/
+```
+
+**بازیابی را یک بار واقعاً آزمایش کنید**؛ پشتیبان آزمایش‌نشده پشتیبان نیست.
 
 ### ساخت نخستین حساب مدیر
 

@@ -6,15 +6,17 @@ import { db } from "@/db";
 import { brands, categories, products } from "@/db/schema";
 import { getClientIp } from "@/lib/auth";
 import { RATE_LIMITS, rateLimit } from "@/lib/rate-limit";
-import { toEnDigits } from "@/lib/utils";
+import {
+  escapeLikePattern,
+  matchesPattern,
+  normalizedColumn,
+  searchTokens,
+} from "@/lib/search-text";
 import { searchQuerySchema } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
-const ZWNJ_CODEPOINT = 8204;
 const MAX_TOKENS = 6;
-const PERSIAN_DIGITS = "۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩";
-const LATIN_DIGITS = "01234567890123456789";
 
 /**
  * وزن‌های رتبه‌بندی. جمع‌شونده‌اند، پس تطبیق قوی‌تر همیشه از ضعیف‌تر بالاتر
@@ -33,32 +35,8 @@ const WEIGHT = {
   description: 3,
 } as const;
 
-/** %  _  \ در ILIKE معنی دارند؛ ورودی کاربر باید متن ساده بماند نه الگو */
-function escapeLikePattern(value: string): string {
-  return value.replace(/[\\%_]/g, (char) => `\\${char}`);
-}
-
-function normalizeSearchText(value: string): string {
-  return toEnDigits(value).replace(/[\u200B-\u200D\uFEFF]/g, "");
-}
-
-function tokenize(value: string): string[] {
-  return normalizeSearchText(value)
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, MAX_TOKENS);
-}
-
-function normalizedColumn(column: AnyColumn): SQL {
-  return sql`translate(replace(coalesce(${column}, ''), chr(${ZWNJ_CODEPOINT}), ''), ${PERSIAN_DIGITS}, ${LATIN_DIGITS})`;
-}
-
 function scoreWhen(condition: SQL, weight: number): SQL {
   return sql`case when ${condition} then ${weight}::int else 0 end`;
-}
-
-function matches(column: AnyColumn, pattern: string): SQL {
-  return sql`${normalizedColumn(column)} ilike ${pattern}`;
 }
 
 /** جستجوی سریع برای دیالوگ Ctrl+K — حداکثر ۸ نتیجه */
@@ -75,7 +53,7 @@ export async function GET(request: Request) {
 
   if (!parsed.success) return NextResponse.json({ items: [] });
 
-  const tokens = tokenize(parsed.data);
+  const tokens = searchTokens(parsed.data, MAX_TOKENS);
 
   if (tokens.length === 0) return NextResponse.json({ items: [] });
 
@@ -92,7 +70,7 @@ export async function GET(request: Request) {
   const tokenPatterns = tokens.map((token) => `%${escapeLikePattern(token)}%`);
 
   const tokenConditions = tokenPatterns.map(
-    (pattern) => or(...searchableColumns.map((column) => matches(column, pattern))) as SQL,
+    (pattern) => or(...searchableColumns.map((column) => matchesPattern(column, pattern))) as SQL,
   );
 
   // عبارت کامل پس از یکسان‌سازی: ZWNJ حذف، ارقام فارسی به لاتین، فاصله‌ها یکی
@@ -103,23 +81,23 @@ export async function GET(request: Request) {
 
   const scoreParts: SQL[] = [
     scoreWhen(sql`lower(${normalizedColumn(products.name)}) = ${phraseExact}`, WEIGHT.nameExact),
-    scoreWhen(matches(products.name, phrasePrefix), WEIGHT.namePrefix),
-    scoreWhen(matches(products.name, phraseContains), WEIGHT.nameContains),
-    ...tokenPatterns.map((pattern) => scoreWhen(matches(products.name, pattern), WEIGHT.nameToken)),
+    scoreWhen(matchesPattern(products.name, phrasePrefix), WEIGHT.namePrefix),
+    scoreWhen(matchesPattern(products.name, phraseContains), WEIGHT.nameContains),
+    ...tokenPatterns.map((pattern) => scoreWhen(matchesPattern(products.name, pattern), WEIGHT.nameToken)),
     scoreWhen(
       sql`lower(${normalizedColumn(brands.name)}) = ${phraseExact} or lower(${normalizedColumn(brands.latinName)}) = ${phraseExact}`,
       WEIGHT.brandExact,
     ),
     scoreWhen(
-      or(matches(products.model, phraseContains), matches(products.sku, phraseContains)) as SQL,
+      or(matchesPattern(products.model, phraseContains), matchesPattern(products.sku, phraseContains)) as SQL,
       WEIGHT.modelOrSku,
     ),
     scoreWhen(
-      or(matches(brands.name, phraseContains), matches(brands.latinName, phraseContains)) as SQL,
+      or(matchesPattern(brands.name, phraseContains), matchesPattern(brands.latinName, phraseContains)) as SQL,
       WEIGHT.brandContains,
     ),
-    scoreWhen(matches(categories.name, phraseContains), WEIGHT.category),
-    scoreWhen(matches(products.shortDescription, phraseContains), WEIGHT.description),
+    scoreWhen(matchesPattern(categories.name, phraseContains), WEIGHT.category),
+    scoreWhen(matchesPattern(products.shortDescription, phraseContains), WEIGHT.description),
   ];
 
   const relevance = sql`(${sql.join(scoreParts, sql` + `)})`;
