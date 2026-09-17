@@ -364,6 +364,13 @@ export const productImages = pgTable(
     alt: varchar("alt", { length: 220 }),
     position: integer("position").notNull().default(0),
     isPrimary: boolean("is_primary").notNull().default(false),
+    /*
+     * «light» یعنی پس‌زمینهٔ عکس روشن است و می‌شود آن را با قاب نقشه‌کشی ترکیب
+     * کرد تا سفیدش ناپدید شود. «dark» یعنی نمی‌شود — ضرب کردنش یک مستطیل سیاه
+     * می‌سازد. تهی یعنی هنوز بررسی نشده، و همان هم حالت امن است: بدون ترکیب.
+     * تشخیص در src/lib/media/backdrop.ts، یک بار هنگام آپلود.
+     */
+    backdrop: varchar("backdrop", { length: 8 }),
   },
   (t) => [index("product_images_product_idx").on(t.productId, t.position)],
 );

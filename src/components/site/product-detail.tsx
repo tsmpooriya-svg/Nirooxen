@@ -12,8 +12,9 @@ import { cn, formatPrice, toFaDigits } from "@/lib/utils";
 import { useCart } from "@/modules/cart/store";
 
 import { OrderForm } from "./order-form";
+import { ProductPhoto } from "./product-photo";
 
-type Image = { id: string; url: string; alt: string | null };
+type Image = { id: string; url: string; alt: string | null; backdrop: string | null };
 type Spec = { id: string; label: string; value: string; unit: string | null; isKey: boolean };
 type SpecGroup = { name: string; items: Spec[] };
 
@@ -112,13 +113,13 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
           <div className="brackets relative overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-inset)]">
             <div className="relative aspect-4/3">
               {images[activeImage] ? (
-                <Image
+                <ProductPhoto
                   src={images[activeImage]!.url}
                   alt={images[activeImage]!.alt ?? product.name}
-                  fill
+                  backdrop={images[activeImage]!.backdrop}
                   priority
                   sizes="(max-width: 1024px) 100vw, 60vw"
-                  className="object-contain p-4"
+                  pad="5%"
                 />
               ) : (
                 <span className="absolute inset-0 grid place-items-center text-[var(--fg-subtle)]">
@@ -151,7 +152,8 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
                       : "border-[var(--border-subtle)] opacity-60 hover:opacity-100",
                   )}
                 >
-                  <Image src={image.url} alt="" fill sizes="80px" className="object-cover" />
+                  {/* در ابعاد ۸۰ پیکسل جا برای قاب نیست؛ فاصله کمتر می‌شود */}
+                  <ProductPhoto src={image.url} alt="" sizes="80px" pad="8%" backdrop={image.backdrop} />
                 </button>
               ))}
             </div>

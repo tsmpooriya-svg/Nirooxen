@@ -6,6 +6,7 @@ import * as React from "react";
 import { useCart, useCartCount, useCartSubtotal } from "@/modules/cart/store";
 import { useMounted } from "@/lib/use-mounted";
 import { cn, formatPrice, toFaDigits } from "@/lib/utils";
+import { ProductThumb } from "./product-photo";
 
 /** نشانگر سبد استعلام در هدر */
 export function CartButton() {
@@ -124,12 +125,7 @@ export function CartPanel() {
               {lines.map((line) => (
                 <li key={line.productId} className="flex gap-3.5 p-4">
                   {line.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={line.imageUrl}
-                      alt=""
-                      className="size-16 shrink-0 rounded-sm border border-[var(--border-hairline)] object-cover"
-                    />
+                    <ProductThumb src={line.imageUrl} className="size-16 rounded-sm" />
                   ) : (
                     <span className="size-16 shrink-0 rounded-sm border border-[var(--border-hairline)] bg-[var(--bg-inset)]" />
                   )}

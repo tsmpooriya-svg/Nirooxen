@@ -59,6 +59,8 @@ export type ProductCardData = {
   isNew: boolean;
   isFeatured: boolean;
   imageUrl: string | null;
+  /** «light» یعنی عکس را می‌شود با قاب نقشه‌کشی ترکیب کرد؛ تهی یعنی نامعلوم */
+  imageBackdrop: string | null;
   categoryName: string;
   categorySlug: string;
   brandName: string | null;
@@ -222,6 +224,16 @@ const cardSelection = {
   brandSlug: brands.slug,
   imageUrl: sql<string | null>`(
     select pi.url from product_images pi
+    where pi.product_id = products.id
+    order by pi.is_primary desc, pi.position asc
+    limit 1
+  )`,
+  /*
+    از همان ردیفی خوانده می‌شود که url از آن می‌آید — با همان ترتیب، تا اگر
+    محصولی چند تصویر داشت، پرچم به تصویر دیگری نچسبد.
+  */
+  imageBackdrop: sql<string | null>`(
+    select pi.backdrop from product_images pi
     where pi.product_id = products.id
     order by pi.is_primary desc, pi.position asc
     limit 1

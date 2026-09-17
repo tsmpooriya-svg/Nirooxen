@@ -445,7 +445,15 @@ export async function saveProduct(
 
     // تصاویر و مشخصات به‌صورت JSON از فرم می‌آیند
     const images = safeJson<
-      { url: string; alt?: string; storageKey?: string; width?: number; height?: number }[]
+      {
+        url: string;
+        alt?: string;
+        storageKey?: string;
+        width?: number;
+        height?: number;
+        /** از پاسخ آپلود می‌آید؛ برای تصویر دستی تهی می‌ماند و یعنی «بدون ترکیب» */
+        backdrop?: string;
+      }[]
     >(formData.get("images"), []);
     const specs = safeJson<{ groupName: string; label: string; value: string; unit?: string; isKey?: boolean }[]>(
       formData.get("specs"),
@@ -523,6 +531,8 @@ export async function saveProduct(
             storageKey: image.storageKey ?? null,
             width: image.width ?? null,
             height: image.height ?? null,
+            // فقط مقدار شناخته‌شده پذیرفته می‌شود؛ هر چیز دیگری یعنی نامعلوم
+            backdrop: image.backdrop === "light" || image.backdrop === "dark" ? image.backdrop : null,
             alt: image.alt ?? input.name,
             position: index,
             isPrimary: index === 0,

@@ -106,5 +106,6 @@ export async function POST(request: Request): Promise<Response> {
     url: storage.publicUrl(displayKey),
     width: processed.width,
     height: processed.height,
+    backdrop: processed.backdrop,
   });
 }

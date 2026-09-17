@@ -194,6 +194,15 @@
      این‌ها با اسکریپت سنجیده شده‌اند، نه با چشم: هر دو داخل باند روشنایی
      همین زمینه‌اند، از کف اشباع بالاترند، و جدایی‌شان در هر سه نوع کوررنگی
      ΔE بالای ۱۸ است. اگر عوضشان کردید، دوباره بسنجید. */
+  /* ── قاب تصویر محصول ───────────────────────────────────────────────────
+     همان تم طرح‌های گرافیکی. در حالت تیره هم روشن می‌ماند — چرایی‌اش در
+     src/components/site/product-photo.tsx توضیح داده شده. */
+  --plate-from: #e4edf1;
+  --plate-to: #d3e5ec;
+  --plate-grid: rgb(0 116 139 / 0.09);
+  --plate-glow: rgb(0 166 192 / 0.16);
+  --plate-grid-size: 24px;
+
   --chart-views: var(--hydro-500);
   /* کهربای signal-600 روی زمینهٔ تیره کمی روشن‌تر از باند است؛ یک پله پایین‌تر */
   --chart-visitors: #cc7f18;
@@ -255,6 +264,12 @@
 
   /* روی سفید، کهربای پررنگ‌تر داخل باند می‌نشیند */
   --chart-visitors: var(--signal-600);
+
+  /* در تم روشن، قاب دقیقاً همان گرادیان داخل فایل‌های SVG است */
+  --plate-from: #ffffff;
+  --plate-to: #eefbfe;
+  --plate-grid: rgb(0 116 139 / 0.07);
+  --plate-glow: rgb(0 166 192 / 0.1);
 
   --brand: var(--hydro-600);
   --brand-hover: var(--hydro-700);
@@ -1314,5 +1329,53 @@ html:has(.ember-scope),
     font-family: var(--font-mono);
     color: var(--ember-500);
     opacity: 0.22;
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+ *  قاب تصویر محصول
+ *
+ *  سه لایه، از رو به زیر: درخشش، شبکه، گرادیان پایه — همان ترتیبی که در
+ *  فایل‌های SVG طرح‌ها هست، تا عکس واقعی و طرح گرافیکی یک‌جور دیده شوند.
+ * ------------------------------------------------------------------------ */
+.product-plate {
+  /* موقعیت و اندازه را فراخوان تعیین می‌کند: گاهی کل قاب را پر می‌کند و گاهی
+     یک بندانگشتی با اندازهٔ ثابت است. */
+  display: block;
+  overflow: hidden;
+  background:
+    radial-gradient(58% 58% at 50% 42%, var(--plate-glow), transparent 70%),
+    repeating-linear-gradient(
+      to right,
+      var(--plate-grid) 0 1px,
+      transparent 1px var(--plate-grid-size)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--plate-grid) 0 1px,
+      transparent 1px var(--plate-grid-size)
+    ),
+    linear-gradient(135deg, var(--plate-from), var(--plate-to));
+}
+
+/*
+  ضرب در سفید یعنی «دست نزن»: پس‌زمینهٔ سفیدِ عکس ناپدید می‌شود و شبکه از زیرش
+  بیرون می‌زند، بی‌آنکه لازم باشد پس‌زمینهٔ تک‌تک عکس‌ها حذف شود.
+*/
+.product-plate[data-blend="multiply"] img {
+  mix-blend-mode: multiply;
+}
+
+/*
+  در حالت اجباری پرکنتراست، ترکیب رنگ‌ها را سیستم تعیین می‌کند و multiply
+  می‌تواند عکس را ناخوانا کند.
+*/
+@media (forced-colors: active) {
+  .product-plate {
+    background: Canvas;
+  }
+  .product-plate[data-blend="multiply"] img {
+    mix-blend-mode: normal;
   }
 }

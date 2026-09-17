@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { ProductPhoto } from "./product-photo";
 import Link from "next/link";
 import * as React from "react";
 
@@ -77,12 +77,12 @@ export function ProductCard({
         aria-hidden
       >
         {product.imageUrl ? (
-          <Image
+          <ProductPhoto
             src={product.imageUrl}
             alt=""
-            fill
+            backdrop={product.imageBackdrop}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover transition-transform duration-[450ms] [transition-timing-function:var(--ease-out-expo)] group-hover:scale-[1.02] group-has-[:focus-visible]:scale-[1.02] motion-reduce:scale-100!"
+            imageClassName="transition-transform duration-[450ms] [transition-timing-function:var(--ease-out-expo)] group-hover:scale-[1.02] group-has-[:focus-visible]:scale-[1.02] motion-reduce:scale-100!"
           />
         ) : (
           <span className="absolute inset-0 grid place-items-center text-[var(--fg-subtle)]">

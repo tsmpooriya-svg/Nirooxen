@@ -43,7 +43,14 @@ export type ProductFormValues = {
   tags: string;
   metaTitle: string;
   metaDescription: string;
-  images: { url: string; alt?: string; storageKey?: string; width?: number; height?: number }[];
+  images: {
+    url: string;
+    alt?: string;
+    storageKey?: string;
+    width?: number;
+    height?: number;
+    backdrop?: string;
+  }[];
   specs: { groupName: string; label: string; value: string; unit?: string; isKey?: boolean }[];
 };
 
@@ -502,6 +509,7 @@ function ImageEditor({
         storageKey?: string;
         width?: number;
         height?: number;
+        backdrop?: string;
         error?: string;
       };
       if (!response.ok || !result.url) {
@@ -510,7 +518,13 @@ function ImageEditor({
       }
       onChange([
         ...images,
-        { url: result.url, storageKey: result.storageKey, width: result.width, height: result.height },
+        {
+          url: result.url,
+          storageKey: result.storageKey,
+          width: result.width,
+          height: result.height,
+          backdrop: result.backdrop,
+        },
       ]);
       toast({ title: "تصویر بارگذاری شد", tone: "success" });
     } catch {

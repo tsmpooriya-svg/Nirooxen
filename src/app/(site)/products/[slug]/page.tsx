@@ -110,7 +110,12 @@ export default async function ProductPage({ params }: { params: Params }) {
           }}
           category={{ name: category.name, slug: category.slug }}
           brand={brand ? { name: brand.name, slug: brand.slug, latinName: brand.latinName } : null}
-          images={images.map((image) => ({ id: image.id, url: image.url, alt: image.alt }))}
+          images={images.map((image) => ({
+            id: image.id,
+            url: image.url,
+            alt: image.alt,
+            backdrop: image.backdrop,
+          }))}
           specGroups={specGroups.map((group) => ({
             name: group.name,
             items: group.items.map((item) => ({

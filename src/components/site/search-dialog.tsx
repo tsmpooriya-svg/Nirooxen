@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { cn, formatPrice } from "@/lib/utils";
+import { ProductThumb } from "./product-photo";
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -233,13 +234,7 @@ export function SearchDialog() {
                   )}
                 >
                   {hit.imageUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={hit.imageUrl}
-                      alt=""
-                      className="size-11 shrink-0 rounded-sm border border-[var(--border-hairline)] object-cover"
-                      loading="lazy"
-                    />
+                    <ProductThumb src={hit.imageUrl} className="size-11 rounded-sm" />
                   )}
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium text-[var(--fg-primary)]">

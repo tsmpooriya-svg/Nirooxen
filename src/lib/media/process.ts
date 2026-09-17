@@ -2,6 +2,8 @@ import "server-only";
 
 import sharp, { type Metadata } from "sharp";
 
+import { detectBackdrop, type Backdrop } from "./backdrop";
+
 /**
  * اعتبارسنجی و بهینه‌سازی تصویر آپلودشده.
  *
@@ -85,6 +87,8 @@ export type ProcessedImage = {
   /** ابعاد همان نسخهٔ تحویلی — نه تصویر اصلی؛ این‌ها فایلی را توصیف می‌کنند که url به آن اشاره دارد */
   width: number;
   height: number;
+  /** روشن یا تیره بودن پس‌زمینه — تعیین می‌کند قاب نقشه‌کشی با عکس ترکیب شود یا نه */
+  backdrop: Backdrop;
 };
 
 export class MediaValidationError extends Error {
@@ -150,6 +154,13 @@ export async function processUpload(buffer: Buffer): Promise<ProcessedImage> {
     throw new MediaValidationError("پردازش تصویر ناموفق بود.");
   }
 
+  /*
+    روی نسخهٔ تحویلی سنجیده می‌شود، نه اصلی: همان است که کاربر می‌بیند، و
+    کوچک‌تر هم هست. اگر نشد، detectBackdrop خودش «dark» می‌دهد — یعنی بدون
+    ترکیب، که هیچ‌وقت بد به نظر نمی‌رسد.
+  */
+  const backdrop = await detectBackdrop(display);
+
   return {
     mime,
     originalExtension: extensionFor(mime),
@@ -157,5 +168,6 @@ export async function processUpload(buffer: Buffer): Promise<ProcessedImage> {
     display,
     width: displayWidth,
     height: displayHeight,
+    backdrop,
   };
 }

@@ -43,6 +43,13 @@
       "when": 1789669233179,
       "tag": "0005_light_xavin",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789673298079,
+      "tag": "0006_keen_gamora",
+      "breakpoints": true
     }
   ]
 }
