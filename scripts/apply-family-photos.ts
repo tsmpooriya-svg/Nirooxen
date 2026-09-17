@@ -46,6 +46,8 @@ const PHOTOS_DIR = process.env.PHOTOS_DIR ?? "photos";
 type Plan = {
   families: {
     key: string;
+    /** نام فایل دلخواه؛ خالی یعنی از key استفاده کن */
+    photo?: string;
     label: string;
     productCount: number;
     withPhoto: number;
@@ -53,10 +55,19 @@ type Plan = {
   }[];
 };
 
-/** عکس خانواده روی دیسک، با هر پسوند پذیرفتنی */
-function findPhoto(key: string): string | null {
+/**
+ * عکس خانواده روی دیسک.
+ *
+ * اگر در نقشه فیلد `photo` پر شده باشد همان به کار می‌رود — این همان راهی است
+ * که چند خانواده می‌توانند یک عکس مشترک داشته باشند بدون کپی کردن فایل. پسوند
+ * اختیاری است؛ اگر نوشته نشده باشد، پسوندهای پذیرفتنی امتحان می‌شوند.
+ */
+function findPhoto(key: string, override?: string): string | null {
+  const name = override?.trim() || key;
+  const direct = path.join(PHOTOS_DIR, name);
+  if (/\.(jpe?g|png|webp)$/i.test(name) && existsSync(direct)) return direct;
   for (const ext of ["jpg", "jpeg", "png", "webp"]) {
-    const file = path.join(PHOTOS_DIR, `${key}.${ext}`);
+    const file = path.join(PHOTOS_DIR, `${name}.${ext}`);
     if (existsSync(file)) return file;
   }
   return null;
@@ -92,6 +103,16 @@ async function main() {
   console.log(`\n${APPLY ? "── چسباندن عکس ──" : "── پیش‌نمایش (چیزی نوشته نشد) ──"}\n`);
   console.log(`  ${available} عکس در ${PHOTOS_DIR}/ · ${plan.families.length} خانواده در نقشه\n`);
 
+  /*
+    چند خانواده می‌توانند به یک فایل اشاره کنند. کلید این حافظه مسیر فایل است
+    نه کلید خانواده، وگرنه همان عکس برای هر خانواده یک بار دوباره پردازش
+    می‌شد — و برداشتن پس‌زمینه گران‌ترین قدم این اسکریپت است.
+  */
+  const processed = new Map<
+    string,
+    { source: Buffer; display: Buffer; backdrop: string; width: number; height: number }
+  >();
+
   let attached = 0;
   let skipped = 0;
   let missing = 0;
@@ -100,7 +121,7 @@ async function main() {
   for (const family of plan.families) {
     if (ONLY && family.key !== ONLY) continue;
 
-    const photo = findPhoto(family.key);
+    const photo = findPhoto(family.key, family.photo);
     if (!photo) {
       missing += family.productCount;
       continue;
@@ -111,16 +132,27 @@ async function main() {
       می‌رود. برداشتن پس‌زمینه گران‌ترین قدم است و انجامش به ازای هر محصول،
       همان کار را بیست بار تکرار می‌کرد.
     */
-    const source = readFileSync(photo);
-    const rendered = await sharp(source)
-      .rotate()
-      .resize({ width: DISPLAY_WIDTH, withoutEnlargement: true })
-      .webp({ quality: DISPLAY_QUALITY })
-      .toBuffer({ resolveWithObject: true });
+    let ready = processed.get(photo);
+    if (!ready) {
+      const source = readFileSync(photo);
+      const rendered = await sharp(source)
+        .rotate()
+        .resize({ width: DISPLAY_WIDTH, withoutEnlargement: true })
+        .webp({ quality: DISPLAY_QUALITY })
+        .toBuffer({ resolveWithObject: true });
 
-    const cut = await removeBackdrop(rendered.data, DISPLAY_QUALITY);
-    const display = cut.removed ? cut.data : rendered.data;
-    const backdrop = cut.removed ? "cut" : await detectBackdrop(display);
+      const cut = await removeBackdrop(rendered.data, DISPLAY_QUALITY);
+      const display = cut.removed ? cut.data : rendered.data;
+      ready = {
+        source,
+        display,
+        backdrop: cut.removed ? "cut" : await detectBackdrop(display),
+        width: rendered.info.width,
+        height: rendered.info.height,
+      };
+      processed.set(photo, ready);
+    }
+    const { source, display, backdrop } = ready;
 
     /* کدام محصولات این خانواده هنوز عکس واقعی ندارند */
     const { rows: pending } = await client.query<{ id: string }>(
@@ -136,7 +168,7 @@ async function main() {
     if (pending.length === 0) continue;
 
     touched.push(
-      `${String(pending.length).padStart(4)}  ${cut.removed ? "بریده" : backdrop === "light" ? "روشن " : "تیره "}  ${family.label}`,
+      `${String(pending.length).padStart(4)}  ${backdrop === "cut" ? "بریده" : backdrop === "light" ? "روشن " : "تیره "}  ${family.label}`,
     );
     attached += pending.length;
 
@@ -177,8 +209,8 @@ async function main() {
             product.id,
             `/media/${prefix}/detail.webp`,
             prefix,
-            rendered.info.width,
-            rendered.info.height,
+            ready.width,
+            ready.height,
             backdrop,
           ],
         );
