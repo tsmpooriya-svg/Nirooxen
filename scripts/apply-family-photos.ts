@@ -15,6 +15,7 @@
  *      npm run photos:plan                 نقشه را بساز
  *      npm run photos:apply                پیش‌نمایش
  *      npm run photos:apply -- --apply     اعمال
+ *      npm run photos:apply:repo           همان، روی عکس‌های داخل مخزن کد
  *      ... --replace                       عکس واقعیِ موجود را هم عوض کن
  *      ... --family=<key>                  فقط یک خانواده
  * =============================================================================
@@ -42,6 +43,10 @@ const APPLY = argv.includes("--apply");
 const REPLACE = argv.includes("--replace");
 const ONLY = argv.find((a) => a.startsWith("--family="))?.slice("--family=".length);
 const PHOTOS_DIR = process.env.PHOTOS_DIR ?? "photos";
+/* عکس‌های تأییدشده در مخزن کد، اسکریپت دیگری نیست — همین است با PHOTOS_DIR
+   دیگر. راهنمای پایانی باید همان دستوری را بگوید که کاربر زده، نه دستور
+   پیش‌فرض را، وگرنه اجرای واقعی سراغ پوشهٔ اشتباه می‌رود. */
+const RUN = PHOTOS_DIR === "product-photos" ? "photos:apply:repo" : "photos:apply";
 
 type Plan = {
   families: {
@@ -241,7 +246,7 @@ async function main() {
   line("عکس خانواده‌اش موجود نیست", missing);
 
   if (!APPLY) {
-    console.log(`\n  برای اجرای واقعی:  npm run photos:apply -- --apply\n`);
+    console.log(`\n  برای اجرای واقعی:  npm run ${RUN} -- --apply\n`);
   } else {
     console.log(`\n  ✓ انجام شد. برای دیده شدن: npm run build && sudo systemctl restart nirooxen\n`);
   }
