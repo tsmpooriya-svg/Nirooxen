@@ -21,6 +21,7 @@
     "db:seed": "node scripts/guard-destructive.mjs db:seed && tsx src/db/seed.ts",
     "bootstrap:admin": "tsx scripts/create-admin.ts",
     "sms:test": "tsx scripts/send-test-sms.ts",
+    "sms:report": "tsx scripts/sms-report.ts",
     "placeholders": "node scripts/generate-placeholders.mjs",
     "db:specs": "node scripts/guard-destructive.mjs db:specs && tsx scripts/backfill-specs.mjs",
     "db:specs:dry": "tsx scripts/backfill-specs.mjs --dry-run",

@@ -46,8 +46,30 @@ export function smsConfigured(): boolean {
   return PROVIDER === "smsir" && API_KEY.length > 0 && LINE.length > 0 && recipients().length > 0;
 }
 
-/** آنچه از پاسخ سرویس می‌خوانیم؛ بقیهٔ فیلدها برایمان مهم نیستند */
-type SmsIrReply = { status?: number; message?: string };
+/**
+ * آنچه از پاسخ سرویس می‌خوانیم.
+ *
+ * `data` عمداً باز گذاشته شده: در پذیرشِ موفق، شناسهٔ بستهٔ ارسال و هزینه
+ * آنجاست و همان‌ها تنها سرنخ برای پیگیری پیامکی‌اند که پذیرفته شده ولی نرسیده.
+ */
+type SmsIrReply = { status?: number; message?: string; data?: unknown };
+
+/**
+ * نتیجهٔ ارسال.
+ *
+ * فراخوان‌های واقعی (ثبت سفارش، پیام تماس) نادیده‌اش می‌گیرند — برایشان اعلان
+ * کاری است که یا می‌شود یا نمی‌شود. اسکریپت آزمایش اما باید بتواند پاسخ خام را
+ * نشان بدهد: «پذیرفته شد» و «رسید» دو چیزند، و فرقشان فقط از همین بدنه پیداست.
+ */
+export type SmsResult = {
+  ok: boolean;
+  /** خالی یعنی اصلاً تنظیم نشده و ارسالی در کار نبوده */
+  attempted: boolean;
+  code?: number;
+  detail?: string;
+  /** بدنهٔ خام پاسخ، برای وقتی که پذیرش موفق بوده ولی پیامکی نرسیده */
+  raw?: string;
+};
 
 /**
  * راهنمای کوتاه برای پاسخ‌هایی که بیشتر در راه‌اندازی دیده می‌شوند.
@@ -67,8 +89,8 @@ const HINTS: Record<number, string> = {
  * مهلت هشت ثانیه دارد: کندی سرویس پیامک نباید صف کارهای پس‌زمینهٔ سرور را
  * بگیرد. کلید API هرگز در لاگ نوشته نمی‌شود — در هدر می‌رود، نه در نشانی.
  */
-export async function notifyStaff(message: string): Promise<void> {
-  if (!smsConfigured()) return;
+export async function notifyStaff(message: string): Promise<SmsResult> {
+  if (!smsConfigured()) return { ok: false, attempted: false };
 
   try {
     const response = await fetch(`${API_BASE}/v1/send/bulk`, {
@@ -103,7 +125,9 @@ export async function notifyStaff(message: string): Promise<void> {
     }
 
     // در sms.ir موفقیت یعنی status === 1، نه 200
-    if (payload?.status === 1) return;
+    if (payload?.status === 1) {
+      return { ok: true, attempted: true, code: 1, detail: payload.message?.trim(), raw };
+    }
 
     const code = payload?.status ?? response.status;
     const detail = payload?.message?.trim() || raw.trim().slice(0, 200) || "بدون توضیح";
@@ -111,10 +135,29 @@ export async function notifyStaff(message: string): Promise<void> {
     console.error(
       `[notify] سرویس پیامک نپذیرفت — کد ${code}: ${detail}` + (hint ? `\n          ${hint}` : ""),
     );
+    return { ok: false, attempted: true, code, detail, raw };
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     console.error(`[notify] ارسال پیامک انجام نشد: ${reason}`);
+    return { ok: false, attempted: true, detail: reason };
   }
+}
+
+/**
+ * وضعیت رساندن یک بستهٔ ارسال.
+ *
+ * «پذیرفته شد» یعنی سرویس پیام را گرفت؛ «رسید» چیز دیگری است و ممکن است ساعت‌ها
+ * بعد یا هرگز اتفاق نیفتد — خط تبلیغاتی به شماره‌ای که پیامک تبلیغاتی را مسدود
+ * کرده تحویل نمی‌شود، و پذیرش هم همان لحظه موفق گزارش می‌شود. تنها راه فهمیدنش
+ * پرسیدن از خود سرویس است.
+ */
+export async function deliveryReport(packId: string): Promise<{ status: number; body: string }> {
+  const response = await fetch(`${API_BASE}/v1/send/pack/${encodeURIComponent(packId)}`, {
+    headers: { Accept: "application/json", "X-API-KEY": API_KEY },
+    signal: AbortSignal.timeout(8000),
+    cache: "no-store",
+  });
+  return { status: response.status, body: await response.text() };
 }
 
 /** ارقام لاتین برای شماره‌ای که باید قابل شماره‌گیری بماند */
