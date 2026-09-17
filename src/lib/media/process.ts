@@ -3,6 +3,7 @@ import "server-only";
 import sharp, { type Metadata } from "sharp";
 
 import { detectBackdrop, type Backdrop } from "./backdrop";
+import { removeBackdrop } from "./cutout";
 
 /**
  * اعتبارسنجی و بهینه‌سازی تصویر آپلودشده.
@@ -87,7 +88,12 @@ export type ProcessedImage = {
   /** ابعاد همان نسخهٔ تحویلی — نه تصویر اصلی؛ این‌ها فایلی را توصیف می‌کنند که url به آن اشاره دارد */
   width: number;
   height: number;
-  /** روشن یا تیره بودن پس‌زمینه — تعیین می‌کند قاب نقشه‌کشی با عکس ترکیب شود یا نه */
+  /**
+   * وضعیت پس‌زمینه:
+   *   cut   — برداشته شد؛ تصویر شفاف است و مستقیم روی قاب می‌نشیند
+   *   light — برداشته نشد ولی روشن است؛ با ترکیب multiply پنهان می‌شود
+   *   dark  — هیچ‌کدام؛ تصویر همان‌طور که هست نمایش داده می‌شود
+   */
   backdrop: Backdrop;
 };
 
@@ -155,11 +161,19 @@ export async function processUpload(buffer: Buffer): Promise<ProcessedImage> {
   }
 
   /*
-    روی نسخهٔ تحویلی سنجیده می‌شود، نه اصلی: همان است که کاربر می‌بیند، و
-    کوچک‌تر هم هست. اگر نشد، detectBackdrop خودش «dark» می‌دهد — یعنی بدون
-    ترکیب، که هیچ‌وقت بد به نظر نمی‌رسد.
+    اول تلاش می‌کنیم پس‌زمینه را واقعاً برداریم؛ نتیجه‌اش از هر ترفند ترکیبی
+    بهتر است، چون تصویر شفاف روی هر زمینه‌ای می‌نشیند. removeBackdrop خودش
+    محافظه‌کار است و اگر مطمئن نباشد دست نمی‌زند — آن‌وقت به همان راه قبلی
+    برمی‌گردیم و فقط روشن یا تیره بودن پس‌زمینه را ثبت می‌کنیم.
   */
-  const backdrop = await detectBackdrop(display);
+  const cut = await removeBackdrop(display, DISPLAY_QUALITY);
+  let backdrop: Backdrop;
+  if (cut.removed) {
+    display = cut.data;
+    backdrop = "cut";
+  } else {
+    backdrop = await detectBackdrop(display);
+  }
 
   return {
     mime,

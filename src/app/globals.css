@@ -1363,8 +1363,21 @@ html:has(.ember-scope),
   ضرب در سفید یعنی «دست نزن»: پس‌زمینهٔ سفیدِ عکس ناپدید می‌شود و شبکه از زیرش
   بیرون می‌زند، بی‌آنکه لازم باشد پس‌زمینهٔ تک‌تک عکس‌ها حذف شود.
 */
-.product-plate[data-blend="multiply"] img {
+.product-plate[data-fit="multiply"] img {
   mix-blend-mode: multiply;
+}
+
+/*
+  تصویری که پس‌زمینه‌اش برداشته شده روی هر زمینه‌ای می‌نشیند، پس در تم تیره قاب
+  هم واقعاً تیره می‌شود. تصویرِ ترکیبی این آزادی را ندارد — multiply روی زمینهٔ
+  تیره کل عکس را سیاه می‌کند — و قاب روشن خودش را نگه می‌دارد.
+*/
+:root:not([data-theme="light"]) .product-plate[data-fit="alpha"] {
+  /* یک پله روشن‌تر از سطح کارت، تا محصول تیره در قاب گم نشود */
+  --plate-from: var(--graphite-800);
+  --plate-to: var(--graphite-750);
+  --plate-grid: rgb(34 188 214 / 0.07);
+  --plate-glow: rgb(0 166 192 / 0.16);
 }
 
 /*
@@ -1375,7 +1388,7 @@ html:has(.ember-scope),
   .product-plate {
     background: Canvas;
   }
-  .product-plate[data-blend="multiply"] img {
+  .product-plate[data-fit="multiply"] img {
     mix-blend-mode: normal;
   }
 }

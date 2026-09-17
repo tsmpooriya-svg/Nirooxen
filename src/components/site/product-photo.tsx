@@ -31,14 +31,23 @@ export function isIllustration(url: string): boolean {
 }
 
 /**
- * قاب با عکس ترکیب شود یا فقط پشتش بنشیند؟
+ * عکس چطور روی قاب بنشیند؟
  *
- * ترکیب فقط با تأیید صریح انجام می‌شود. تهی بودن — تصویری که هنوز بررسی نشده —
- * یعنی «نه»، و همان درست است: عکسِ بررسی‌نشده مثل امروز نمایش داده می‌شود، در
- * حالی که ترکیبِ خوش‌بینانه روی عکسی با پس‌زمینهٔ تیره یک مستطیل سیاه می‌سازد.
+ *   plain    — مستطیل خودش را پر می‌کند؛ قاب دیده نمی‌شود
+ *   multiply — پس‌زمینهٔ روشن با ترکیب پنهان می‌شود
+ *   alpha    — پس‌زمینه هنگام آپلود برداشته شده؛ شفافیت خودش کار را کرده
+ *
+ * هر چیزی جز دو مقدار شناخته‌شده «plain» است. تصویری که هنوز بررسی نشده باید
+ * مثل امروز دیده شود، نه اینکه خوش‌بینانه ترکیب شود و روی پس‌زمینهٔ تیره یک
+ * مستطیل سیاه بسازد.
  */
-function blends(url: string, backdrop?: string | null): boolean {
-  return !isIllustration(url) && backdrop === "light";
+type Fit = "plain" | "multiply" | "alpha";
+
+function fitFor(url: string, backdrop?: string | null): Fit {
+  if (isIllustration(url)) return "plain";
+  if (backdrop === "cut") return "alpha";
+  if (backdrop === "light") return "multiply";
+  return "plain";
 }
 
 export function ProductPhoto({
@@ -61,13 +70,12 @@ export function ProductPhoto({
   /** فاصلهٔ عکس از لبه — همان چیزی است که قاب را دیدنی می‌کند */
   pad?: string;
 }) {
-  const art = isIllustration(src);
-  const blend = blends(src, backdrop);
+  const fit = fitFor(src, backdrop);
 
   return (
     <span
       className={cn("product-plate absolute inset-0", className)}
-      data-blend={blend ? "multiply" : undefined}
+      data-fit={fit}
     >
       <Image
         src={src}
@@ -75,8 +83,8 @@ export function ProductPhoto({
         fill
         priority={priority}
         sizes={sizes}
-        className={cn(art || !blend ? "object-cover" : "object-contain", imageClassName)}
-        style={art || !blend ? undefined : { padding: pad }}
+        className={cn(fit === "plain" ? "object-cover" : "object-contain", imageClassName)}
+        style={fit === "plain" ? undefined : { padding: pad }}
       />
     </span>
   );
@@ -99,18 +107,18 @@ export function ProductThumb({
   backdrop?: string | null;
   className?: string;
 }) {
-  const blend = blends(src, backdrop);
+  const fit = fitFor(src, backdrop);
   return (
     <span
       className={cn("product-plate shrink-0 border border-[var(--border-hairline)]", className)}
-      data-blend={blend ? "multiply" : undefined}
+      data-fit={fit}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}
         alt=""
         loading="lazy"
-        className={cn("size-full", blend ? "object-contain p-[7%]" : "object-cover")}
+        className={cn("size-full", fit === "plain" ? "object-cover" : "object-contain p-[7%]")}
       />
     </span>
   );

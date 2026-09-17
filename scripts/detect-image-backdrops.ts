@@ -51,6 +51,11 @@ async function main() {
   const client = new Client({ connectionString: process.env.DATABASE_URL });
   await client.connect();
 
+  /*
+    تصویری که پس‌زمینه‌اش هنگام آپلود برداشته شده دوباره سنجیده نمی‌شود: فایلش
+    شفاف است و detectBackdrop روی شفافیتِ سفیدشده جواب «روشن» می‌دهد، که پرچم
+    درست را خراب می‌کرد.
+  */
   const { rows } = await client.query<{
     id: string;
     url: string;
@@ -60,6 +65,7 @@ async function main() {
     `select id, url, storage_key, backdrop
        from product_images
       where url not like '%.svg'
+        and coalesce(backdrop, '') <> 'cut'
         ${ALL ? "" : "and backdrop is null"}
       order by url`,
   );
@@ -67,7 +73,7 @@ async function main() {
   console.log(`\n${APPLY ? "── تشخیص پس‌زمینه ──" : "── پیش‌نمایش (چیزی نوشته نشد) ──"}\n`);
   console.log(`  ${rows.length} تصویر برای بررسی\n`);
 
-  const tally = { light: 0, dark: 0, missing: 0 };
+  const tally = { cut: 0, light: 0, dark: 0, missing: 0 };
 
   for (const row of rows) {
     const file = fileFor(row.url, row.storage_key);
@@ -93,6 +99,7 @@ async function main() {
   }
 
   const line = (k: string, v: number) => console.log(`  ${k.padEnd(28, "·")} ${v}`);
+  if (tally.cut > 0) line("پس‌زمینه برداشته‌شده", tally.cut);
   line("پس‌زمینهٔ روشن (ترکیب می‌شود)", tally.light);
   line("پس‌زمینهٔ تیره (بدون ترکیب)", tally.dark);
   line("فایلش پیدا نشد", tally.missing);
