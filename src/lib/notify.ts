@@ -10,11 +10,13 @@
  *  بلعیده و لاگ می‌شود؛ درخواست مشتری در هر حال ثبت شده است و پنل همیشه منبع
  *  حقیقت می‌ماند.
  *
+ *  سرویس: sms.ir — ارسال گروهی روی خط اختصاصی حساب.
+ *
  *  تنظیمات (در /etc/nirooxen/nirooxen.env):
- *      SMS_PROVIDER=kavenegar
- *      KAVENEGAR_API_KEY=…
- *      SMS_SENDER=…            اختیاری — خط اختصاصی؛ خالی یعنی خط پیش‌فرض پنل
- *      SMS_RECIPIENTS=0912…,0913…   شماره‌هایی که باید خبردار شوند
+ *      SMS_PROVIDER=smsir
+ *      SMSIR_API_KEY=…             از پنل sms.ir ← توسعه‌دهندگان ← کلید API
+ *      SMS_LINE=3000…              شمارهٔ خطی که روی حساب فعال است
+ *      SMS_RECIPIENTS=0912…,0913…  شماره‌هایی که باید خبردار شوند
  *
  *  اگر تنظیم نشده باشد، بی‌صدا کاری نمی‌کند. سایت بدون آن هم کامل کار می‌کند.
  * =============================================================================
@@ -22,10 +24,10 @@
 
 /** هیچ‌کدام NEXT_PUBLIC_ نیستند، پس روی کلاینت خالی‌اند و چیزی لو نمی‌رود */
 const PROVIDER = (process.env.SMS_PROVIDER ?? "").trim().toLowerCase();
-const API_KEY = (process.env.KAVENEGAR_API_KEY ?? "").trim();
-const SENDER = (process.env.SMS_SENDER ?? "").trim();
+const API_KEY = (process.env.SMSIR_API_KEY ?? "").trim();
+const LINE = (process.env.SMS_LINE ?? "").trim();
 /** فقط برای آزمایش با یک سرویس ساختگی؛ در production خالی می‌ماند */
-const API_BASE = (process.env.SMS_API_BASE ?? "https://api.kavenegar.com").replace(/\/$/, "");
+const API_BASE = (process.env.SMS_API_BASE ?? "https://api.sms.ir").replace(/\/$/, "");
 
 /** شماره‌ها با کاما جدا می‌شوند؛ فاصله و خط تیره نادیده گرفته می‌شود */
 function recipients(): string[] {
@@ -35,49 +37,80 @@ function recipients(): string[] {
     .filter(Boolean);
 }
 
+/**
+ * خط ارسال هم شرط است، نه اختیاری: sms.ir بدون آن ارسال گروهی را نمی‌پذیرد.
+ * اگر جزو شرط‌ها نبود، نبودش به‌جای «تنظیم‌نشده» به شکل خطای هر بار ارسال
+ * ظاهر می‌شد.
+ */
 export function smsConfigured(): boolean {
-  return PROVIDER === "kavenegar" && API_KEY.length > 0 && recipients().length > 0;
+  return PROVIDER === "smsir" && API_KEY.length > 0 && LINE.length > 0 && recipients().length > 0;
 }
+
+/** آنچه از پاسخ سرویس می‌خوانیم؛ بقیهٔ فیلدها برایمان مهم نیستند */
+type SmsIrReply = { status?: number; message?: string };
+
+/**
+ * راهنمای کوتاه برای پاسخ‌هایی که بیشتر در راه‌اندازی دیده می‌شوند.
+ *
+ * متن خودِ سرویس می‌گوید «چه چیزی» رد شده؛ این می‌گوید کدام تنظیم را باید
+ * عوض کرد. فهرست عمداً کوتاه است — کدی که اینجا نیست با پیام خودش چاپ می‌شود.
+ */
+const HINTS: Record<number, string> = {
+  401: "کلید API پذیرفته نشد — SMSIR_API_KEY را از پنل sms.ir ← توسعه‌دهندگان دوباره بردارید.",
+  403: "دسترسی رد شد — اگر در پنل «محدودیت IP» فعال است، IP این سرور را آنجا اضافه کنید.",
+  429: "درخواست بیش از حد مجاز — کمی بعد دوباره.",
+};
 
 /**
  * ارسال پیامک به شماره‌های تیم.
  *
  * مهلت هشت ثانیه دارد: کندی سرویس پیامک نباید صف کارهای پس‌زمینهٔ سرور را
- * بگیرد. کلید API هرگز در لاگ نوشته نمی‌شود.
+ * بگیرد. کلید API هرگز در لاگ نوشته نمی‌شود — در هدر می‌رود، نه در نشانی.
  */
 export async function notifyStaff(message: string): Promise<void> {
   if (!smsConfigured()) return;
 
-  const to = recipients();
-  const url = `${API_BASE}/v1/${encodeURIComponent(API_KEY)}/sms/send.json`;
-
-  const body = new URLSearchParams({ receptor: to.join(","), message });
-  if (SENDER) body.set("sender", SENDER);
-
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${API_BASE}/v1/send/bulk`, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-API-KEY": API_KEY,
+      },
+      body: JSON.stringify({
+        lineNumber: LINE,
+        messageText: message,
+        mobiles: recipients(),
+      }),
       signal: AbortSignal.timeout(8000),
       cache: "no-store",
     });
 
-    if (!response.ok) {
-      console.error(`[notify] سرویس پیامک پاسخ ${response.status} داد`);
-      return;
+    /*
+      خطاها گاهی در وضعیت HTTP می‌نشینند (کلید غلط، IP مسدود) و گاهی با HTTP 200
+      و یک کد داخلی برمی‌گردند (اعتبار تمام‌شده، خط نامعتبر، متن مسدود). در هر دو
+      حالت دلیلِ خواندنی در بدنه است، پس بدنه یک بار به‌صورت متن خوانده می‌شود و
+      هر دو مسیر از همان می‌خوانند. اگر فقط عدد وضعیت چاپ می‌شد، اپراتور با یک
+      ۴۰۳ بی‌توضیح تنها می‌ماند و باید حدس می‌زد کدام تنظیم غلط است.
+    */
+    const raw = await response.text();
+    let payload: SmsIrReply | null = null;
+    try {
+      payload = JSON.parse(raw) as SmsIrReply;
+    } catch {
+      /* سرویس گاهی در خطا HTML یا متن خام می‌دهد؛ همان را نشان می‌دهیم */
     }
 
-    /*
-      کاوه‌نگار خطاهای دامنه‌ای — اعتبار تمام‌شده، شمارهٔ نامعتبر، متن مسدود —
-      را با HTTP 200 و کد داخلی برمی‌گرداند. بدون خواندن همان کد، شکستِ ارسال
-      موفقیت به‌نظر می‌رسد.
-    */
-    const payload = (await response.json()) as { return?: { status?: number; message?: string } };
-    const status = payload?.return?.status;
-    if (status !== 200) {
-      console.error(`[notify] سرویس پیامک نپذیرفت — کد ${status}: ${payload?.return?.message ?? "?"}`);
-    }
+    // در sms.ir موفقیت یعنی status === 1، نه 200
+    if (payload?.status === 1) return;
+
+    const code = payload?.status ?? response.status;
+    const detail = payload?.message?.trim() || raw.trim().slice(0, 200) || "بدون توضیح";
+    const hint = HINTS[response.status];
+    console.error(
+      `[notify] سرویس پیامک نپذیرفت — کد ${code}: ${detail}` + (hint ? `\n          ${hint}` : ""),
+    );
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     console.error(`[notify] ارسال پیامک انجام نشد: ${reason}`);

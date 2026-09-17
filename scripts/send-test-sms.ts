@@ -19,8 +19,9 @@ if (!smsConfigured()) {
   console.error(
     "\n✖ پیامک تنظیم نشده است.\n" +
       "  در /etc/nirooxen/nirooxen.env این‌ها لازم‌اند:\n" +
-      "     SMS_PROVIDER=kavenegar\n" +
-      "     KAVENEGAR_API_KEY=…\n" +
+      "     SMS_PROVIDER=smsir\n" +
+      "     SMSIR_API_KEY=…\n" +
+      "     SMS_LINE=3000…\n" +
       "     SMS_RECIPIENTS=09…\n",
   );
   process.exit(1);
@@ -31,8 +32,8 @@ await notifyStaff(`نیروکسن | پیام آزمایشی · ${stamp}`);
 
 console.log(
   "\n✓ درخواست ارسال شد.\n" +
-    "  اگر پیامکی نرسید، خطوط [notify] در خروجی بالا را ببینید —\n" +
-    "  سرویس پیامک خطاهایش را با کد ۲۰۰ برمی‌گرداند و همان‌جا چاپ می‌شود.\n",
+    "  اگر پیامکی نرسید، خطوط [notify] در خروجی بالا را ببینید — کد و دلیلِ\n" +
+    "  خودِ سرویس آنجا چاپ می‌شود، همراه با اینکه کدام تنظیم را باید عوض کرد.\n",
 );
 }
 
