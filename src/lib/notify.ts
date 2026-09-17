@@ -95,8 +95,41 @@ export type SmsResult = {
   attempted: boolean;
   method?: "verify" | "bulk";
   /** یک ردیف به ازای هر درخواستی که رفت */
-  sends: { to?: string; ok: boolean; code?: number; detail?: string; raw: string }[];
+  sends: {
+    to?: string;
+    ok: boolean;
+    code?: number;
+    detail?: string;
+    raw: string;
+    /** نشانی و سرآیندهایی که هویت پاسخ‌دهنده را نشان می‌دهند */
+    url?: string;
+    httpStatus?: number;
+    server?: string | null;
+    date?: string | null;
+  }[];
 };
+
+/**
+ * تنظیمات مؤثر، برای وقتی که پاسخ سرویس با واقعیت نمی‌خواند.
+ *
+ * وجودش از یک بن‌بست واقعی آمد: سرویس status=1 می‌داد و در پنل هیچ رکوردی
+ * ثبت نمی‌شد. هیچ راهی نبود که ببینیم درخواست واقعاً به کدام نشانی و با کدام
+ * شناسهٔ قالب رفته — و همان دو تا بودند که باید بررسی می‌شدند.
+ *
+ * کلید فقط با چند نویسهٔ ابتدا و انتها نشان داده می‌شود: آن‌قدر که بشود دو
+ * کلید را از هم تشخیص داد، نه آن‌قدر که در لاگ یا گفت‌وگو به کار کسی بیاید.
+ */
+export function smsDiagnostics() {
+  return {
+    base: API_BASE,
+    provider: PROVIDER,
+    key: API_KEY ? `${API_KEY.slice(0, 4)}…${API_KEY.slice(-4)} (${API_KEY.length} نویسه)` : "—",
+    templateOrder: TEMPLATES.order || "—",
+    templateContact: TEMPLATES.contact || "—",
+    line: LINE || "—",
+    recipients: recipients(),
+  };
+}
 
 /**
  * راهنمای کوتاه برای پاسخ‌هایی که بیشتر در راه‌اندازی دیده می‌شوند.
@@ -117,8 +150,9 @@ async function post(
   body: unknown,
   to?: string,
 ): Promise<SmsResult["sends"][number]> {
+  const url = `${API_BASE}${path}`;
   try {
-    const response = await fetch(`${API_BASE}${path}`, {
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -145,8 +179,15 @@ async function post(
       /* سرویس گاهی در خطا HTML یا متن خام می‌دهد؛ همان را نشان می‌دهیم */
     }
 
+    const where = {
+      url,
+      httpStatus: response.status,
+      server: response.headers.get("server"),
+      date: response.headers.get("date"),
+    };
+
     // در sms.ir موفقیت یعنی status === 1، نه 200
-    if (payload?.status === 1) return { to, ok: true, code: 1, raw };
+    if (payload?.status === 1) return { to, ok: true, code: 1, raw, ...where };
 
     const code = payload?.status ?? response.status;
     const detail = payload?.message?.trim() || raw.trim().slice(0, 200) || "بدون توضیح";
@@ -155,11 +196,11 @@ async function post(
       `[notify] سرویس پیامک نپذیرفت${to ? ` (${to})` : ""} — کد ${code}: ${detail}` +
         (hint ? `\n          ${hint}` : ""),
     );
-    return { to, ok: false, code, detail, raw };
+    return { to, ok: false, code, detail, raw, ...where };
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     console.error(`[notify] ارسال پیامک انجام نشد${to ? ` (${to})` : ""}: ${reason}`);
-    return { to, ok: false, detail: reason, raw: "" };
+    return { to, ok: false, detail: reason, raw: "", url };
   }
 }
 

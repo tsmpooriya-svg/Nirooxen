@@ -17,7 +17,7 @@
  */
 import "dotenv/config";
 
-import { notifyStaff, smsConfigured, testMessage } from "../src/lib/notify";
+import { notifyStaff, smsConfigured, smsDiagnostics, testMessage } from "../src/lib/notify";
 
 // tsx این فایل را به CommonJS ترجمه می‌کند و آنجا await سطح بالا مجاز نیست
 async function main() {
@@ -34,6 +34,19 @@ async function main() {
     process.exit(1);
   }
 
+  /*
+    تنظیمات مؤثر پیش از ارسال چاپ می‌شود، نه بعدش. وقتی سرویس «موفق» می‌گوید و
+    پنل هیچ رکوردی ندارد، نخستین چیزی که باید دید همین است: درخواست به کجا رفت
+    و با کدام شناسهٔ قالب. بدون این، حدس‌زدن جای بررسی را می‌گیرد.
+  */
+  const config = smsDiagnostics();
+  console.log("\n── تنظیمات مؤثر ──");
+  console.log(`  نشانی سرویس      ${config.base}`);
+  console.log(`  کلید API         ${config.key}`);
+  console.log(`  قالب سفارش       ${config.templateOrder}`);
+  console.log(`  قالب پیام تماس   ${config.templateContact}`);
+  console.log(`  گیرنده‌ها         ${config.recipients.join("، ")}`);
+
   const result = await notifyStaff(testMessage());
   console.log(`\n── مسیر ارسال: ${result.method === "verify" ? "قالب (Verify)" : "انبوه (Bulk)"} ──`);
 
@@ -47,7 +60,10 @@ async function main() {
 
   const ids: string[] = [];
   for (const send of result.sends) {
-    console.log(`\n── پاسخ خام${send.to ? ` برای ${send.to}` : ""} ──`);
+    console.log(`\n── پاسخ${send.to ? ` برای ${send.to}` : ""} ──`);
+    console.log(`  ${send.url}  →  HTTP ${send.httpStatus ?? "—"}`);
+    if (send.server) console.log(`  سرور پاسخ‌دهنده: ${send.server}`);
+    if (send.date) console.log(`  تاریخ پاسخ: ${send.date}`);
     console.log(pretty(send.raw));
     const id = trackingId(send.raw);
     if (id) ids.push(id);
