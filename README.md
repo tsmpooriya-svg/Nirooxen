@@ -525,8 +525,12 @@ npm run sms:report -- <packId>   # آن ارسال رسید یا فقط پذیر
 ### عکس از کاتالوگ PDF برندها
 
 ```bash
-pip install pymupdf                                   # یک بار
-python3 scripts/extract-catalog-photos.py catalogs/*.pdf --plan photo-plan.json
+# یک بار — روی اوبونتو ۲۴ نصب سیستمی با pip مسدود است (PEP 668)
+sudo apt install -y python3-venv
+python3 -m venv .venv-pdf
+.venv-pdf/bin/pip install pymupdf
+
+.venv-pdf/bin/python scripts/extract-catalog-photos.py catalogs/*.pdf --plan photo-plan.json
 ```
 
 گلوگاه عکس‌دار کردن کاتالوگ «نبودن عکس» نیست، «پیدا کردنش» است. عکس این
@@ -546,7 +550,9 @@ python3 scripts/extract-catalog-photos.py catalogs/*.pdf --plan photo-plan.json
 همان خانواده ذخیره می‌شود. تطبیق‌نشده‌ها با نام صفحه ذخیره می‌شوند و
 `index.json` متنِ کنارشان را دارد تا دستی تطبیق داده شوند.
 
-**پایتون لازم دارد** و این تنها جای پروژه است که چنین وابستگی‌ای دارد. دلیلش
+این اسکریپت لازم نیست روی سرور اجرا شود — هر جایی که PDFها هستند کافی است، و
+خروجی فقط چند فایل PNG است. **پایتون لازم دارد** و این تنها جای پروژه است که
+چنین وابستگی‌ای دارد. دلیلش
 این است که کتابخانه‌های PDF در Node ماسک نرم را نگه نمی‌دارند و همان ماسک
 تمام ارزش این کار است. اسکریپت آفلاین و یک‌باره است و به اجرای سایت ربطی
 ندارد.

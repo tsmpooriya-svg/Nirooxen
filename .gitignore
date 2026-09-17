@@ -59,3 +59,7 @@ next-env.d.ts
 # فایل‌های کاری اپراتور برای عکس محصولات
 /photos/
 /photo-plan.json
+
+# محیط مجازی استخراج عکس از PDF
+/.venv-pdf/
+/photos-raw/

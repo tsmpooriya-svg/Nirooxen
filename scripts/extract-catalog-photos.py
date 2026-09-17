@@ -15,7 +15,14 @@
 
  پس صافی اصلی «تصویری که ماسک دارد» است، نه حدس زدن از روی اندازه یا رنگ.
 
- وابستگی:  pip install pymupdf
+ وابستگی: pymupdf — و روی اوبونتو ۲۴ باید در محیط مجازی نصب شود، چون
+ نصب سیستمی با pip آنجا مسدود است (PEP 668):
+
+     sudo apt install -y python3-venv
+     python3 -m venv .venv-pdf
+     .venv-pdf/bin/pip install pymupdf
+     .venv-pdf/bin/python scripts/extract-catalog-photos.py …
+
  اجرا:
      python3 scripts/extract-catalog-photos.py catalogs/*.pdf
      ... --out photos-raw          پوشهٔ خروجی (پیش‌فرض photos-raw)
@@ -39,7 +46,15 @@ from pathlib import Path
 try:
     import pymupdf
 except ImportError:
-    sys.exit("✖ pymupdf نصب نیست.  pip install pymupdf")
+    sys.exit(
+        "\n✖ pymupdf نصب نیست.\n\n"
+        "  روی اوبونتو ۲۴ نصب سیستمی با pip مسدود است، پس محیط مجازی بسازید:\n\n"
+        "     sudo apt install -y python3-venv\n"
+        "     python3 -m venv .venv-pdf\n"
+        "     .venv-pdf/bin/pip install pymupdf\n\n"
+        "  بعد به‌جای python3، از .venv-pdf/bin/python استفاده کنید:\n\n"
+        "     .venv-pdf/bin/python scripts/extract-catalog-photos.py <کاتالوگ.pdf>\n"
+    )
 
 # کوچک‌تر از این، آیکون است نه عکس محصول
 MIN_PIXELS = 40_000
