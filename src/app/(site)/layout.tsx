@@ -3,6 +3,7 @@ import { LoadingScreen, loaderGateScript } from "@/components/site/loading-scree
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { SiteSettingsProvider } from "@/components/site/settings-provider";
+import { ViewTracker } from "@/components/site/view-tracker";
 import { ThemeHint } from "@/components/theme-provider";
 import { JsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { getCategoryTree } from "@/modules/catalog/queries";
@@ -31,6 +32,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       >
         رفتن به محتوای اصلی
       </a>
+
+      <ViewTracker />
 
       <SiteSettingsProvider settings={settings}>
         <SiteHeader categories={categories} settings={settings} />

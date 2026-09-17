@@ -36,6 +36,13 @@
       "when": 1789612275554,
       "tag": "0004_blue_moonstone",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1789669233179,
+      "tag": "0005_light_xavin",
+      "breakpoints": true
     }
   ]
 }

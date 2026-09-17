@@ -82,4 +82,6 @@ export async function readTextWithLimit(request: Request, maxBytes: number): Pro
 export const BODY_LIMITS = {
   /** یک ایمیل در JSON؛ چند کیلوبایت هم سخاوتمندانه است */
   subscribe: 8 * 1024,
+  /** یک مسیر و یک ارجاع‌دهنده */
+  view: 4 * 1024,
 } as const;

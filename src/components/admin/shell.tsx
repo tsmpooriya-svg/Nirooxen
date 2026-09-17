@@ -121,6 +121,12 @@ const navGroups: { label: string; items: NavItem[] }[] = [
         icon: icon("M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM8.6 2.8h2.8l.4 2 1.7 1 1.9-.7 1.4 2.4-1.5 1.3v2l1.5 1.3-1.4 2.4-1.9-.7-1.7 1-.4 2H8.6l-.4-2-1.7-1-1.9.7-1.4-2.4L4.7 12v-2L3.2 8.7l1.4-2.4 1.9.7 1.7-1z"),
       },
       {
+        href: "/admin/analytics",
+        title: "آمار بازدید",
+        permission: "logs",
+        icon: icon("M3.5 16.5V9M8 16.5V4M12.5 16.5v-5M17 16.5V7"),
+      },
+      {
         href: "/admin/logs",
         title: "لاگ فعالیت‌ها",
         permission: "logs",

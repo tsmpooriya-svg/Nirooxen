@@ -959,6 +959,50 @@ export const searchQueries = pgTable(
   ],
 );
 
+/**
+ * بازدید صفحه‌ها.
+ *
+ * هدف یک چیز است: بدانیم مردم به چه چیزی نگاه می‌کنند. بدون این، تنها بازخوردی
+ * که از سایت می‌گیریم استعلام‌های ثبت‌شده است — یعنی فقط آن تکه‌ای از ترافیک که
+ * تا انتها رفته، و هیچ خبری از بقیه.
+ *
+ * دو تصمیم عمدی، هر دو به یک دلیل — نباید بشود از این جدول به آدم رسید:
+ *
+ *   • **IP ذخیره نمی‌شود.** ستون visitor یک درهمِ کوتاه از IP و مرورگر است با
+ *     نمکی که هر روز عوض می‌شود. همان بازدیدکننده فردا مقدار دیگری می‌گیرد، پس
+ *     شمارش «چند نفر امروز» ممکن است و دنبال‌کردن کسی در طول زمان ممکن نیست.
+ *     نمک هم جایی صادر نمی‌شود، بنابراین درهم برگشت‌پذیر نیست.
+ *
+ *   • **از ارجاع‌دهنده فقط دامنه.** نشانی کامل می‌تواند عبارت جست‌وجو یا شناسهٔ
+ *     کارزار را با خودش بیاورد؛ برای پاسخ به «از کجا می‌آیند» دامنه کافی است.
+ *
+ * kind از روی مسیر یک بار در لحظهٔ ثبت تعیین می‌شود، نه در گزارش: گزارشی که
+ * مجبور باشد رشته تجزیه کند هم کند است و هم با هر تغییر مسیر می‌شکند.
+ */
+export const pageViews = pgTable(
+  "page_views",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** مسیر بدون کوئری‌استرینگ */
+    path: varchar("path", { length: 200 }).notNull(),
+    /** product | category | news | solution | brand | page */
+    kind: varchar("kind", { length: 16 }).notNull(),
+    /** فقط دامنهٔ ارجاع‌دهنده؛ خالی یعنی ورود مستقیم */
+    referrerHost: varchar("referrer_host", { length: 120 }),
+    /** درهم روزانه — هویت نیست، فقط برای شمارش یکتا در همان روز */
+    visitor: varchar("visitor", { length: 16 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("page_views_created_idx").on(t.createdAt),
+    // گزارش «پربازدیدترین‌ها» همیشه با بازهٔ زمانی همراه است
+    index("page_views_path_idx").on(t.path, t.createdAt),
+    index("page_views_kind_idx").on(t.kind, t.createdAt),
+    index("page_views_visitor_idx").on(t.visitor, t.createdAt),
+    index("page_views_referrer_idx").on(t.referrerHost, t.createdAt),
+  ],
+);
+
 /** شمارنده اتمی برای تولید شماره سفارش بدون تداخل */
 export const counters = pgTable("counters", {
   key: varchar("key", { length: 48 }).primaryKey(),
