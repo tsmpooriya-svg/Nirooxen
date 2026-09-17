@@ -17,6 +17,25 @@ import {
 import { RATE_LIMITS, rateLimit } from "@/lib/rate-limit";
 import { loginSchema, toFieldErrors, type FieldErrors } from "@/lib/validation";
 
+/**
+ * قفل در سطح حساب.
+ *
+ * ده شکست پشت‌سرهم در یک ربع ساعت، حساب را یک ربع می‌بندد.
+ *
+ * هر قفلی در سطح حساب این را هم می‌دهد که کسی می‌تواند عمداً حساب دیگری را
+ * ببندد — ده حدس غلط کافی است. مبادله‌اش آگاهانه است: پانزده دقیقه دردسر است،
+ * نه از کار افتادن، در برابر حمله‌ای که سقف IP اصلاً نمی‌بیندش. به همین دلیل
+ * هم آستانه سخاوتمند است و هم مدت کوتاه.
+ *
+ * سقف IP پایین‌تر از این آستانه است، پس از یک آی‌پی هرگز به قفل نمی‌رسیم —
+ * و لازم هم نیست: آنجا خودِ سقف IP جلو را گرفته. این شمارنده برای وقتی است
+ * که تلاش‌ها از ده آی‌پی مختلف بیایند و هیچ‌کدام به سقف خودشان نرسند.
+ */
+const MAX_FAILURES = 10;
+const LOCK_MINUTES = 15;
+/** شکستی قدیمی‌تر از این، دیگر به شمارش امروز ربطی ندارد */
+const WINDOW_MINUTES = 15;
+
 export type LoginState = {
   status: "idle" | "error";
   message?: string;
@@ -65,17 +84,56 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
   */
   const valid = await verifyPassword(parsed.data.password, user.passwordHash);
   if (!valid) {
+    /*
+      شمارنده پیش از ثبت، بر اساس پنجره بازنشانی می‌شود: ده شکستِ پراکنده در
+      چند ماه نباید همان وزن ده شکست در یک دقیقه را داشته باشد.
+    */
+    const fresh =
+      user.failedLoginAt && Date.now() - user.failedLoginAt.getTime() < WINDOW_MINUTES * 60_000;
+    const count = (fresh ? user.failedLoginCount : 0) + 1;
+    const locked = count >= MAX_FAILURES;
+
+    await db
+      .update(users)
+      .set({
+        failedLoginCount: locked ? 0 : count,
+        failedLoginAt: new Date(),
+        lockedUntil: locked ? new Date(Date.now() + LOCK_MINUTES * 60_000) : user.lockedUntil,
+      })
+      .where(eq(users.id, user.id));
+
     await logActivity({
       userId: user.id,
       action: "login_failed",
       entity: "user",
       entityId: user.id,
-      summary: `رمز عبور نادرست برای ${user.email}`,
+      summary: locked
+        ? `حساب ${user.email} پس از ${MAX_FAILURES} تلاش ناموفق قفل شد`
+        : `رمز عبور نادرست برای ${user.email}`,
     });
     return invalid;
   }
 
-  // رمز درست بوده؛ حالا گفتن دلیل واقعی به صاحب حساب نشتی نیست
+  /*
+    از اینجا به بعد، رمز درست بوده.
+
+    پیام‌های اختصاصی عمداً همین‌جا می‌آیند و نه زودتر: کسی که رمز را می‌داند
+    صاحب حساب است، پس گفتن «قفل است» یا «غیرفعال است» به او چیزی لو نمی‌دهد.
+    اگر همین بررسی‌ها پیش از تأیید رمز بودند، هر کسی با یک رمز دلخواه می‌فهمید
+    که آن ایمیل در سیستم وجود دارد — همان چیزی که پیام یکسانِ بالا برای پنهان
+    کردنش هست.
+
+    قفل، ورودِ با رمزِ درست را هم می‌بندد. اگر نمی‌بست، حمله‌ای که سرانجام رمز
+    را پیدا می‌کرد از قفل رد می‌شد و قفل بی‌معنا بود.
+  */
+  if (user.lockedUntil && user.lockedUntil.getTime() > Date.now()) {
+    const minutes = Math.max(1, Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60_000));
+    return {
+      status: "error",
+      message: `حساب شما به‌دلیل تلاش‌های ناموفق موقتاً قفل است. ${minutes} دقیقه دیگر تلاش کنید.`,
+    };
+  }
+
   if (!user.isActive) {
     await logActivity({
       userId: user.id,
@@ -88,7 +146,11 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
   }
 
   await createSession(user.id);
-  await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id));
+  // ورود موفق، صفحه را پاک می‌کند: شمارنده و قفل هر دو می‌روند
+  await db
+    .update(users)
+    .set({ lastLoginAt: new Date(), failedLoginCount: 0, failedLoginAt: null, lockedUntil: null })
+    .where(eq(users.id, user.id));
   await logActivity({
     userId: user.id,
     action: "login",

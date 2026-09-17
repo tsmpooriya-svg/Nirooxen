@@ -158,6 +158,25 @@ test("پنل بدون ورود در دسترس نیست", async ({ page }) => {
   await expect(page).toHaveURL(/\/admin\/login/);
 });
 
+test("حساب کاربری هم بدون ورود بسته است", async ({ page }) => {
+  // مجوز بخشی ندارد، ولی نباید یعنی «برای همه باز است»
+  await page.goto("/admin/profile");
+  await expect(page).toHaveURL(/\/admin\/login/);
+});
+
+test("هر کاربری به حساب خودش دسترسی دارد", async ({ page }) => {
+  const outcome = await login(page, ADMIN_PASSWORD);
+  test.skip(outcome === "throttled", "محدودکنندهٔ نرخ ورود فعال است — سرور را تازه کنید");
+  expect(outcome).toBe("ok");
+
+  await page.goto("/admin/profile");
+  await expect(page.getByRole("heading", { name: /حساب کاربری/ })).toBeVisible();
+  // سه چیزی که صفحه برایشان هست
+  await expect(page.locator("main")).toContainText(ADMIN_EMAIL);
+  await expect(page.getByRole("button", { name: /تغییر رمز عبور/ })).toBeVisible();
+  await expect(page.locator("main")).toContainText("همین دستگاه");
+});
+
 test("نشانی ناموجود صفحهٔ ۴۰۴ می‌دهد، نه خطای سرور", async ({ page }) => {
   const response = await page.goto("/products/this-slug-does-not-exist-404");
   expect(response?.status()).toBe(404);

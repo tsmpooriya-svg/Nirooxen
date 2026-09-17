@@ -102,6 +102,25 @@ export async function destroySession(): Promise<void> {
   cookieStore.delete(SESSION_COOKIE);
 }
 
+/**
+ * شناسهٔ نشست جاری.
+ *
+ * صفحهٔ پروفایل باید بتواند «همین دستگاه» را در فهرست نشست‌ها علامت بزند و
+ * جلوی ابطال ناخواستهٔ خودش را بگیرد. توکن هرگز بیرون نمی‌رود؛ فقط شناسهٔ
+ * ردیف برمی‌گردد.
+ */
+export async function getCurrentSessionId(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  if (!token) return null;
+  const [row] = await db
+    .select({ id: sessions.id })
+    .from(sessions)
+    .where(eq(sessions.tokenHash, hashToken(token)))
+    .limit(1);
+  return row?.id ?? null;
+}
+
 /** ابطال تمام نشست‌های یک کاربر — مثلاً هنگام غیرفعال‌سازی حساب */
 export async function destroyAllSessions(userId: string): Promise<void> {
   await db.delete(sessions).where(eq(sessions.userId, userId));

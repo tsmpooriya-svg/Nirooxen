@@ -285,6 +285,34 @@ export const userFormSchema = z.object({
   isActive: checkbox.default(true),
 });
 
+/* -------------------------------- پروفایل --------------------------------- */
+
+/**
+ * آنچه کاربر دربارهٔ حساب خودش می‌تواند عوض کند: نام و شمارهٔ تماس.
+ *
+ * ایمیل و نقش عمداً اینجا نیستند. ایمیل شناسهٔ ورود است و نقش مرز دسترسی؛
+ * هیچ‌کدام نباید با فرمی که خود کاربر پر می‌کند جابه‌جا شود.
+ */
+export const profileSchema = z.object({
+  name: z.string().trim().min(3, "نام الزامی است").max(120),
+  phone: z.string().trim().max(24).optional(),
+});
+
+export const passwordChangeSchema = z
+  .object({
+    currentPassword: z.string().min(1, "رمز فعلی الزامی است").max(128),
+    newPassword: z.string().min(8, "رمز تازه باید حداقل ۸ کاراکتر باشد").max(128),
+    confirmPassword: z.string().max(128),
+  })
+  .refine((v) => v.newPassword === v.confirmPassword, {
+    message: "تکرار رمز با رمز تازه یکی نیست",
+    path: ["confirmPassword"],
+  })
+  .refine((v) => v.newPassword !== v.currentPassword, {
+    message: "رمز تازه باید با رمز فعلی فرق کند",
+    path: ["newPassword"],
+  });
+
 /* ------------------------- فیلترهای کاتالوگ (URL) -------------------------- */
 
 /**

@@ -230,7 +230,15 @@ export function AdminShell({
       </nav>
 
       <div className="shrink-0 border-t border-[var(--border-hairline)] p-3">
-        <div className="flex items-center gap-3 rounded-md p-2">
+        {/*
+          کارت کاربر خودش لینک پروفایل است. جای دیگری هم می‌شد گذاشت، ولی اولین
+          جایی که آدم دنبال «حساب من» می‌گردد همین‌جاست — و این صفحه مجوز بخشی
+          نمی‌خواهد، پس برای همه دیده می‌شود.
+        */}
+        <Link
+          href="/admin/profile"
+          className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-[var(--bg-elev-3)]"
+        >
           <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[var(--brand-soft)] font-display text-xs font-bold text-[var(--brand)]">
             {initials(user.name)}
           </span>
@@ -240,7 +248,18 @@ export function AdminShell({
               {USER_ROLE[user.role].label}
             </p>
           </div>
-        </div>
+          <svg
+            aria-hidden
+            viewBox="0 0 20 20"
+            className="size-4 shrink-0 text-[var(--fg-subtle)] rtl:rotate-180"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <path d="m8 5 5 5-5 5" />
+          </svg>
+          <span className="sr-only">حساب کاربری</span>
+        </Link>
         <LogoutButton />
       </div>
     </>

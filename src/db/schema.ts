@@ -188,6 +188,19 @@ export const users = pgTable(
     avatarUrl: text("avatar_url"),
     isActive: boolean("is_active").notNull().default(true),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+    /*
+     * قفل در سطح حساب، کنارِ محدودسازی نرخ در سطح IP.
+     *
+     * آن یکی یک مهاجم را کند می‌کند؛ این یکی یک حساب را در برابر حمله‌ای که
+     * از صد آی‌پی می‌آید نگه می‌دارد — حالتی که سقفِ IP اصلاً نمی‌بیندش، چون
+     * هیچ آی‌پی‌ای به سقف خودش نمی‌رسد.
+     *
+     * شمارنده پنجره دارد: سه تلاش ناموفق پراکنده در یک سال نباید کسی را قفل
+     * کند، پس اگر آخرین شکست از پنجره قدیمی‌تر باشد شمارش از نو شروع می‌شود.
+     */
+    failedLoginCount: integer("failed_login_count").notNull().default(0),
+    failedLoginAt: timestamp("failed_login_at", { withTimezone: true }),
+    lockedUntil: timestamp("locked_until", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

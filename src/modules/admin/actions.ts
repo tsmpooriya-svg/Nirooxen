@@ -298,51 +298,63 @@ export async function submitQuote(
     const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
     if (items.length === 0) return { status: "error", message: "این پرونده قلمی ندارد." };
 
-    let subtotal = 0;
-
-    for (const item of items) {
-      const entry = prices.find((p) => p.itemId === item.id);
-      const unit = entry
-        ? Math.max(0, Math.round(entry.price))
-        : (item.quotedUnitPrice ?? item.unitPrice ?? 0);
-      const lineTotal = unit * item.quantity;
-      subtotal += lineTotal;
-
-      if (entry) {
-        await db
-          .update(orderItems)
-          .set({ quotedUnitPrice: unit, lineTotal })
-          .where(eq(orderItems.id, item.id));
-      }
-    }
-
     const discount = Math.max(0, extra.discount ?? 0);
     const tax = Math.max(0, extra.tax ?? 0);
     const shipping = Math.max(0, extra.shipping ?? 0);
-    const total = Math.max(0, subtotal - discount + tax + shipping);
     const validUntil = new Date(Date.now() + (extra.validDays ?? 7) * 864e5);
 
-    await db
-      .update(orders)
-      .set({
-        subtotal,
-        discount,
-        tax,
-        shipping,
-        total,
-        status: "QUOTED",
-        quotedAt: new Date(),
-        quoteValidUntil: validUntil,
-        updatedAt: new Date(),
-      })
-      .where(eq(orders.id, orderId));
+    /*
+      همه در یک تراکنش.
 
-    await db.insert(orderEvents).values({
-      orderId,
-      userId: user.id,
-      type: "QUOTE_SENT",
-      message: `پیش‌فاکتور با مبلغ کل ${total.toLocaleString("en-US")} تومان ثبت شد.`,
-      meta: { subtotal, discount, tax, shipping, total },
+      پیش‌تر اقلام یکی‌یکی و بیرون از تراکنش به‌روز می‌شدند و بعد خود سفارش. هر
+      خطایی در میانهٔ راه — قطع اتصال، مهلت تمام‌شده — پرونده‌ای می‌ساخت که
+      نیمی از اقلامش قیمت خورده بود ولی وضعیتش هنوز عوض نشده بود، و هیچ‌چیز در
+      پنل نشان نمی‌داد کدام نیمه. ثبت سفارش از همان اول این کار را درست
+      می‌کرد؛ اینجا هم همان الگو.
+    */
+    await db.transaction(async (tx) => {
+      let subtotal = 0;
+
+      for (const item of items) {
+        const entry = prices.find((p) => p.itemId === item.id);
+        const unit = entry
+          ? Math.max(0, Math.round(entry.price))
+          : (item.quotedUnitPrice ?? item.unitPrice ?? 0);
+        const lineTotal = unit * item.quantity;
+        subtotal += lineTotal;
+
+        if (entry) {
+          await tx
+            .update(orderItems)
+            .set({ quotedUnitPrice: unit, lineTotal })
+            .where(eq(orderItems.id, item.id));
+        }
+      }
+
+      const sum = Math.max(0, subtotal - discount + tax + shipping);
+
+      await tx
+        .update(orders)
+        .set({
+          subtotal,
+          discount,
+          tax,
+          shipping,
+          total: sum,
+          status: "QUOTED",
+          quotedAt: new Date(),
+          quoteValidUntil: validUntil,
+          updatedAt: new Date(),
+        })
+        .where(eq(orders.id, orderId));
+
+      await tx.insert(orderEvents).values({
+        orderId,
+        userId: user.id,
+        type: "QUOTE_SENT",
+        message: `پیش‌فاکتور با مبلغ کل ${sum.toLocaleString("en-US")} تومان ثبت شد.`,
+        meta: { subtotal, discount, tax, shipping, total: sum },
+      });
     });
 
     await logActivity({

@@ -225,17 +225,32 @@ export function productJsonLd(product: {
     brand: product.brandName ? { "@type": "Brand", name: product.brandName } : undefined,
     image: product.image ? absoluteUrl(product.image, siteConfig.url) : undefined,
     url: absoluteUrl(`/products/${product.slug}`, siteConfig.url),
-    offers: {
-      "@type": "Offer",
-      url: absoluteUrl(`/products/${product.slug}`, siteConfig.url),
-      priceCurrency: "IRR",
-      // قیمت به ریال گزارش می‌شود (۱ تومان = ۱۰ ریال)
-      ...(product.priceMode === "PUBLIC" && product.price
-        ? { price: product.price * 10 }
-        : { availability: "https://schema.org/PreOrder" }),
-      availability,
-      seller: { "@id": `${siteConfig.url}/#organization` },
-    },
+    /*
+      Offer فقط وقتی می‌آید که قیمتی برای گفتن باشد.
+
+      گوگل Offer بدون price یا priceSpecification را نامعتبر می‌داند و کل
+      داده‌ی ساختاریافتهٔ محصول را کنار می‌گذارد — یعنی برای اکثر کاتالوگ، که
+      قیمتش استعلامی است، کارت محصولی در نتایج ساخته نمی‌شد. نبودنِ offers
+      خطا نیست؛ Product بدون آن معتبر است و موجودی هنوز گفته می‌شود.
+    */
+    ...(product.priceMode === "PUBLIC" && product.price
+      ? {
+          offers: {
+            "@type": "Offer",
+            url: absoluteUrl(`/products/${product.slug}`, siteConfig.url),
+            priceCurrency: "IRR",
+            // قیمت به ریال گزارش می‌شود (۱ تومان = ۱۰ ریال)
+            price: product.price * 10,
+            availability,
+            seller: { "@id": `${siteConfig.url}/#organization` },
+          },
+        }
+      : {}),
+    /*
+      برای محصول استعلامی، موجودی روی خود Product می‌نشیند. قبلاً availability
+      دو بار در Offer ست می‌شد و مقدار داخل spread بی‌اثر بود.
+    */
+    ...(product.priceMode === "PUBLIC" && product.price ? {} : { availability }),
   };
 }
 

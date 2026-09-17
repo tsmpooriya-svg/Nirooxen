@@ -50,6 +50,13 @@
       "when": 1789673298079,
       "tag": "0006_keen_gamora",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1789676447130,
+      "tag": "0007_exotic_valkyrie",
+      "breakpoints": true
     }
   ]
 }
