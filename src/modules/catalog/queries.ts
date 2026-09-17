@@ -9,7 +9,7 @@
  */
 import "server-only";
 
-import { and, asc, count, desc, eq, gte, inArray, isNotNull, lte, ne, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, getTableColumns, gte, inArray, isNotNull, lte, ne, or, sql, type SQL } from "drizzle-orm";
 
 import {
   FOLD_FROM,
@@ -99,15 +99,24 @@ export const getCategoryTree = cache(async (): Promise<CategoryNode[]> => {
   const all = rows.map((r) => ({ ...r.category, productCount: r.productCount }));
   const roots = all.filter((c) => !c.parentId);
 
-  return roots.map((root) => {
-    const children = all.filter((c) => c.parentId === root.id);
-    return {
-      ...root,
-      children,
-      // تعداد محصول شاخه = محصولات مستقیم + محصولات زیرشاخه‌ها
-      productCount: root.productCount + children.reduce((sum, c) => sum + c.productCount, 0),
-    };
-  });
+  /*
+    دسته‌های بدون محصول از این درخت بیرون می‌مانند. این درخت فقط به صفحه‌های
+    عمومی و sitemap می‌رسد (پنل مدیریت فهرست خودش را دارد و همهٔ دسته‌ها را
+    می‌بیند)، و دستهٔ خالی در منو یعنی «۰ کالا» جلوی چشم کاربر و یک صفحهٔ
+    بن‌بست در نتایج گوگل. شاخه‌ای که خودش محصول ندارد ولی زیرشاخهٔ پرمحصول
+    دارد می‌ماند، چون مسیر رسیدن به آن‌هاست.
+  */
+  return roots
+    .map((root) => {
+      const children = all.filter((c) => c.parentId === root.id && c.productCount > 0);
+      return {
+        ...root,
+        children,
+        // تعداد محصول شاخه = محصولات مستقیم + محصولات زیرشاخه‌ها
+        productCount: root.productCount + children.reduce((sum, c) => sum + c.productCount, 0),
+      };
+    })
+    .filter((root) => root.productCount > 0);
 });
 
 export const getCategoryBySlug = cache(async (slug: string) => {
@@ -226,9 +235,11 @@ async function attachKeySpecs(rows: Omit<ProductCardData, "keySpecs">[]): Promis
       productId: productSpecs.productId,
       label: productSpecs.label,
       value: productSpecs.value,
-      unit: productSpecs.unit,
+      // همان قاعدهٔ صفحهٔ محصول؛ کارت و صفحه نباید واحد متفاوتی نشان بدهند
+      unit: sql<string | null>`coalesce(${units.symbol}, ${units.label}, ${productSpecs.unit})`,
     })
     .from(productSpecs)
+    .leftJoin(units, eq(units.id, productSpecs.unitId))
     .where(and(inArray(productSpecs.productId, rows.map((r) => r.id)), eq(productSpecs.isKey, true)))
     .orderBy(asc(productSpecs.position));
 
@@ -721,9 +732,20 @@ export const getProductBySlug = cache(async (slug: string) => {
       .from(productImages)
       .where(eq(productImages.productId, row.product.id))
       .orderBy(desc(productImages.isPrimary), asc(productImages.position)),
+    /*
+      واحد از جدول units خوانده می‌شود، نه از ستون متنی قدیمیِ product_specs.
+      آن ستون از نسخهٔ پیش از سیستم واحدهای تایپ‌دار مانده و در بیشتر ردیف‌ها
+      خالی است، در حالی که unit_id پر است؛ نتیجه‌اش این بود که صفحهٔ محصول
+      «حجم ۱۰۰» نشان می‌داد به‌جای «۱۰۰ لیتر». هر جا واحد تایپ‌دار نباشد،
+      همان متن قدیمی به کار می‌آید تا ردیف‌های میراثی هم واحدشان را از دست ندهند.
+    */
     db
-      .select()
+      .select({
+        ...getTableColumns(productSpecs),
+        unit: sql<string | null>`coalesce(${units.symbol}, ${units.label}, ${productSpecs.unit})`,
+      })
       .from(productSpecs)
+      .leftJoin(units, eq(units.id, productSpecs.unitId))
       .where(eq(productSpecs.productId, row.product.id))
       .orderBy(asc(productSpecs.position)),
   ]);

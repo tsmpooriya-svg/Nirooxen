@@ -108,7 +108,7 @@ export function ProductCard({
         پنهان می‌شدند — یعنی اطلاعات معنادار از دسترس صفحه‌خوان خارج بود.
         عمداً بی‌حرکت‌اند: خوانایی مهم‌تر از واکنش نشان‌دادن است.
       */}
-      <span className="pointer-events-none absolute start-3 top-3 flex flex-col gap-1.5">
+      <span className="pointer-events-none absolute start-3 top-3 hidden flex-col gap-1.5 sm:flex">
         {product.isNew && (
           <Badge tone="brand" size="sm">
             جدید
@@ -157,7 +157,7 @@ export function ProductCard({
 
         {/* مشخصات کلیدی — همان چیزی که خریدار صنعتی اول نگاه می‌کند */}
         {product.keySpecs.length > 0 && !compact && (
-          <dl className="mb-4 grid grid-cols-2 gap-x-3 gap-y-1.5 border-y border-[var(--border-hairline)] py-3">
+          <dl className="mb-4 grid grid-cols-1 gap-x-3 gap-y-1.5 border-y border-[var(--border-hairline)] py-3 sm:grid-cols-2">
             {product.keySpecs.slice(0, 2).map((spec) => (
               <div key={spec.label} className="min-w-0">
                 {/* برچسب ۱۳px و مقدار ۱۴px: پیش‌تر هر دو ۱۲px بودند و جفت
@@ -195,7 +195,7 @@ export function ProductCard({
           <div className="flex gap-2">
             <Link
               href={`/products/${product.slug}`}
-              className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-[background-color,box-shadow] duration-200 group-hover:shadow-[var(--shadow-brand)] group-has-[:focus-visible]:shadow-[var(--shadow-brand)] hover:bg-[var(--brand-hover)]"
+              className="flex h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-[background-color,box-shadow] duration-200 group-hover:shadow-[var(--shadow-brand)] group-has-[:focus-visible]:shadow-[var(--shadow-brand)] hover:bg-[var(--brand-hover)]"
             >
               {hasPrice ? "ثبت سفارش" : "استعلام قیمت"}
             </Link>
@@ -205,7 +205,7 @@ export function ProductCard({
               onClick={onAdd}
               aria-label={`افزودن ${product.name} به سبد استعلام`}
               title="افزودن به سبد استعلام"
-              className="grid size-10 shrink-0 place-items-center rounded-md border border-[var(--border-subtle)] text-[var(--fg-muted)] transition-[color,border-color,background-color] duration-200 group-hover:border-[var(--border-default)] hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+              className="hidden size-10 shrink-0 place-items-center rounded-md border border-[var(--border-subtle)] text-[var(--fg-muted)] transition-[color,border-color,background-color] duration-200 group-hover:border-[var(--border-default)] hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)] sm:grid"
             >
               <svg viewBox="0 0 20 20" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M3 3h2l1.6 8.4a1.5 1.5 0 0 0 1.5 1.2h6.3a1.5 1.5 0 0 0 1.5-1.2L17 6H5.4" strokeLinecap="round" strokeLinejoin="round" />

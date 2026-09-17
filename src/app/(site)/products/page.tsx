@@ -191,7 +191,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
                   این h2 پنهان، پرش سطح تیتر را برای صفحه‌خوان‌ها می‌بندد.
                 */}
                 <h2 className="sr-only">فهرست محصولات</h2>
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
                   {items.map((product, index) => (
                     <Reveal key={product.id} delay={Math.min(index, 6) * 60}>
                       <ProductCard product={product} />
@@ -248,7 +248,7 @@ function EmptyResults({ query, hasActiveFilters }: { query?: string; hasActiveFi
 
 export function ProductsLoading() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
         <ProductCardSkeleton key={i} />
       ))}

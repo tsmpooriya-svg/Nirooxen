@@ -1,24 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-label="PRESSURE GAUGE">
   <defs>
     <linearGradient id="bg-n3" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0b1220"/>
-      <stop offset="1" stop-color="#050910"/>
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eefbfe"/>
     </linearGradient>
     <radialGradient id="glow-n3" cx="50%" cy="42%" r="58%">
-      <stop offset="0" stop-color="#22bcd6" stop-opacity=".2"/>
-      <stop offset="1" stop-color="#22bcd6" stop-opacity="0"/>
+      <stop offset="0" stop-color="#00a6c0" stop-opacity=".10"/>
+      <stop offset="1" stop-color="#00a6c0" stop-opacity="0"/>
     </radialGradient>
     <pattern id="grid-n3" width="24" height="24" patternUnits="userSpaceOnUse">
-      <path d="M24 0H0v24" fill="none" stroke="#ffffff" stroke-opacity=".045" stroke-width="1"/>
+      <path d="M24 0H0v24" fill="none" stroke="#00748b" stroke-opacity=".07" stroke-width="1"/>
     </pattern>
   </defs>
   <rect width="480" height="360" fill="url(#bg-n3)"/>
   <rect width="480" height="360" fill="url(#grid-n3)"/>
   <rect width="480" height="360" fill="url(#glow-n3)"/>
-  <g fill="none" stroke="#4fd3e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".92">
+  <g fill="none" stroke="#00748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".92">
     <circle cx="240" cy="168" r="86"/>
     <circle cx="240" cy="168" r="70" opacity=".5"/>
-    <circle cx="240" cy="168" r="8" fill="#4fd3e8" stroke="none"/>
+    <circle cx="240" cy="168" r="8" fill="#00748b" stroke="none"/>
     <path d="M240 168l46-40"/>
     <path d="M240 98v14M310 168h-14M240 238v-14M170 168h14" opacity=".6"/>
     <path d="M190 118l10 10M290 118l-10 10M190 218l10-10M290 218l-10-10" opacity=".4"/>
@@ -26,8 +26,8 @@
     <rect x="214" y="284" width="52" height="24" rx="4" opacity=".7"/>
     <path d="M226 308v14M254 308v14" opacity=".5"/>
   </g>
-  <g fill="none" stroke="#22bcd6" stroke-width="1" opacity=".5">
+  <g fill="none" stroke="#00748b" stroke-width="1" opacity=".5">
     <path d="M18 18h26M18 18v26M462 18h-26M462 18v26M18 342h26M18 342v-26M462 342h-26M462 342v-26"/>
   </g>
-  <text x="24" y="348" fill="#4fd3e8" fill-opacity=".55" font-family="ui-monospace, monospace" font-size="11" letter-spacing="2">PRESSURE GAUGE</text>
+  <text x="24" y="348" fill="#00748b" fill-opacity=".55" font-family="ui-monospace, monospace" font-size="11" letter-spacing="2">PRESSURE GAUGE</text>
 </svg>

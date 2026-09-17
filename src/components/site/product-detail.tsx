@@ -157,7 +157,15 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
             </div>
           )}
 
-          {/* تب مشخصات / توضیحات */}
+          {/*
+            تب مشخصات / توضیحات.
+
+            محصولی که نه مشخصهٔ فنی دارد و نه توضیح، هیچ تبی هم ندارد؛ بدون این
+            شرط، فقط خطِ زیرِ نوار تب و یک فضای خالی رندر می‌شد — یک خط افقیِ
+            بی‌دلیل وسط صفحه. چنین محصولاتی کم نیستند، چون بخشی از کاتالوگ هنوز
+            مشخصات فنی ندارد.
+          */}
+          {(specGroups.length > 0 || product.description) && (
           <div className="mt-10">
             <div
               role="tablist"
@@ -241,6 +249,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
               )}
             </div>
           </div>
+          )}
         </div>
 
         {/* ستون خرید — چسبان روی دسکتاپ */}
