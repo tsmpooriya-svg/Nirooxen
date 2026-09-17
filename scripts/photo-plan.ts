@@ -74,13 +74,27 @@ function modelStem(model: string | null): string {
   return head;
 }
 
-/** وقتی مدل نیست: چند واژهٔ معنادار اول نام */
-function nameStem(name: string): string {
+/**
+ * وقتی مدل نیست: چند واژهٔ معنادار اول نام.
+ *
+ * نام برند از نام محصول برداشته می‌شود، و این نکتهٔ ظریفی است که در اجرای
+ * واقعی معلوم شد: «کفکش فلوتر راین» و «کفکش فلوتر زاگرس» ریشهٔ متفاوتی
+ * می‌گرفتند چون برند داخل نام بود، و گزارشِ «یک قلم، چند برند» پنجاه‌ودو
+ * محصول را نمی‌دید. برند در کلید خانواده جداگانه هست؛ تکرارش در ریشه فقط
+ * خانواده‌های هم‌شکل را از هم دور می‌کرد.
+ */
+function nameStem(name: string, brand: string | null): string {
+  const brandWords = new Set(
+    (brand ?? "")
+      .split(/\s+/)
+      .map((w) => w.trim())
+      .filter((w) => w.length > 1),
+  );
   return toEn(name)
     .replace(/[0-9]+([./-][0-9]+)*/g, " ")
     .replace(/[^\p{L}\p{N} ]+/gu, " ")
     .split(/\s+/)
-    .filter((w) => w.length > 1 && !NOISE.has(w))
+    .filter((w) => w.length > 1 && !NOISE.has(w) && !brandWords.has(w))
     .slice(0, 3)
     .join(" ");
 }
@@ -110,7 +124,7 @@ function familyKey(label: string, stem: string): string {
 }
 
 function familyOf(row: Row): { key: string; label: string; stem: string; category: string } {
-  const stem = modelStem(row.model) || nameStem(row.name);
+  const stem = modelStem(row.model) || nameStem(row.name, row.brand);
   const parts = [row.brand ?? "بی‌برند", row.category, stem].filter(Boolean);
   const label = parts.join(" · ");
   return { key: familyKey(label, stem), label, stem, category: row.category };
@@ -221,7 +235,7 @@ async function main() {
       saved: group.length - 1,
     }))
     .sort((a, b) => b.products - a.products)
-    .slice(0, 12);
+    .slice(0, 15);
 
   if (candidates.length > 0) {
     console.log("\n  ── جای ادغام: یک قلم، چند برند ──");
