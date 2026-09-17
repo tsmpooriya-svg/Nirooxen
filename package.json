@@ -30,7 +30,8 @@
     "db:backdrops": "tsx scripts/detect-image-backdrops.ts --apply",
     "db:backdrops:dry": "tsx scripts/detect-image-backdrops.ts",
     "photos:plan": "tsx scripts/photo-plan.ts",
-    "photos:apply": "tsx scripts/apply-family-photos.ts"
+    "photos:apply": "tsx scripts/apply-family-photos.ts",
+    "photos:extract": "python3 scripts/extract-catalog-photos.py"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
