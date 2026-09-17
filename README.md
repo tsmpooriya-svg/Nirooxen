@@ -530,8 +530,12 @@ sudo apt install -y python3-venv
 python3 -m venv .venv-pdf
 .venv-pdf/bin/pip install pymupdf
 
+# کاتالوگ‌ها را در catalogs/ بگذارید، بعد:
 .venv-pdf/bin/python scripts/extract-catalog-photos.py catalogs/*.pdf --plan photo-plan.json
 ```
+
+مسیر واقعی فایل را بدهید؛ اگر فایلی پیدا نشود اسکریپت با پیام روشن متوقف
+می‌شود و چیزی نمی‌سازد.
 
 گلوگاه عکس‌دار کردن کاتالوگ «نبودن عکس» نیست، «پیدا کردنش» است. عکس این
 محصولات وجود دارد — در کاتالوگ PDF خود سازنده — و یک کاتالوگ می‌تواند ده‌ها

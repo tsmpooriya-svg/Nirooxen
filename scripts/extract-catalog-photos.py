@@ -24,7 +24,7 @@
      .venv-pdf/bin/python scripts/extract-catalog-photos.py …
 
  اجرا:
-     python3 scripts/extract-catalog-photos.py catalogs/*.pdf
+     .venv-pdf/bin/python scripts/extract-catalog-photos.py catalogs/*.pdf
      ... --out photos-raw          پوشهٔ خروجی (پیش‌فرض photos-raw)
      ... --plan photo-plan.json    نام‌گذاری خودکار بر اساس نقشهٔ خانواده‌ها
 
@@ -53,7 +53,7 @@ except ImportError:
         "     python3 -m venv .venv-pdf\n"
         "     .venv-pdf/bin/pip install pymupdf\n\n"
         "  بعد به‌جای python3، از .venv-pdf/bin/python استفاده کنید:\n\n"
-        "     .venv-pdf/bin/python scripts/extract-catalog-photos.py <کاتالوگ.pdf>\n"
+        "     .venv-pdf/bin/python scripts/extract-catalog-photos.py catalogs/*.pdf\n"
     )
 
 # کوچک‌تر از این، آیکون است نه عکس محصول
@@ -123,6 +123,28 @@ def main() -> None:
 
     index, seen = [], set()
     matched = 0
+
+    """
+    مسیرها پیش از هر کاری بررسی می‌شوند.
+
+    در نخستین استفادهٔ واقعی، متنِ نمونهٔ راهنما («مسیر/کاتالوگ.pdf») عیناً تایپ
+    شد و اسکریپت با traceback پایتون افتاد — که به کسی که فقط می‌خواهد عکس
+    بیرون بکشد هیچ نمی‌گوید. بررسی زودهنگام، پیام روشن می‌دهد و پیش از باز کردن
+    هر فایلی متوقف می‌شود.
+    """
+    missing = [p for p in args.pdfs if not Path(p).is_file()]
+    if missing:
+        print("\n✖ این فایل‌ها پیدا نشدند:\n", file=sys.stderr)
+        for path in missing:
+            print(f"     {path}", file=sys.stderr)
+        print(
+            "\n  مسیر واقعی فایل PDF را بدهید، نه متن نمونه. مثلاً اگر کاتالوگ‌ها"
+            "\n  را در پوشهٔ catalogs/ گذاشته‌اید:"
+            "\n\n     .venv-pdf/bin/python scripts/extract-catalog-photos.py catalogs/*.pdf"
+            "\n",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
     for pdf_path in args.pdfs:
         source = Path(pdf_path)
