@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/site/product-card";
 import { ProductDetail } from "@/components/site/product-detail";
 import { SectionHeading } from "@/components/site/section";
 import { JsonLd, pageMetadata, productJsonLd } from "@/lib/seo";
+import { productSummary } from "@/modules/catalog/summary";
 import { decodeRouteParam } from "@/lib/utils";
 import {
   getAllProductSlugs,
@@ -33,10 +34,15 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const data = await getProductBySlug(slug);
   if (!data) return pageMetadata({ title: "محصول یافت نشد", path: `/products/${slug}`, noIndex: true });
 
-  const { product, images } = data;
+  const { product, category, brand, images, specs } = data;
   return pageMetadata({
     title: product.metaTitle ?? product.name,
-    description: product.metaDescription ?? product.shortDescription ?? undefined,
+    /*
+      اگر این خالی بماند، pageMetadata توضیح خودِ سایت را می‌گذارد و محصول
+      توضیحی می‌گیرد که ۳۷۷ محصول دیگر هم دارند. productSummary اول متن
+      نوشته‌شده را برمی‌دارد و اگر نبود از داده‌های همان ردیف جمله می‌سازد.
+    */
+    description: productSummary({ product, category, brand, specs }) ?? undefined,
     path: `/products/${product.slug}`,
     image: images[0]?.url ?? null,
   });
@@ -48,7 +54,7 @@ export default async function ProductPage({ params }: { params: Params }) {
   const data = await getProductBySlug(slug);
   if (!data) notFound();
 
-  const { product, category, brand, images, specGroups } = data;
+  const { product, category, brand, images, specs, specGroups } = data;
 
   const [related, categoryPath] = await Promise.all([
     getRelatedProducts(product.id, product.categoryId, category.parentId, product.brandId),
@@ -64,7 +70,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         data={productJsonLd({
           name: product.name,
           slug: product.slug,
-          description: product.shortDescription ?? product.description,
+          description: productSummary({ product, category, brand, specs }),
           sku: product.sku,
           brandName: brand?.name ?? null,
           image: images[0]?.url ?? null,
