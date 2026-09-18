@@ -336,13 +336,44 @@ export function ProcessSection() {
 /*  برندها — نوار متحرک                                                        */
 /* -------------------------------------------------------------------------- */
 
+/** بیش از این تعداد، نوار را طولانی‌تر نمی‌کند — فقط پاسخ را سنگین‌تر */
+const MARQUEE_LIMIT = 24;
+/** عرض کارت (w-52) به‌علاوهٔ فاصله (gap-3) */
+const MARQUEE_CARD_PX = 208 + 12;
+/** همان سرعتی که ۶۱ برند در ۴۲ ثانیه داشتند */
+const MARQUEE_SPEED_PX_S = 320;
+
 export function BrandsSection({
   brands,
 }: {
-  brands: { id: string; name: string; latinName: string | null; slug: string; country: string | null }[];
+  brands: {
+    id: string;
+    name: string;
+    latinName: string | null;
+    slug: string;
+    country: string | null;
+    productCount: number;
+  }[];
 }) {
-  if (brands.length === 0) return null;
-  const loop = [...brands, ...brands];
+  /*
+    نوار برندها همهٔ ۶۱ برند را دوبار رندر می‌کرد — یک‌بار برای دیده‌شدن و
+    یک‌بار برای حلقه‌شدنِ بی‌درز. ۱۲۲ کارت، که در پاسخِ تولید ۶۹ کیلوبایت فقط
+    className بود و بخش بزرگی از ۲۰۵ کیلوبایت RSC صفحهٔ اصلی.
+
+    برندِ بی‌محصول هم در نوار بود و لینکش به صفحه‌ای خالی می‌رفت؛ ۴ تا از ۶۱.
+    نوار یک نشانهٔ اعتماد است نه فهرست — فهرست کامل در `‎/brands` است و دکمه‌اش
+    همین بالا هست.
+  */
+  const shown = brands.filter((brand) => brand.productCount > 0).slice(0, MARQUEE_LIMIT);
+  if (shown.length === 0) return null;
+  const loop = [...shown, ...shown];
+
+  /*
+    مدت حرکت با تعداد کارت‌ها می‌آید، نه عددی ثابت: keyframe نصف مسیر را
+    می‌پیماید، پس مسیرِ کوتاه‌تر با همان ۴۲ ثانیه کندتر می‌شد. این‌طور سرعت
+    دیداری ثابت می‌ماند هر چند تا برند باشد.
+  */
+  const duration = Math.round((shown.length * MARQUEE_CARD_PX) / MARQUEE_SPEED_PX_S);
 
   return (
     <Section className="border-y border-[var(--border-hairline)] bg-[var(--bg-elev-1)] py-14">
@@ -371,7 +402,7 @@ export function BrandsSection({
       >
         <div
           className="flex w-max gap-3 group-hover:[animation-play-state:paused] motion-reduce:animate-none"
-          style={{ animation: "aria-marquee 42s linear infinite" }}
+          style={{ animation: `aria-marquee ${duration}s linear infinite` }}
         >
           {loop.map((brand, index) => (
             <Link

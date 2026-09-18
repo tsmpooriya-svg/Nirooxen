@@ -75,6 +75,13 @@ export default async function BrandPage({ params }: { params: Params }) {
           </p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {/*
+              کارت‌های محصول h3 هستند و بدون h2ی بالای سرشان، ترتیب سرفصل‌ها از
+              h1 صفحه یک‌راست به h3 می‌پرید. صفحهٔ کاتالوگ همین سرفصل را دیداری
+              دارد؛ اینجا عنوان صفحه خودش «محصولات ...» است و تکرارش دیداری
+              اضافه می‌شد.
+            */}
+            <h2 className="sr-only">فهرست محصولات این برند</h2>
             {items.map((product, index) => (
               <Reveal key={product.id} delay={Math.min(index, 6) * 60}>
                 <ProductCard product={product} />

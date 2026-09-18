@@ -72,12 +72,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })),
-    ...brands.map((brand) => ({
-      url: encodeURI(`${base}/brands/${brand.slug}`),
-      lastModified: brand.updatedAt,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
+    /*
+      برندِ بی‌محصول در sitemap نمی‌آید.
+
+      صفحه‌اش سر جایش می‌ماند و ۴۰۴ نمی‌شود — نشانی موجود را خراب نمی‌کنیم و
+      حالت خالیِ درستی هم دارد. ولی صفحه‌ای که هیچ محصولی ندارد چیزی برای
+      رتبه‌گرفتن ندارد، و فرستادنش به گوگل فقط بودجهٔ خزش را خرج می‌کند.
+      به‌محض اینکه محصولی به برند اضافه شود، خودش برمی‌گردد.
+    */
+    ...brands
+      .filter((brand) => brand.productCount > 0)
+      .map((brand) => ({
+        url: encodeURI(`${base}/brands/${brand.slug}`),
+        lastModified: brand.updatedAt,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      })),
     ...posts.map((post) => ({
       url: encodeURI(`${base}/news/${post.slug}`),
       lastModified: post.updatedAt,
