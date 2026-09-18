@@ -284,11 +284,18 @@ export default async function FireSafetyPage() {
 
           {groups.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {/*
+                min-w-0 روی خانهٔ گرید و روی خودِ ردیف: پیش‌فرضِ min-width برای
+                آیتم گرید «auto» است، یعنی کوچک‌تر از محتوای کمینه‌اش نمی‌شود.
+                نام گروه whitespace-nowrap دارد، پس محتوای کمینه به اندازهٔ کل
+                متن بود و truncate هیچ‌وقت فعال نمی‌شد — ردیف ۳۶۰ پیکسل می‌ماند
+                داخل ستون ۳۲۰ پیکسلی و کل صفحه را ۶۰ پیکسل به پهنا می‌برد.
+              */}
               {groups.map((g, i) => (
-                <Reveal key={g.id} delay={i * 50}>
+                <Reveal key={g.id} delay={i * 50} className="min-w-0">
                   <Link
                     href={`/products?category=${g.slug}`}
-                    className="group flex items-center justify-between gap-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-3 pe-5 transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)]"
+                    className="group flex min-w-0 items-center justify-between gap-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-3 pe-5 transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)]"
                   >
                     <span className="flex min-w-0 items-center gap-3.5">
                       {/* همان طرح‌های ۴۸۰×۳۶۰ کارت محصول‌اند و پس‌زمینه و شبکهٔ
@@ -306,7 +313,12 @@ export default async function FireSafetyPage() {
                           className="block h-auto w-full"
                         />
                       </span>
-                      <span className="truncate font-medium">{g.name}</span>
+                      {/*
+                        min-w-0 لازم است: آیتمِ flexی که whitespace-nowrap دارد
+                        کوچک‌تر از عرض متنش نمی‌شود، پس truncate هیچ‌وقت فعال
+                        نمی‌شد و ردیف روی صفحهٔ باریک از قاب بیرون می‌زد.
+                      */}
+                      <span className="min-w-0 truncate font-medium">{g.name}</span>
                     </span>
                     {g.productCount > 0 && (
                       <span className="shrink-0 rounded-full bg-[var(--brand-chip)] px-2.5 py-1 font-mono text-xs text-[var(--brand-text)]">
