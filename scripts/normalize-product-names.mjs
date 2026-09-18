@@ -26,12 +26,12 @@ await client.connect();
 
 try {
   const result = await client.query(
-    \`select id, name, model, sku
+    `select id, name, model, sku
        from products
       where status = 'PUBLISHED'
         and name ~ '[0-9]'
       order by name
-      \${limit ? "limit $1" : ""}\`,
+      ${limit ? "limit $1" : ""}`,
     limit ? [limit] : [],
   );
 
@@ -40,11 +40,11 @@ try {
     .filter((row) => row.normalized !== row.name);
 
   console.log(APPLY ? "✍️  اجرای واقعی" : "🔍 گزارش آزمایشی — چیزی نوشته نمی‌شود");
-  console.log(\`نام‌های دارای رقم لاتین بررسی‌شده: \${result.rows.length}\`);
-  console.log(\`نام‌هایی که واقعاً تغییر می‌کنند: \${changes.length}\`);
+  console.log(`نام‌های دارای رقم لاتین بررسی‌شده: ${result.rows.length}`);
+  console.log(`نام‌هایی که واقعاً تغییر می‌کنند: ${changes.length}`);
 
   for (const row of changes) {
-    console.log(\`\n\${row.name}\n→ \${row.normalized}\`);
+    console.log(`\n${row.name}\n→ ${row.normalized}`);
   }
 
   if (APPLY && changes.length) {
@@ -61,7 +61,7 @@ try {
       await client.query("rollback");
       throw error;
     }
-    console.log(\`\n✓ \${changes.length} نام به‌روزرسانی شد.\`);
+    console.log(`\n✓ ${changes.length} نام به‌روزرسانی شد.`);
   }
 } finally {
   await client.end();
