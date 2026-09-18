@@ -31,6 +31,7 @@ import { Client } from "pg";
 import { brandSlug, latinFor } from "./lib/brand-slug.mjs";
 
 const DRY = process.argv.includes("--dry");
+let succeeded = false;
 const DATA =
   process.argv.find((a) => a.startsWith("--data="))?.slice(7) ??
   fileURLToPath(new URL("./data/batch1-catalog.json", import.meta.url));
@@ -312,7 +313,13 @@ try {
     );
   }
 
-  if (DRY) { await q("ROLLBACK"); } else { await q("COMMIT"); }
+  if (DRY) {
+    await q("ROLLBACK");
+    succeeded = true;
+  } else {
+    await q("COMMIT");
+    succeeded = true;
+  }
 } catch (error) {
   await q("ROLLBACK");
   console.error("\n✖ خطا — هیچ تغییری اعمال نشد:", error.message);
@@ -322,6 +329,10 @@ try {
 }
 
 const line = (k, v) => console.log(`  ${k.padEnd(28, "·")} ${v}`);
+if (!succeeded) {
+  console.error("\n✖ ورود انجام نشد؛ تراکنش rollback شد و هیچ گزارشی با عنوان «ورود انجام شد» نباید چاپ شود.\n");
+  process.exit(1);
+}
 console.log(`\n${DRY ? "── اجرای آزمایشی (بدون نوشتن) ──" : "── ورود انجام شد ──"}\n`);
 line("دستهٔ تازه", stat.categoriesAdded);
 line("تعریف مشخصهٔ تازه", stat.specDefsAdded);
