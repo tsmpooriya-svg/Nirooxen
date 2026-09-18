@@ -34,7 +34,9 @@
     "photos:plan": "tsx scripts/photo-plan.ts",
     "photos:apply": "tsx scripts/apply-family-photos.ts",
     "photos:apply:repo": "PHOTOS_DIR=product-photos tsx scripts/apply-family-photos.ts",
-    "photos:extract": "python3 scripts/extract-catalog-photos.py"
+    "photos:extract": "python3 scripts/extract-catalog-photos.py",
+    "products:names:normalize": "node scripts/normalize-product-names.mjs",
+    "products:names:normalize:apply": "node scripts/normalize-product-names.mjs --apply"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
