@@ -176,6 +176,26 @@ export function organizationJsonLd(settings?: {
   const address = settings?.contact.address ?? siteConfig.contact.address;
   const phonesRaw = settings?.contact.phonesRaw ?? siteConfig.contact.phonesRaw;
 
+  /*
+    داده ساختاریافته یک ادعاست، نه یک نمایش.
+
+    روی صفحه، نشانیِ «هنوز ثبت نشده است» و شمارهٔ ۰۲۱-۰۰۰۰۰۰۰۰ عمداً آشکارا
+    جانشین‌اند تا به چشم بیایند. ولی همین مقادیر در JSON-LD مثل واقعیت منتشر
+    می‌شدند: گوگل آن جمله را به‌عنوان streetAddress و آن شماره را به‌عنوان خط
+    فروش می‌خواند.
+
+    محک، مقایسه با همان پیش‌فرضی است که در مخزن نشسته — اگر مدیر مقدار واقعی
+    را در تنظیمات گذاشته باشد، دیگر برابر پیش‌فرض نیست و منتشر می‌شود. حدس و
+    الگوی متنی در کار نیست.
+
+    Organization بدون address و contactPoint معتبر است؛ با نشانی نادرست، نه.
+  */
+  const addressRegistered = address.trim() !== "" && address !== siteConfig.contact.address;
+  const phonesRegistered =
+    phonesRaw.length > 0 && phonesRaw.join(",") !== siteConfig.contact.phonesRaw.join(",");
+  /* `sameAs` فقط حساب‌های تأییدشده — نه صفحهٔ اصلی یک شبکهٔ اجتماعی */
+  const verifiedSocial = siteConfig.social.filter((s) => s.verified).map((s) => s.href);
+
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -186,19 +206,21 @@ export function organizationJsonLd(settings?: {
     description: settings?.description ?? siteConfig.description,
     // فقط وقتی سال تأسیس واقعی ثبت شده باشد در داده ساختاریافته منتشر می‌شود
     ...(siteConfig.foundedYear ? { foundingDate: String(siteConfig.foundedYear) } : {}),
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: address,
-      addressCountry: "IR",
-    },
-    contactPoint: phonesRaw.map((phone) => ({
-      "@type": "ContactPoint",
-      telephone: phone,
-      contactType: "sales",
-      areaServed: "IR",
-      availableLanguage: ["fa"],
-    })),
-    sameAs: siteConfig.social.map((s) => s.href),
+    ...(addressRegistered
+      ? { address: { "@type": "PostalAddress", streetAddress: address, addressCountry: "IR" } }
+      : {}),
+    ...(phonesRegistered
+      ? {
+          contactPoint: phonesRaw.map((phone) => ({
+            "@type": "ContactPoint",
+            telephone: phone,
+            contactType: "sales",
+            areaServed: "IR",
+            availableLanguage: ["fa"],
+          })),
+        }
+      : {}),
+    ...(verifiedSocial.length > 0 ? { sameAs: verifiedSocial } : {}),
   };
 }
 
@@ -284,10 +306,14 @@ export function productJsonLd(product: {
         }
       : {}),
     /*
-      برای محصول استعلامی، موجودی روی خود Product می‌نشیند. قبلاً availability
-      دو بار در Offer ست می‌شد و مقدار داخل spread بی‌اثر بود.
+      برای محصول استعلامی هیچ `availability` منتشر نمی‌شود.
+
+      قبلاً روی خودِ Product می‌نشست، ولی `availability` در schema.org اصلاً
+      خاصیتِ Product نیست — فقط روی Offer و Demand تعریف شده. یعنی آن مقدار
+      هیچ‌وقت خوانده نمی‌شد و فقط ظاهرِ درستی داشت. راه درستش Offer است، و
+      Offer بدون price هم (طبق همان دلیلِ بالا) کل داده را بی‌اعتبار می‌کند.
+      پس چیزی گفته نمی‌شود؛ نگفتن، از گفتنِ در جای نادرست بهتر است.
     */
-    ...(product.priceMode === "PUBLIC" && product.price ? {} : { availability }),
   };
 }
 

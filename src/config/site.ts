@@ -105,11 +105,22 @@ export const siteConfig = {
     geo: { lat: 0, lng: 0 },
   },
 
+  /**
+   * شبکه‌های اجتماعی.
+   *
+   * `verified` یعنی «این نشانی واقعاً حساب همین کسب‌وکار است». فقط همین‌ها در
+   * `sameAs` داده ساختاریافته منتشر می‌شوند، چون `sameAs` یک **ادعا** است:
+   * به گوگل می‌گوید این حساب‌ها متعلق به این سازمان‌اند. تا امروز هر چهار
+   * نشانی زیر منتشر می‌شد، در حالی که دوتاشان صفحهٔ اصلی خود آن شبکه است نه
+   * حساب کسی، و شمارهٔ واتس‌اپ هم نمونه است و به شخص دیگری تعلق دارد.
+   *
+   * وقتی نشانی واقعی ثبت شد، `verified: true` را همان‌جا بگذارید.
+   */
   social: [
-    { label: "اینستاگرام", href: "https://instagram.com", icon: "instagram" },
-    { label: "تلگرام", href: "https://t.me", icon: "telegram" },
-    { label: "واتس‌اپ", href: "https://wa.me/989121234567", icon: "whatsapp" },
-    { label: "لینکدین", href: "https://linkedin.com", icon: "linkedin" },
+    { label: "اینستاگرام", href: "https://instagram.com", icon: "instagram", verified: false },
+    { label: "تلگرام", href: "https://t.me", icon: "telegram", verified: false },
+    { label: "واتس‌اپ", href: "https://wa.me/989121234567", icon: "whatsapp", verified: false },
+    { label: "لینکدین", href: "https://linkedin.com", icon: "linkedin", verified: false },
   ],
 
   /**
