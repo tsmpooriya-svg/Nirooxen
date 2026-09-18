@@ -110,6 +110,7 @@ export function OrderForm({
           <Input
             id="contactName"
             name="contactName"
+            defaultValue={state.values?.contactName ?? ""}
             autoComplete="name"
             placeholder="مثلاً: رضا کاظمی"
             invalid={Boolean(state.errors?.contactName)}
@@ -127,6 +128,7 @@ export function OrderForm({
           <Input
             id="contactPhone"
             name="contactPhone"
+            defaultValue={state.values?.contactPhone ?? ""}
             type="tel"
             inputMode="tel"
             dir="ltr"
@@ -139,13 +141,20 @@ export function OrderForm({
         </Field>
 
         <Field label="نام شرکت" htmlFor="contactCompany" hint="اختیاری — برای صدور پیش‌فاکتور رسمی">
-          <Input id="contactCompany" name="contactCompany" autoComplete="organization" placeholder="اختیاری" />
+          <Input
+            id="contactCompany"
+            name="contactCompany"
+            autoComplete="organization"
+            defaultValue={state.values?.contactCompany ?? ""}
+            placeholder="اختیاری"
+          />
         </Field>
 
         <Field label="استان / شهر" htmlFor="contactCity" hint="برای برآورد هزینه و زمان ارسال">
           <Input
             id="contactCity"
             name="contactCity"
+            defaultValue={state.values?.contactCity ?? ""}
             list="province-list"
             placeholder="اختیاری"
             autoComplete="address-level1"
@@ -167,6 +176,7 @@ export function OrderForm({
         <Input
           id="contactEmail"
           name="contactEmail"
+          defaultValue={state.values?.contactEmail ?? ""}
           type="email"
           dir="ltr"
           autoComplete="email"
@@ -184,6 +194,7 @@ export function OrderForm({
         <Textarea
           id="note"
           name="note"
+          defaultValue={state.values?.note ?? ""}
           rows={4}
           placeholder="مثلاً: ساختمان ۸ طبقه، ۲۴ واحد، نیاز به تثبیت فشار در طبقات بالا…"
         />

@@ -33,13 +33,14 @@ export function ContactForm() {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="نام و نام خانوادگی" htmlFor="name" required error={state.errors?.name}>
-          <Input id="name" name="name" autoComplete="name" required invalid={Boolean(state.errors?.name)} />
+          <Input id="name" name="name" autoComplete="name" defaultValue={state.values?.name ?? ""} required invalid={Boolean(state.errors?.name)} />
         </Field>
 
         <Field label="شماره تماس" htmlFor="phone" required error={state.errors?.phone}>
           <Input
             id="phone"
             name="phone"
+            defaultValue={state.values?.phone ?? ""}
             type="tel"
             dir="ltr"
             inputMode="tel"
@@ -57,6 +58,7 @@ export function ContactForm() {
           <Input
             id="email"
             name="email"
+            defaultValue={state.values?.email ?? ""}
             type="email"
             dir="ltr"
             autoComplete="email"
@@ -66,7 +68,12 @@ export function ContactForm() {
         </Field>
 
         <Field label="موضوع" htmlFor="subject" hint="اختیاری">
-          <Input id="subject" name="subject" placeholder="مثلاً: درخواست مشاوره فنی" />
+          <Input
+            id="subject"
+            name="subject"
+            defaultValue={state.values?.subject ?? ""}
+            placeholder="مثلاً: درخواست مشاوره فنی"
+          />
         </Field>
       </div>
 
@@ -74,6 +81,7 @@ export function ContactForm() {
         <Textarea
           id="message"
           name="message"
+          defaultValue={state.values?.message ?? ""}
           rows={6}
           required
           placeholder="شرایط پروژه یا سؤال فنی خود را بنویسید…"

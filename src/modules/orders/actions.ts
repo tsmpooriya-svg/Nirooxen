@@ -32,14 +32,50 @@ import {
 import { getClientIp } from "@/lib/auth";
 import { RATE_LIMITS, rateLimit } from "@/lib/rate-limit";
 import { toFieldErrors, orderInputSchema, type FieldErrors } from "@/lib/validation";
-import { normalizePhone } from "@/lib/utils";
+import { normalizePhone, toFaDigits } from "@/lib/utils";
+
+/**
+ * مقادیری که کاربر فرستاده بود، تا فرم پس از خطا خالی برنگردد.
+ *
+ * React ۱۹ فرمِ کنترل‌نشده را بعد از اجرای action ریست می‌کند، پس یک رقمِ
+ * اشتباه در شمارهٔ تماس کل فرم استعلام را پاک می‌کرد — نام، شرکت، شهر و
+ * توضیحی که کاربر نوشته بود. در مسیری که کارش گرفتنِ سرنخ فروش است، این یعنی
+ * از دست دادن همان سرنخ.
+ *
+ * فقط در حالت خطا برمی‌گردد.
+ */
+export type OrderValues = {
+  contactName?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  contactCompany?: string;
+  contactCity?: string;
+  note?: string;
+};
 
 export type OrderActionState = {
   status: "idle" | "success" | "error";
   message?: string;
   orderNumber?: string;
   errors?: FieldErrors;
+  values?: OrderValues;
 };
+
+/** honeypot عمداً برنمی‌گردد */
+function echo(formData: FormData): OrderValues {
+  const text = (key: string) => {
+    const value = formData.get(key);
+    return typeof value === "string" ? value : undefined;
+  };
+  return {
+    contactName: text("contactName"),
+    contactPhone: text("contactPhone"),
+    contactEmail: text("contactEmail"),
+    contactCompany: text("contactCompany"),
+    contactCity: text("contactCity"),
+    note: text("note"),
+  };
+}
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
@@ -76,7 +112,8 @@ export async function createOrder(
   if (!limit.success) {
     return {
       status: "error",
-      message: `تعداد درخواست‌های شما زیاد است. لطفاً ${Math.ceil(limit.retryAfterSeconds / 60)} دقیقه دیگر تلاش کنید.`,
+      message: `تعداد درخواست‌های شما زیاد است. لطفاً ${toFaDigits(Math.ceil(limit.retryAfterSeconds / 60))} دقیقه دیگر تلاش کنید.`,
+      values: echo(formData),
     };
   }
 
@@ -84,7 +121,7 @@ export async function createOrder(
   try {
     itemsRaw = JSON.parse(String(formData.get("items") ?? "[]"));
   } catch {
-    return { status: "error", message: "اطلاعات محصولات نامعتبر است." };
+    return { status: "error", message: "اطلاعات محصولات نامعتبر است.", values: echo(formData) };
   }
 
   const parsed = orderInputSchema.safeParse({
@@ -105,6 +142,7 @@ export async function createOrder(
       status: "error",
       message: "لطفاً خطاهای فرم را برطرف کنید.",
       errors: toFieldErrors(parsed.error),
+      values: echo(formData),
     };
   }
 
@@ -156,6 +194,7 @@ export async function createOrder(
         status: "error",
         message:
           "برخی از اقلام سبد شما دیگر در دسترس نیستند. لطفاً سبد را بازبینی کنید و دوباره تلاش کنید.",
+        values: echo(formData),
       };
     }
 
@@ -292,6 +331,7 @@ export async function createOrder(
     return {
       status: "error",
       message: "در ثبت درخواست خطایی رخ داد. لطفاً دوباره تلاش کنید یا تلفنی تماس بگیرید.",
+      values: echo(formData),
     };
   }
 }
