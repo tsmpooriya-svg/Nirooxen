@@ -153,6 +153,8 @@
   --brand-soft: rgb(34 188 214 / 0.12);
   --brand-soft-hover: rgb(34 188 214 / 0.2);
   --brand-ring: rgb(34 188 214 / 0.55);
+  /* متن روی پُرکنندهٔ --brand-soft. در تم تیره همان --brand کافی است. */
+  --brand-on-soft: var(--brand);
 
   --signal: var(--signal-400);
   --signal-soft: rgb(247 187 86 / 0.14);
@@ -277,6 +279,14 @@
   --brand-soft: rgb(0 116 139 / 0.09);
   --brand-soft-hover: rgb(0 116 139 / 0.16);
   --brand-ring: rgb(0 116 139 / 0.45);
+  /*
+    متن روی پُرکنندهٔ --brand-soft.
+
+    --brand روی این زمینه ۴٫۴۱:۱ می‌دهد و از ۴٫۵ رد نمی‌شود — اندازه‌گیری axe
+    روی چیپ فیلتر اخبار، و همان ترکیب در صفحه‌بندی و میز کار سفارش هم هست.
+    یک پله تیره‌تر، ۵٫۰۵:۱ می‌دهد و تفاوت رنگ به چشم نمی‌آید.
+  */
+  --brand-on-soft: var(--hydro-700);
 
   --signal: var(--signal-600);
   --signal-soft: rgb(209 129 26 / 0.12);

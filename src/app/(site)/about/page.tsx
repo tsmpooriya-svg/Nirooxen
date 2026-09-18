@@ -110,7 +110,11 @@ export default function AboutPage() {
           </Reveal>
 
           <Reveal variant="scale" delay={140}>
-            <div className="space-y-4">
+            <section aria-labelledby="values-heading" className="space-y-4">
+              {/* کارت‌ها h3 بودند و بالای سرشان هیچ h2ی نبود */}
+              <h2 id="values-heading" className="sr-only">
+                ارزش‌های ما
+              </h2>
               {values.map((value) => (
                 <div
                   key={value.title}
@@ -125,7 +129,7 @@ export default function AboutPage() {
                   </div>
                 </div>
               ))}
-            </div>
+            </section>
           </Reveal>
         </div>
       </Section>

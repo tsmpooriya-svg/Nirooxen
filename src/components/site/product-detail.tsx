@@ -337,18 +337,36 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
           */}
           {(specGroups.length > 0 || product.description) && (
           <div>
+            {/*
+              گروه‌های مشخصات h3 هستند و بالای سرشان هیچ h2ی نبود، پس ترتیب
+              سرفصل‌ها از h1 صفحه یک‌راست به h3 می‌پرید. نوار تب همین نام را
+              به‌عنوان aria-label دارد؛ سرفصل هم همان را می‌گوید.
+            */}
+            <h2 id="product-info-heading" className="sr-only">
+              اطلاعات محصول
+            </h2>
             <div
               role="tablist"
               aria-label="اطلاعات محصول"
               className="flex gap-1 border-b border-[var(--border-hairline)]"
             >
               {specGroups.length > 0 && (
-                <TabButton active={activeTab === "specs"} onClick={() => setActiveTab("specs")}>
+                <TabButton
+                  id="tab-specs"
+                  controls="panel-specs"
+                  active={activeTab === "specs"}
+                  onClick={() => setActiveTab("specs")}
+                >
                   مشخصات فنی
                 </TabButton>
               )}
               {product.description && (
-                <TabButton active={activeTab === "description"} onClick={() => setActiveTab("description")}>
+                <TabButton
+                  id="tab-description"
+                  controls="panel-description"
+                  active={activeTab === "description"}
+                  onClick={() => setActiveTab("description")}
+                >
                   توضیحات و کاربرد
                 </TabButton>
               )}
@@ -356,7 +374,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
 
             <div className="pt-6">
               {activeTab === "specs" && specGroups.length > 0 && (
-                <div role="tabpanel" className="space-y-8">
+                <div role="tabpanel" id="panel-specs" aria-labelledby="tab-specs" className="space-y-8">
                   {specGroups.map((group) => (
                     <section key={group.name}>
                       <h3 className="eyebrow mb-4 flex items-center gap-2.5">
@@ -390,7 +408,7 @@ export function ProductDetail({ product, category, brand, images, specGroups }: 
               )}
 
               {activeTab === "description" && product.description && (
-                <div role="tabpanel" className="max-w-3xl">
+                <div role="tabpanel" id="panel-description" aria-labelledby="tab-description" className="max-w-3xl">
                   {product.description.split("\n\n").map((paragraph, index) => {
                     if (paragraph.startsWith("### ")) {
                       return (
@@ -514,10 +532,14 @@ function withUnitGap(value: string, unit: string): string {
 }
 
 function TabButton({
+  id,
+  controls,
   active,
   onClick,
   children,
 }: {
+  id: string;
+  controls: string;
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
@@ -526,6 +548,8 @@ function TabButton({
     <button
       type="button"
       role="tab"
+      id={id}
+      aria-controls={controls}
       aria-selected={active}
       onClick={onClick}
       className={cn(

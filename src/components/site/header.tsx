@@ -144,8 +144,18 @@ export function SiteHeader({
 
   return (
     <>
-      {/* نوار اطلاعات تماس — روی موبایل مخفی است */}
-      <div className="relative z-50 hidden border-b border-[var(--border-hairline)] bg-[var(--bg-sunken)] lg:block">
+      {/*
+        نوار اطلاعات تماس — روی موبایل مخفی است.
+
+        section با نام، نه div: این نوار بیرون از هدرِ چسبان می‌نشیند و تا امروز
+        در هیچ landmarkی نبود، یعنی صفحه‌خوان راهی نداشت به آن برسد جز خواندن
+        خطی صفحه. هدر چسبان است و این نوار نیست، پس داخل همان header بردنش
+        چیدمان را عوض می‌کرد؛ نام‌گذاری‌اش نمی‌کند.
+      */}
+      <section
+        aria-label="اطلاعات تماس"
+        className="relative z-50 hidden border-b border-[var(--border-hairline)] bg-[var(--bg-sunken)] lg:block"
+      >
         <div className="shell flex h-10 items-center justify-between text-meta text-[var(--fg-muted)]">
           <div className="flex items-center gap-5">
             <span className="flex items-center gap-2">
@@ -166,7 +176,7 @@ export function SiteHeader({
             </a>
           </div>
         </div>
-      </div>
+      </section>
 
       {/*
         لایه تمرکز. بالای محتوای صفحه و زیر هدر (z-50) می‌نشیند، پس هدر و

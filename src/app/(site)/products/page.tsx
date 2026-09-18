@@ -194,7 +194,15 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
 
       <div className="shell py-10">
         <div className="grid gap-8 lg:grid-cols-[17rem_1fr]">
-          <aside className="hidden lg:block">
+          <aside className="hidden lg:block" aria-labelledby="filters-heading">
+            {/*
+              ستون فیلتر عنوان دیداری ندارد، ولی گروه‌هایش h3 هستند و بدون h2ی
+              بالای سرشان، ترتیب سرفصل‌ها از h1 صفحه یک‌باره به h3 می‌پرید.
+              نسخهٔ موبایل همین عنوان را دیداری دارد؛ اینجا فقط برای صفحه‌خوان.
+            */}
+            <h2 id="filters-heading" className="sr-only">
+              فیلترها
+            </h2>
             <div className="sticky top-[calc(var(--header-h)+1.5rem)]">
               <Suspense fallback={null}>{filtersPanel}</Suspense>
             </div>

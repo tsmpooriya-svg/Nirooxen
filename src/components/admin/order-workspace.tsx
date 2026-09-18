@@ -113,7 +113,7 @@ export function OrderWorkflow({
                 className={cn(
                   "rounded-md border px-2.5 py-1 text-micro transition-all duration-200 disabled:opacity-50",
                   priority === level
-                    ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand)]"
+                    ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand-on-soft)]"
                     : "border-[var(--border-subtle)] text-[var(--fg-muted)] hover:text-[var(--fg-primary)]",
                 )}
               >
