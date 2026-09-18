@@ -42,6 +42,27 @@ export function ProductFilters({
   const pathname = usePathname();
   const params = useSearchParams();
 
+  /*
+    بازخورد «در حال اعمال».
+
+    فیلترها وضعیت را در URL نگه می‌دارند و هر تغییر یک ناوبری سمت سرور است.
+    تا امروز هیچ نشانه‌ای در کار نبود: کاربر تیک می‌زد و صفحه دست‌نخورده
+    می‌ماند تا وقتی پاسخ برسد. روی این ماشین ۳۱۰ میلی‌ثانیه طول می‌کشد، ولی با
+    شبیه‌سازی شبکهٔ کند (۳۰۰ms تأخیر، ۴۰۰kbps) بیش از ۱۵ ثانیه — و در تمام آن
+    مدت هیچ اتفاقی دیده نمی‌شد. کاربر یا دوباره کلیک می‌کند یا می‌رود.
+
+    useTransition همان حالت در حال انتظار را می‌دهد بی‌آنکه چیزی از معماری
+    URL-محور عوض شود.
+  */
+  const [pending, startTransition] = React.useTransition();
+
+  const go = React.useCallback(
+    (href: string) => {
+      startTransition(() => router.push(href, { scroll: false }));
+    },
+    [router],
+  );
+
   const activeCategory = params.get("category");
   const activeBrand = params.get("brand");
   const activeStock = params.get("stock");
@@ -65,7 +86,7 @@ export function ProductFilters({
     if (value === null || next.get(key) === value) next.delete(key);
     else next.set(key, value);
     next.delete("page");
-    router.push(`${pathname}?${next.toString()}`, { scroll: false });
+    go(`${pathname}?${next.toString()}`);
     onNavigate?.();
   }
 
@@ -84,7 +105,7 @@ export function ProductFilters({
     if (next.length === 0) search.delete(specParamName(key));
     else search.set(specParamName(key), next.join(","));
     search.delete("page");
-    router.push(`${pathname}?${search.toString()}`, { scroll: false });
+    go(`${pathname}?${search.toString()}`);
     onNavigate?.();
   }
 
@@ -96,7 +117,7 @@ export function ProductFilters({
       else search.set(name, value.trim());
     }
     search.delete("page");
-    router.push(`${pathname}?${search.toString()}`, { scroll: false });
+    go(`${pathname}?${search.toString()}`);
     onNavigate?.();
   }
 
@@ -106,12 +127,28 @@ export function ProductFilters({
   );
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div
+      className={cn(
+        "space-y-6 transition-opacity duration-200",
+        /*
+          نه اسکلت و نه چرخنده: خودِ پنل کم‌رنگ و بی‌اثر می‌شود. کاربر همین‌جا
+          کلیک کرده، پس بازخورد هم باید همین‌جا باشد — و فهرست فیلترها سر جایش
+          می‌ماند تا بشود دید چه چیزی انتخاب شده.
+        */
+        pending && "pointer-events-none opacity-60",
+        className,
+      )}
+      aria-busy={pending}
+    >
+      {/* تغییر نتیجه بیرون از دید کاربر است؛ صفحه‌خوان باید بشنودش */}
+      <span aria-live="polite" className="sr-only">
+        {pending ? "در حال اعمال فیلتر…" : ""}
+      </span>
       {hasFilters && (
         <button
           type="button"
           onClick={() => {
-            router.push(pathname, { scroll: false });
+            go(pathname);
             onNavigate?.();
           }}
           className="flex w-full items-center justify-center gap-2 rounded-md border border-[var(--border-default)] py-2.5 text-meta font-medium text-[var(--fg-secondary)] transition-colors hover:border-[var(--danger)] hover:text-[var(--danger-text)]"
@@ -462,10 +499,20 @@ function SpecOptionsFilter({
   );
 }
 
-/** جداکننده فقط برای صفحه‌خوان است؛ بدون آن نام دسترس‌پذیر «پنتاکس۲» خوانده می‌شود */
+/**
+ * شمارشِ کنار هر گزینهٔ فیلتر.
+ *
+ * جداکننده فقط برای صفحه‌خوان است؛ بدون آن نام دسترس‌پذیر «پنتاکس۲» خوانده
+ * می‌شود.
+ *
+ * رنگ از `--fg-muted` می‌آید نه `--fg-subtle`: ردیفِ فعال پس‌زمینهٔ
+ * `--brand-soft` می‌گیرد و روی آن، subtle در تم تیره ۴٫۳۱:۱ می‌داد و از ۴٫۵
+ * رد نمی‌شد (اندازه‌گیری axe روی `‎/products?category=pumps`). muted روی همان
+ * زمینه ۶٫۴۸:۱ است و هنوز از برچسب کم‌رنگ‌تر، پس سلسله‌مراتب دیداری می‌ماند.
+ */
 function FacetCount({ value }: { value: number }) {
   return (
-    <span className="shrink-0 font-mono text-micro text-[var(--fg-subtle)]">
+    <span className="shrink-0 font-mono text-micro text-[var(--fg-muted)]">
       <span className="sr-only"> — </span>
       {toFaDigits(value)}
     </span>
@@ -500,6 +547,7 @@ export function ProductToolbar({
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
+  const [sorting, startSorting] = React.useTransition();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const sheetRef = React.useRef<HTMLDivElement>(null);
@@ -568,13 +616,20 @@ export function ProductToolbar({
     if (value === "newest") next.delete("sort");
     else next.set("sort", value);
     next.delete("page");
-    router.push(`${pathname}?${next.toString()}`, { scroll: false });
+    /* همان دلیل پنل فیلتر: تغییر ترتیب هم یک ناوبری سمت سرور است */
+    startSorting(() => router.push(`${pathname}?${next.toString()}`, { scroll: false }));
   }
 
   return (
     <>
       <div className="mb-6 flex items-center justify-between gap-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-3">
-        <p className="text-meta text-[var(--fg-muted)]">
+        <p
+          className={cn(
+            "text-meta text-[var(--fg-muted)] transition-opacity duration-200",
+            sorting && "opacity-50",
+          )}
+          aria-busy={sorting}
+        >
           <span className="font-mono text-[var(--fg-primary)]">{toFaDigits(total)}</span> کالا یافت شد
         </p>
 
@@ -596,6 +651,7 @@ export function ProductToolbar({
             <span className="sr-only">مرتب‌سازی</span>
             <select
               value={sort}
+              disabled={sorting}
               onChange={(e) => onSortChange(e.target.value)}
               className="h-10 cursor-pointer rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-3 text-meta outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
             >
