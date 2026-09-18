@@ -65,7 +65,7 @@ export function OrderForm({
       <input type="hidden" name="items" value={JSON.stringify(lines)} />
 
       {/* honeypot ضد ربات — برای کاربران نامرئی است */}
-      <div className="absolute -left-[9999px] top-0" aria-hidden>
+      <div className="sr-only" aria-hidden>
         <label htmlFor="website-hp">وب‌سایت</label>
         <input id="website-hp" type="text" name="website" tabIndex={-1} autoComplete="off" />
       </div>
@@ -78,7 +78,7 @@ export function OrderForm({
           </p>
           <ul className="space-y-2.5">
             {lines.map((line, index) => (
-              <li key={`${line.productId ?? index}`} className="flex items-start justify-between gap-3 text-xs">
+              <li key={`${line.productId ?? index}`} className="flex items-start justify-between gap-3 text-meta">
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[var(--fg-primary)]">{line.productName}</span>
                   <span className="mt-0.5 block font-mono text-micro text-[var(--fg-subtle)]">
@@ -93,8 +93,8 @@ export function OrderForm({
           </ul>
           {subtotal > 0 && (
             <div className="mt-4 flex items-center justify-between border-t border-[var(--border-hairline)] pt-3">
-              <span className="text-xs text-[var(--fg-muted)]">جمع اقلام قیمت‌دار</span>
-              <span className="font-display text-sm font-bold">{formatPrice(subtotal)}</span>
+              <span className="text-meta text-[var(--fg-muted)]">جمع اقلام قیمت‌دار</span>
+              <span className="font-display text-base font-bold">{formatPrice(subtotal)}</span>
             </div>
           )}
           {hasUnpriced && (
@@ -110,6 +110,7 @@ export function OrderForm({
           <Input
             id="contactName"
             name="contactName"
+            defaultValue={state.values?.contactName ?? ""}
             autoComplete="name"
             placeholder="مثلاً: رضا کاظمی"
             invalid={Boolean(state.errors?.contactName)}
@@ -127,6 +128,7 @@ export function OrderForm({
           <Input
             id="contactPhone"
             name="contactPhone"
+            defaultValue={state.values?.contactPhone ?? ""}
             type="tel"
             inputMode="tel"
             dir="ltr"
@@ -139,13 +141,20 @@ export function OrderForm({
         </Field>
 
         <Field label="نام شرکت" htmlFor="contactCompany" hint="اختیاری — برای صدور پیش‌فاکتور رسمی">
-          <Input id="contactCompany" name="contactCompany" autoComplete="organization" placeholder="اختیاری" />
+          <Input
+            id="contactCompany"
+            name="contactCompany"
+            autoComplete="organization"
+            defaultValue={state.values?.contactCompany ?? ""}
+            placeholder="اختیاری"
+          />
         </Field>
 
         <Field label="استان / شهر" htmlFor="contactCity" hint="برای برآورد هزینه و زمان ارسال">
           <Input
             id="contactCity"
             name="contactCity"
+            defaultValue={state.values?.contactCity ?? ""}
             list="province-list"
             placeholder="اختیاری"
             autoComplete="address-level1"
@@ -167,6 +176,7 @@ export function OrderForm({
         <Input
           id="contactEmail"
           name="contactEmail"
+          defaultValue={state.values?.contactEmail ?? ""}
           type="email"
           dir="ltr"
           autoComplete="email"
@@ -184,6 +194,7 @@ export function OrderForm({
         <Textarea
           id="note"
           name="note"
+          defaultValue={state.values?.note ?? ""}
           rows={4}
           placeholder="مثلاً: ساختمان ۸ طبقه، ۲۴ واحد، نیاز به تثبیت فشار در طبقات بالا…"
         />

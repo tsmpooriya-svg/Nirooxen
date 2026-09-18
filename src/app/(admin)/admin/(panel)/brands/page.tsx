@@ -2,6 +2,7 @@ import { BrandDialog, DeleteTaxonomyButton } from "@/components/admin/taxonomy-f
 import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/components/admin/ui";
 import { toFaDigits } from "@/lib/utils";
 import { getBrandOptions } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,8 @@ const empty = {
 };
 
 export default async function AdminBrandsPage() {
+  await requirePageAccess("brands");
+
   const brands = await getBrandOptions();
 
   return (
@@ -54,7 +57,7 @@ export default async function AdminBrandsPage() {
                     }}
                     trigger={{ kind: "icon", label: `ویرایش ${brand.name}` }}
                     />
-                  <DeleteTaxonomyButton kind="brand" id={brand.id} name={brand.name} />
+                  <DeleteTaxonomyButton kind="brand" id={brand.id} name={brand.name} productCount={brand.productCount} />
                 </div>
               </Td>
             </Tr>

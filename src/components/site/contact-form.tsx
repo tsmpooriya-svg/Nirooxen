@@ -7,7 +7,14 @@ import { sendContactMessage, type ContactActionState } from "@/modules/orders/co
 
 const initialState: ContactActionState = { status: "idle" };
 
-export function ContactForm() {
+/**
+ * `subject` از نشانی می‌آید.
+ *
+ * وقتی جست‌وجوی کاربر در کاتالوگ نتیجه‌ای ندارد، متن جست‌وجو همین‌جا در فیلد
+ * موضوع می‌نشیند. آن جست‌وجو دقیقاً همان چیزی است که مشتری می‌خواهد و ما
+ * صفحه‌اش را نداریم؛ بدون این، نیت کاربر همان‌جا از بین می‌رفت.
+ */
+export function ContactForm({ defaultSubject = "" }: { defaultSubject?: string }) {
   const [state, formAction, pending] = useActionState(sendContactMessage, initialState);
 
   if (state.status === "success") {
@@ -26,20 +33,21 @@ export function ContactForm() {
 
   return (
     <form action={formAction} className="space-y-5" noValidate>
-      <div className="absolute -left-[9999px] top-0" aria-hidden>
+      <div className="sr-only" aria-hidden>
         <label htmlFor="contact-hp">وب‌سایت</label>
         <input id="contact-hp" type="text" name="website" tabIndex={-1} autoComplete="off" />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="نام و نام خانوادگی" htmlFor="name" required error={state.errors?.name}>
-          <Input id="name" name="name" autoComplete="name" required invalid={Boolean(state.errors?.name)} />
+          <Input id="name" name="name" autoComplete="name" defaultValue={state.values?.name ?? ""} required invalid={Boolean(state.errors?.name)} />
         </Field>
 
         <Field label="شماره تماس" htmlFor="phone" required error={state.errors?.phone}>
           <Input
             id="phone"
             name="phone"
+            defaultValue={state.values?.phone ?? ""}
             type="tel"
             dir="ltr"
             inputMode="tel"
@@ -57,6 +65,7 @@ export function ContactForm() {
           <Input
             id="email"
             name="email"
+            defaultValue={state.values?.email ?? ""}
             type="email"
             dir="ltr"
             autoComplete="email"
@@ -66,7 +75,12 @@ export function ContactForm() {
         </Field>
 
         <Field label="موضوع" htmlFor="subject" hint="اختیاری">
-          <Input id="subject" name="subject" placeholder="مثلاً: درخواست مشاوره فنی" />
+          <Input
+            id="subject"
+            name="subject"
+            defaultValue={state.values?.subject ?? defaultSubject}
+            placeholder="مثلاً: درخواست مشاوره فنی"
+          />
         </Field>
       </div>
 
@@ -74,6 +88,7 @@ export function ContactForm() {
         <Textarea
           id="message"
           name="message"
+          defaultValue={state.values?.message ?? ""}
           rows={6}
           required
           placeholder="شرایط پروژه یا سؤال فنی خود را بنویسید…"

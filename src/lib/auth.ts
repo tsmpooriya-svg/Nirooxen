@@ -17,10 +17,11 @@ import { cache } from "react";
 import bcrypt from "bcryptjs";
 import { and, eq, gt, lt } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 import { db } from "@/db";
 import { sessions, users, type UserRole } from "@/db/schema";
-import { can, type PermissionKey } from "@/lib/constants";
+import { can, canWrite, type PermissionKey } from "@/lib/constants";
 
 export const SESSION_COOKIE = "aria_session";
 const SESSION_TTL_DAYS = 7;
@@ -101,6 +102,25 @@ export async function destroySession(): Promise<void> {
   cookieStore.delete(SESSION_COOKIE);
 }
 
+/**
+ * شناسهٔ نشست جاری.
+ *
+ * صفحهٔ پروفایل باید بتواند «همین دستگاه» را در فهرست نشست‌ها علامت بزند و
+ * جلوی ابطال ناخواستهٔ خودش را بگیرد. توکن هرگز بیرون نمی‌رود؛ فقط شناسهٔ
+ * ردیف برمی‌گردد.
+ */
+export async function getCurrentSessionId(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  if (!token) return null;
+  const [row] = await db
+    .select({ id: sessions.id })
+    .from(sessions)
+    .where(eq(sessions.tokenHash, hashToken(token)))
+    .limit(1);
+  return row?.id ?? null;
+}
+
 /** ابطال تمام نشست‌های یک کاربر — مثلاً هنگام غیرفعال‌سازی حساب */
 export async function destroyAllSessions(userId: string): Promise<void> {
   await db.delete(sessions).where(eq(sessions.userId, userId));
@@ -156,6 +176,21 @@ export async function requirePermission(key: PermissionKey): Promise<SessionUser
   return user;
 }
 
+export async function requireWritePermission(key: PermissionKey): Promise<SessionUser> {
+  const user = await requireUser();
+  if (!canWrite(user.role, key)) {
+    throw new AuthError("حساب شما فقط اجازه مشاهده دارد و نمی‌تواند این تغییر را انجام دهد.");
+  }
+  return user;
+}
+
+export async function requirePageAccess(key: PermissionKey): Promise<SessionUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/admin/login");
+  if (!can(user.role, key)) redirect("/admin");
+  return user;
+}
+
 export class AuthError extends Error {
   constructor(message: string) {
     super(message);
@@ -165,8 +200,30 @@ export class AuthError extends Error {
 
 /* --------------------------------- کمکی ---------------------------------- */
 
+/**
+ * نشانی واقعی کلاینت، برای کلید محدودسازی نرخ.
+ *
+ * استقرار پشت یک reverse proxy مورد اعتماد است و همان proxy باید هر دو هدر
+ * زیر را بازنویسی کند (نه صرفاً عبور دهد) — به README بخش «استقرار» ببینید.
+ *
+ * X-Real-IP تک‌مقداری است و proxy آن را جایگزین می‌کند، پس اولویت با آن است.
+ * در X-Forwarded-For آخرین مقدار خوانده می‌شود نه اولی: هر مقداری که کلاینت
+ * خودش بفرستد در ابتدای فهرست می‌نشیند، بنابراین خواندن مقدار اول یعنی مهاجم
+ * می‌تواند با یک هدر ساختگی سطل محدودسازی تازه بگیرد.
+ */
 export function getClientIp(headerList: Headers): string | null {
+  const realIp = headerList.get("x-real-ip")?.trim();
+  if (realIp) return realIp.slice(0, 60);
+
   const forwarded = headerList.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]!.trim().slice(0, 60);
-  return headerList.get("x-real-ip")?.slice(0, 60) ?? null;
+  if (forwarded) {
+    const hops = forwarded
+      .split(",")
+      .map((hop) => hop.trim())
+      .filter(Boolean);
+    const nearest = hops[hops.length - 1];
+    if (nearest) return nearest.slice(0, 60);
+  }
+
+  return null;
 }

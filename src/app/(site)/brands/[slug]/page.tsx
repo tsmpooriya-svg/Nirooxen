@@ -5,7 +5,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { PageHeader } from "@/components/site/breadcrumb";
 import { ProductCard } from "@/components/site/product-card";
 import { pageMetadata } from "@/lib/seo";
-import { toFaDigits } from "@/lib/utils";
+import { decodeRouteParam, toFaDigits } from "@/lib/utils";
 import { getBrandBySlug, getBrands, listProducts } from "@/modules/catalog/queries";
 
 type Params = Promise<{ slug: string }>;
@@ -18,7 +18,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const brand = await getBrandBySlug(slug);
   if (!brand) return pageMetadata({ title: "برند یافت نشد", path: `/brands/${slug}`, noIndex: true });
 
@@ -30,7 +31,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function BrandPage({ params }: { params: Params }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const brand = await getBrandBySlug(slug);
   if (!brand || !brand.isActive) notFound();
 
@@ -46,7 +48,7 @@ export default async function BrandPage({ params }: { params: Params }) {
           { name: brand.name, href: `/brands/${brand.slug}` },
         ]}
       >
-        <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-xs">
+        <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-meta">
           {brand.latinName && (
             <div>
               <dt className="text-[var(--fg-subtle)]">نام لاتین</dt>
@@ -73,6 +75,13 @@ export default async function BrandPage({ params }: { params: Params }) {
           </p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {/*
+              کارت‌های محصول h3 هستند و بدون h2ی بالای سرشان، ترتیب سرفصل‌ها از
+              h1 صفحه یک‌راست به h3 می‌پرید. صفحهٔ کاتالوگ همین سرفصل را دیداری
+              دارد؛ اینجا عنوان صفحه خودش «محصولات ...» است و تکرارش دیداری
+              اضافه می‌شد.
+            */}
+            <h2 className="sr-only">فهرست محصولات این برند</h2>
             {items.map((product, index) => (
               <Reveal key={product.id} delay={Math.min(index, 6) * 60}>
                 <ProductCard product={product} />

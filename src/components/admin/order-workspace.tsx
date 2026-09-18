@@ -7,6 +7,7 @@ import { useTransition } from "react";
 import { StatusBadge } from "@/components/admin/ui";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
+import { useReadOnly } from "./shell";
 import { useToast } from "@/components/ui/toast";
 import type { OrderPriority, OrderStatus } from "@/db/schema";
 import { ORDER_PRIORITY, ORDER_STATUS, ORDER_STATUS_FLOW } from "@/lib/constants";
@@ -48,6 +49,7 @@ export function OrderWorkflow({
   const { toast } = useToast();
   const [pending, startTransition] = useTransition();
   const currentIndex = ORDER_STATUS_FLOW.indexOf(status);
+  const readOnly = useReadOnly();
 
   function run(fn: () => Promise<{ status: string; message?: string }>) {
     startTransition(async () => {
@@ -71,7 +73,7 @@ export function OrderWorkflow({
             <li key={step} className="flex shrink-0 items-center gap-1">
               <button
                 type="button"
-                disabled={pending}
+                disabled={pending || readOnly}
                 onClick={() => run(() => updateOrderStatus(orderId, step))}
                 title={ORDER_STATUS[step].description}
                 className={cn(
@@ -106,12 +108,12 @@ export function OrderWorkflow({
               <button
                 key={level}
                 type="button"
-                disabled={pending}
+                disabled={pending || readOnly}
                 onClick={() => run(() => updateOrderPriority(orderId, level))}
                 className={cn(
                   "rounded-md border px-2.5 py-1 text-micro transition-all duration-200 disabled:opacity-50",
                   priority === level
-                    ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand)]"
+                    ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand-on-soft)]"
                     : "border-[var(--border-subtle)] text-[var(--fg-muted)] hover:text-[var(--fg-primary)]",
                 )}
               >
@@ -125,7 +127,7 @@ export function OrderWorkflow({
         <div className="ms-auto flex gap-2">
           <button
             type="button"
-            disabled={pending}
+            disabled={pending || readOnly}
             onClick={() => run(() => updateOrderStatus(orderId, "CANCELLED"))}
             className="rounded-md border border-[var(--border-subtle)] px-3 py-1.5 text-micro text-[var(--fg-muted)] transition-colors hover:border-[var(--border-default)] hover:text-[var(--fg-primary)] disabled:opacity-50"
           >
@@ -133,7 +135,7 @@ export function OrderWorkflow({
           </button>
           <button
             type="button"
-            disabled={pending}
+            disabled={pending || readOnly}
             onClick={() => run(() => updateOrderStatus(orderId, "REJECTED"))}
             className="rounded-md border border-[color-mix(in_oklab,var(--danger)_35%,transparent)] px-3 py-1.5 text-micro text-[var(--danger-text)] transition-colors hover:bg-[var(--danger-soft)] disabled:opacity-50"
           >
@@ -160,13 +162,14 @@ export function AssigneePicker({
 }) {
   const { toast } = useToast();
   const [pending, startTransition] = useTransition();
+  const readOnly = useReadOnly();
 
   return (
     <label className="block">
       <span className="mb-2 block text-micro text-[var(--fg-muted)]">کارشناس مسئول</span>
       <select
         defaultValue={currentId ?? ""}
-        disabled={pending}
+        disabled={pending || readOnly}
         onChange={(event) => {
           const value = event.target.value || null;
           startTransition(async () => {
@@ -199,6 +202,7 @@ export function QuoteBuilder({ orderId, items }: { orderId: string; items: Item[
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
   const [pending, startTransition] = useTransition();
+  const readOnly = useReadOnly();
   const [prices, setPrices] = React.useState<Record<string, string>>(() =>
     Object.fromEntries(items.map((i) => [i.id, String(i.quotedUnitPrice ?? i.unitPrice ?? "")])),
   );
@@ -238,7 +242,8 @@ export function QuoteBuilder({ orderId, items }: { orderId: string; items: Item[
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
+        disabled={readOnly}
+        className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)] disabled:opacity-60"
       >
         <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
           <path d="M3 2h7l3 3v9H3zM6 7h4M6 10h4" strokeLinecap="round" strokeLinejoin="round" />
@@ -264,7 +269,7 @@ export function QuoteBuilder({ orderId, items }: { orderId: string; items: Item[
             <button
               type="button"
               onClick={save}
-              disabled={pending}
+              disabled={pending || readOnly}
               className="h-10 rounded-md bg-[var(--brand)] px-5 text-sm font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)] disabled:opacity-50"
             >
               {pending ? "در حال ثبت…" : "ثبت پیش‌فاکتور"}
@@ -374,6 +379,7 @@ export function OrderTimeline({
   const { toast } = useToast();
   const [note, setNote] = React.useState("");
   const [pending, startTransition] = useTransition();
+  const readOnly = useReadOnly();
 
   function submit(kind: "note" | "contact") {
     if (note.trim().length < 2) return;
@@ -391,7 +397,7 @@ export function OrderTimeline({
   return (
     <div>
       <div className="mb-5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-2)] p-4">
-        <label htmlFor="order-note" className="mb-2 block text-[0.75rem] font-medium text-[var(--fg-secondary)]">
+        <label htmlFor="order-note" className="mb-2 block text-meta font-medium text-[var(--fg-secondary)]">
           ثبت یادداشت یا نتیجه تماس
         </label>
         <textarea
@@ -405,7 +411,7 @@ export function OrderTimeline({
         <div className="mt-3 flex flex-wrap gap-2">
           <button
             type="button"
-            disabled={pending || note.trim().length < 2}
+            disabled={pending || readOnly || note.trim().length < 2}
             onClick={() => submit("contact")}
             className="h-9 rounded-md bg-[var(--brand)] px-4 text-xs font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)] disabled:opacity-40"
           >
@@ -413,7 +419,7 @@ export function OrderTimeline({
           </button>
           <button
             type="button"
-            disabled={pending || note.trim().length < 2}
+            disabled={pending || readOnly || note.trim().length < 2}
             onClick={() => submit("note")}
             className="h-9 rounded-md border border-[var(--border-default)] px-4 text-xs transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)] disabled:opacity-40"
           >

@@ -6,6 +6,7 @@ import * as React from "react";
 import { useCart, useCartCount, useCartSubtotal } from "@/modules/cart/store";
 import { useMounted } from "@/lib/use-mounted";
 import { cn, formatPrice, toFaDigits } from "@/lib/utils";
+import { ProductThumb } from "./product-photo";
 
 /** نشانگر سبد استعلام در هدر */
 export function CartButton() {
@@ -60,7 +61,7 @@ export function CartPanel() {
   return (
     <div
       className={cn("fixed inset-0 z-[80]", isOpen ? "pointer-events-auto" : "pointer-events-none")}
-      aria-hidden={!isOpen}
+      inert={!isOpen}
     >
       <div
         onClick={close}
@@ -124,12 +125,7 @@ export function CartPanel() {
               {lines.map((line) => (
                 <li key={line.productId} className="flex gap-3.5 p-4">
                   {line.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={line.imageUrl}
-                      alt=""
-                      className="size-16 shrink-0 rounded-sm border border-[var(--border-hairline)] object-cover"
-                    />
+                    <ProductThumb src={line.imageUrl} className="size-16 rounded-sm" />
                   ) : (
                     <span className="size-16 shrink-0 rounded-sm border border-[var(--border-hairline)] bg-[var(--bg-inset)]" />
                   )}
@@ -155,7 +151,7 @@ export function CartPanel() {
                             <path d="M3.5 8h9" strokeLinecap="round" />
                           </svg>
                         </button>
-                        <span className="min-w-8 text-center font-mono text-xs">{toFaDigits(line.quantity)}</span>
+                        <span className="min-w-8 text-center font-mono text-meta font-medium">{toFaDigits(line.quantity)}</span>
                         <button
                           type="button"
                           onClick={() => setQuantity(line.productId, line.quantity + 1)}
@@ -168,7 +164,7 @@ export function CartPanel() {
                         </button>
                       </div>
 
-                      <span className="text-xs text-[var(--fg-muted)]">
+                      <span className="text-meta text-[var(--fg-muted)]">
                         {line.priceMode === "PUBLIC" && line.unitPrice
                           ? formatPrice(line.unitPrice * line.quantity)
                           : "استعلامی"}

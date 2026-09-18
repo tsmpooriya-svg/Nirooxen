@@ -153,6 +153,8 @@
   --brand-soft: rgb(34 188 214 / 0.12);
   --brand-soft-hover: rgb(34 188 214 / 0.2);
   --brand-ring: rgb(34 188 214 / 0.55);
+  /* متن روی پُرکنندهٔ --brand-soft. در تم تیره همان --brand کافی است. */
+  --brand-on-soft: var(--brand);
 
   --signal: var(--signal-400);
   --signal-soft: rgb(247 187 86 / 0.14);
@@ -188,6 +190,24 @@
   --warn-chip: #2c2721;
   --danger-chip: #2d1e2b;
   --info-chip: #18273f;
+
+  /* ── رنگ سری‌های نمودار ─────────────────────────────────────────────────
+     دو سری، دو هویت: فیروزه‌ای برند برای بازدید، کهربایی برای بازدیدکننده.
+     این‌ها با اسکریپت سنجیده شده‌اند، نه با چشم: هر دو داخل باند روشنایی
+     همین زمینه‌اند، از کف اشباع بالاترند، و جدایی‌شان در هر سه نوع کوررنگی
+     ΔE بالای ۱۸ است. اگر عوضشان کردید، دوباره بسنجید. */
+  /* ── قاب تصویر محصول ───────────────────────────────────────────────────
+     همان تم طرح‌های گرافیکی. در حالت تیره هم روشن می‌ماند — چرایی‌اش در
+     src/components/site/product-photo.tsx توضیح داده شده. */
+  --plate-from: #e4edf1;
+  --plate-to: #d3e5ec;
+  --plate-grid: rgb(0 116 139 / 0.09);
+  --plate-glow: rgb(0 166 192 / 0.16);
+  --plate-grid-size: 24px;
+
+  --chart-views: var(--hydro-500);
+  /* کهربای signal-600 روی زمینهٔ تیره کمی روشن‌تر از باند است؛ یک پله پایین‌تر */
+  --chart-visitors: #cc7f18;
 
   --grid-line: rgb(255 255 255 / 0.028);
   --grid-line-strong: rgb(34 188 214 / 0.07);
@@ -244,12 +264,29 @@
   --border-strong: rgb(10 20 36 / 0.3);
   --border-brand: rgb(0 116 139 / 0.42);
 
+  /* روی سفید، کهربای پررنگ‌تر داخل باند می‌نشیند */
+  --chart-visitors: var(--signal-600);
+
+  /* در تم روشن، قاب دقیقاً همان گرادیان داخل فایل‌های SVG است */
+  --plate-from: #ffffff;
+  --plate-to: #eefbfe;
+  --plate-grid: rgb(0 116 139 / 0.07);
+  --plate-glow: rgb(0 166 192 / 0.1);
+
   --brand: var(--hydro-600);
   --brand-hover: var(--hydro-700);
   --brand-pressed: var(--hydro-800);
   --brand-soft: rgb(0 116 139 / 0.09);
   --brand-soft-hover: rgb(0 116 139 / 0.16);
   --brand-ring: rgb(0 116 139 / 0.45);
+  /*
+    متن روی پُرکنندهٔ --brand-soft.
+
+    --brand روی این زمینه ۴٫۴۱:۱ می‌دهد و از ۴٫۵ رد نمی‌شود — اندازه‌گیری axe
+    روی چیپ فیلتر اخبار، و همان ترکیب در صفحه‌بندی و میز کار سفارش هم هست.
+    یک پله تیره‌تر، ۵٫۰۵:۱ می‌دهد و تفاوت رنگ به چشم نمی‌آید.
+  */
+  --brand-on-soft: var(--hydro-700);
 
   --signal: var(--signal-600);
   --signal-soft: rgb(209 129 26 / 0.12);
@@ -381,7 +418,21 @@
 
   --font-display: "Estedad", "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Vazirmatn", "Estedad", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  /* Vazirmatn sits INSIDE the mono stack, immediately after JetBrains Mono.
+     JetBrains Mono is declared for Latin only (its @font-face unicode-range is
+     U+0000-00FF, U+0131, U+2000-206F, U+2122), so every Persian letter and
+     every Persian digit — ۰-۹ at U+06F0-06F9 — fell straight past it to the
+     generic `monospace` keyword. Chrome resolved that to DejaVu Sans Mono;
+     other machines pick Consolas or Menlo. Either way «۶ کالا» was rendering
+     in a system terminal face the project never chose, which is what made the
+     counts and metadata read as debug output.
+
+     Because the fallback is driven by unicode-range, this one line splits the
+     stack by script instead of by component: Latin technical content (SKU,
+     model codes, ESC, PRODUCT CATEGORIES, brand wordmarks) still resolves to
+     JetBrains Mono and is untouched; Persian resolves to the same Vazirmatn
+     the rest of the UI already uses. */
+  --font-mono: "JetBrains Mono", "Vazirmatn", ui-monospace, "SFMono-Regular", monospace;
 
   /* ---- Fluid display scale ----------------------------------------------
      One continuous curve from 360px to 1440px instead of three discrete
@@ -404,19 +455,41 @@
   --text-lead--line-height: 1.95;
 
   /* ---- Metadata scale ---------------------------------------------------
-     Floor of 12px. Persian glyphs carry more internal detail than Latin at
-     the same nominal size, and the 10px mono labels used across the product
-     cards were below the point where that detail survives. */
-  --text-meta: 0.8125rem;
+     Floor of 13px. The previous 12px floor was set against Latin reference
+     text; measured against the Persian the site actually ships — brand
+     lockups, key-spec values, facet counts, prices — 12px is the size at
+     which the dots of ب/پ/ت/ث and the ی/ژ descenders start merging into the
+     stroke. Every metadata step moved up one rung.
+
+     This scale and Tailwind's own text-xs/text-sm are now pinned to the same
+     rungs (13/15). They used to disagree — --text-micro and text-xs both
+     resolved to 12px while meaning different things, so a <dt>/<dd> pair
+     built from one of each had no size hierarchy at all. */
+  --text-meta: 0.875rem;
   --text-meta--line-height: 1.7;
-  --text-micro: 0.75rem;
+  --text-micro: 0.8125rem;
   --text-micro--line-height: 1.6;
   /* 11px, and ONLY for all-caps Latin mono lockups (the logo sub-label,
      "PRODUCT CATEGORIES", entity ids). Latin at 11px stays legible because
      the letterforms are simple and widely tracked; Persian at the same size
-     loses its dots and diacritics, so Persian never uses this step. */
+     loses its dots and diacritics, so Persian never uses this step. Audited:
+     the four call sites are the latin wordmark, "ADMIN CONSOLE" and log
+     entity ids — all Latin all-caps mono. The step stays. */
   --text-label: 0.6875rem;
   --text-label--line-height: 1.5;
+
+  /* ---- Tailwind's own steps, re-pinned ----------------------------------
+     Defaults are 12px/1.333 and 14px/1.429 — both sized and led for Latin.
+     Persian needs the extra pixel and noticeably more leading, and the
+     codebase had already voted: text-[0.9375rem] (15px) appeared 30 times
+     as a hand-written escape hatch from a 14px text-sm. That rung is now
+     the token, so the escape hatch is no longer needed. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.6;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.7;
+  --text-base: 1rem;
+  --text-base--line-height: 1.75;
 
   --radius-xs: 4px;
   --radius-sm: 6px;
@@ -702,14 +775,24 @@
   }
 
   .eyebrow {
-    font-family: var(--font-mono);
-    /* 12px, not 11px: most eyebrows are Persian («چرا ما», «فرآیند خرید»)
-       and the mono fallback renders Persian without the tracking benefit
-       Latin gets, so the extra pixel matters here. */
+    /* Sans, not mono. All 26 eyebrows in the repo are Persian («چرا ما»,
+       «فرآیند خرید», «کارنامه اجرایی», spec-group and solution names) — there
+       is not one Latin eyebrow — so the mono stack only ever reached its
+       generic fallback here.
+
+       The 0.14em tracking went with it. Latin gains a label-like rhythm from
+       tracking; Persian is a connected script, and prising the clusters apart
+       breaks the joins — the same reason the heading rule below refuses
+       negative tracking. Weight carries the label instead: 600 against the
+       body's 400, in the brand colour, still at --text-micro (13px).
+
+       text-transform is kept as a no-op for Persian so a Latin eyebrow, if one
+       is ever added, still reads as a label rather than as a sentence. */
+    font-family: var(--font-sans);
     font-size: var(--text-micro);
-    line-height: 1.6;
-    font-weight: 500;
-    letter-spacing: 0.14em;
+    line-height: 1.7;
+    font-weight: 600;
+    letter-spacing: normal;
     text-transform: uppercase;
     color: var(--brand-text);
   }
@@ -1149,4 +1232,173 @@ html[data-loader="seen"] .loader-root {
   .loader-root[data-exit="true"] { animation: loader-fade-out 200ms linear forwards; }
   .loader-root[data-exit="true"] .loader-stage { animation: none; }
   @keyframes loader-fade-out { to { opacity: 0; visibility: hidden; } }
+}
+
+/* --------------------------------------------------------------------------
+   12. EMBER SCOPE — the fire-safety family's own skin
+   --------------------------------------------------------------------------
+   تجهیزات آتش‌نشانی، برخلاف بقیهٔ کاتالوگ، زبان رنگی خودش را دارد: سفید و قرمز،
+   همان قراردادی که روی کپسول، تابلو و نوار خطر جا افتاده است. به‌جای ساختن
+   کامپوننت تازه، فقط توکن‌ها را داخل .ember-scope بازنویسی می‌کنیم؛ هر کامپوننت
+   مشترکی که از var(--brand) و var(--bg-*) استفاده می‌کند، همان‌جا قرمز می‌شود.
+
+   بازنویسی عمداً به هر دو تم می‌چسبد (بدون قید data-theme): این صفحه در حالت
+   تیره هم باید روشن بماند، وگرنه قرارداد رنگی‌اش می‌شکند.
+   -------------------------------------------------------------------------- */
+/* سربرگ و پابرگ در چیدمان بالاتر از این صفحه رندر می‌شوند، پس کلاس روی خودشان
+   نمی‌نشیند. به‌جای جابه‌جا کردن چیدمان، توکن‌ها را روی خودِ html بازنویسی
+   می‌کنیم؛ چون متغیرهای CSS ارث می‌رسند، هر چیزی که var(--brand) یا
+   var(--bg-*) می‌خواند — از جمله سربرگ چسبان و پابرگ — همان‌جا قرمز/سفید
+   می‌شود، بدون آنکه کامپوننتی از این صفحه خبر داشته باشد. */
+html:has(.ember-scope),
+.ember-scope {
+  --ember-50: #fff5f4;
+  --ember-100: #ffe4e1;
+  --ember-200: #ffc6c0;
+  --ember-300: #ff9d94;
+  --ember-400: #f76057;
+  --ember-500: #e02a1e;
+  --ember-600: #c01a10;
+  --ember-700: #99120a;
+  --ember-800: #730d07;
+  --ember-900: #4d0905;
+
+  color-scheme: light;
+
+  --bg-base: #ffffff;
+  --bg-sunken: var(--ember-50);
+  --bg-elev-1: #ffffff;
+  --bg-elev-2: var(--ember-50);
+  --bg-elev-3: var(--ember-100);
+  --bg-inset: var(--ember-50);
+  --bg-glass: rgb(255 255 255 / 0.82);
+  --bg-glass-strong: rgb(255 255 255 / 0.94);
+
+  --fg-primary: #1a0705;
+  --fg-secondary: #4a211c;
+  --fg-muted: #7a4038;
+  --fg-subtle: #9c6058;
+  --fg-inverse: #ffffff;
+  --fg-on-brand: #ffffff;
+
+  --brand: var(--ember-600);
+  --brand-hover: var(--ember-700);
+  --brand-pressed: var(--ember-800);
+  --brand-text: var(--ember-700);
+  --brand-soft: rgb(224 42 30 / 0.08);
+  --brand-soft-hover: rgb(224 42 30 / 0.14);
+  --brand-ring: rgb(224 42 30 / 0.5);
+  --brand-chip: var(--ember-100);
+
+  --border-hairline: rgb(122 32 24 / 0.09);
+  --border-subtle: rgb(122 32 24 / 0.14);
+  --border-default: rgb(122 32 24 / 0.2);
+  --border-strong: rgb(122 32 24 / 0.32);
+  --border-brand: rgb(224 42 30 / 0.45);
+
+  --grid-line: rgb(192 26 16 / 0.07);
+  --glow-brand: rgb(224 42 30 / 0.3);
+  --shadow-brand: 0 14px 44px -14px rgb(192 26 16 / 0.45);
+  --noise-opacity: 0.028;
+  --grain-blend: multiply;
+  --blueprint-mask: radial-gradient(140% 100% at 50% 0%, #000 45%, transparent 92%);
+
+  background: var(--bg-base);
+  color: var(--fg-primary);
+}
+
+@layer utilities {
+  /* نوار خطر — همان راه‌راه مورب قرمز و سفیدِ تابلوهای ایمنی */
+  .hazard-band {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--ember-500) 0 18px,
+      #ffffff 18px 36px
+    );
+  }
+
+  /* نسخهٔ ریز همان نوار، برای عنصرهای چند ده پیکسلی که راه‌راه درشت در آن‌ها
+     فقط یک لکهٔ قرمز دیده می‌شود */
+  .hazard-band-sm {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--ember-500) 0 5px,
+      #ffffff 5px 10px
+    );
+  }
+
+  /* هالهٔ گرما پشت تیتر — گرادیان شعاعی گرم، نه عکس */
+  .ember-glow {
+    background-image:
+      radial-gradient(60% 52% at 78% 8%, rgb(224 42 30 / 0.16), transparent 68%),
+      radial-gradient(46% 40% at 12% 92%, rgb(247 96 87 / 0.12), transparent 70%);
+  }
+
+  /* شمارهٔ بزرگ کم‌رنگ کنار عنوان بخش‌ها */
+  .ember-index {
+    font-family: var(--font-mono);
+    color: var(--ember-500);
+    opacity: 0.22;
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+ *  قاب تصویر محصول
+ *
+ *  سه لایه، از رو به زیر: درخشش، شبکه، گرادیان پایه — همان ترتیبی که در
+ *  فایل‌های SVG طرح‌ها هست، تا عکس واقعی و طرح گرافیکی یک‌جور دیده شوند.
+ * ------------------------------------------------------------------------ */
+.product-plate {
+  /* موقعیت و اندازه را فراخوان تعیین می‌کند: گاهی کل قاب را پر می‌کند و گاهی
+     یک بندانگشتی با اندازهٔ ثابت است. */
+  display: block;
+  overflow: hidden;
+  background:
+    radial-gradient(58% 58% at 50% 42%, var(--plate-glow), transparent 70%),
+    repeating-linear-gradient(
+      to right,
+      var(--plate-grid) 0 1px,
+      transparent 1px var(--plate-grid-size)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--plate-grid) 0 1px,
+      transparent 1px var(--plate-grid-size)
+    ),
+    linear-gradient(135deg, var(--plate-from), var(--plate-to));
+}
+
+/*
+  ضرب در سفید یعنی «دست نزن»: پس‌زمینهٔ سفیدِ عکس ناپدید می‌شود و شبکه از زیرش
+  بیرون می‌زند، بی‌آنکه لازم باشد پس‌زمینهٔ تک‌تک عکس‌ها حذف شود.
+*/
+.product-plate[data-fit="multiply"] img {
+  mix-blend-mode: multiply;
+}
+
+/*
+  تصویری که پس‌زمینه‌اش برداشته شده روی هر زمینه‌ای می‌نشیند، پس در تم تیره قاب
+  هم واقعاً تیره می‌شود. تصویرِ ترکیبی این آزادی را ندارد — multiply روی زمینهٔ
+  تیره کل عکس را سیاه می‌کند — و قاب روشن خودش را نگه می‌دارد.
+*/
+:root:not([data-theme="light"]) .product-plate[data-fit="alpha"] {
+  /* یک پله روشن‌تر از سطح کارت، تا محصول تیره در قاب گم نشود */
+  --plate-from: var(--graphite-800);
+  --plate-to: var(--graphite-750);
+  --plate-grid: rgb(34 188 214 / 0.07);
+  --plate-glow: rgb(0 166 192 / 0.16);
+}
+
+/*
+  در حالت اجباری پرکنتراست، ترکیب رنگ‌ها را سیستم تعیین می‌کند و multiply
+  می‌تواند عکس را ناخوانا کند.
+*/
+@media (forced-colors: active) {
+  .product-plate {
+    background: Canvas;
+  }
+  .product-plate[data-fit="multiply"] img {
+    mix-blend-mode: normal;
+  }
 }

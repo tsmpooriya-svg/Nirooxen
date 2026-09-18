@@ -5,6 +5,7 @@ import * as React from "react";
 import { useTransition } from "react";
 
 import { ConfirmDialog } from "@/components/ui/modal";
+import { useReadOnly } from "./shell";
 import { useToast } from "@/components/ui/toast";
 import { toFaDigits } from "@/lib/utils";
 import { bulkUpdateProductStatus, deleteProduct } from "@/modules/admin/actions";
@@ -22,6 +23,7 @@ export function ProductRowActions({
   const { toast } = useToast();
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [pending, startTransition] = useTransition();
+  const readOnly = useReadOnly();
 
   return (
     <>
@@ -49,17 +51,19 @@ export function ProductRowActions({
           </svg>
         </Link>
 
-        <button
-          type="button"
-          onClick={() => setConfirmOpen(true)}
-          aria-label={`حذف ${name}`}
-          title="حذف"
-          className="grid size-8 place-items-center rounded-md text-[var(--fg-subtle)] transition-colors hover:text-[var(--danger-text)]"
-        >
-          <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6">
-            <path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5 5 13h6l.5-8.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
+        {!readOnly && (
+          <button
+            type="button"
+            onClick={() => setConfirmOpen(true)}
+            aria-label={`حذف ${name}`}
+            title="حذف"
+            className="grid size-8 place-items-center rounded-md text-[var(--fg-subtle)] transition-colors hover:text-[var(--danger-text)]"
+          >
+            <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5 5 13h6l.5-8.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        )}
       </div>
 
       <ConfirmDialog
@@ -102,6 +106,7 @@ export function ProductBulkBar({
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [selected, setSelected] = React.useState<string[]>([]);
   const [pending, startTransition] = useTransition();
+  const readOnly = useReadOnly();
 
   const refresh = React.useCallback(() => {
     const boxes = containerRef.current?.querySelectorAll<HTMLInputElement>('input[name="bulk"]:checked');
@@ -125,6 +130,8 @@ export function ProductBulkBar({
       if (result.status === "success") toggleAll(false);
     });
   }
+
+  if (readOnly) return <div>{children}</div>;
 
   return (
     <div ref={containerRef} onChange={refresh}>

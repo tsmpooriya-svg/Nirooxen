@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { ProductPhoto } from "./product-photo";
 import Link from "next/link";
 import * as React from "react";
 
@@ -77,12 +77,12 @@ export function ProductCard({
         aria-hidden
       >
         {product.imageUrl ? (
-          <Image
+          <ProductPhoto
             src={product.imageUrl}
             alt=""
-            fill
+            backdrop={product.imageBackdrop}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover transition-transform duration-[450ms] [transition-timing-function:var(--ease-out-expo)] group-hover:scale-[1.02] group-has-[:focus-visible]:scale-[1.02] motion-reduce:scale-100!"
+            imageClassName="transition-transform duration-[450ms] [transition-timing-function:var(--ease-out-expo)] group-hover:scale-[1.02] group-has-[:focus-visible]:scale-[1.02] motion-reduce:scale-100!"
           />
         ) : (
           <span className="absolute inset-0 grid place-items-center text-[var(--fg-subtle)]">
@@ -108,7 +108,7 @@ export function ProductCard({
         پنهان می‌شدند — یعنی اطلاعات معنادار از دسترس صفحه‌خوان خارج بود.
         عمداً بی‌حرکت‌اند: خوانایی مهم‌تر از واکنش نشان‌دادن است.
       */}
-      <span className="pointer-events-none absolute start-3 top-3 flex flex-col gap-1.5">
+      <span className="pointer-events-none absolute start-3 top-3 hidden flex-col gap-1.5 sm:flex">
         {product.isNew && (
           <Badge tone="brand" size="sm">
             جدید
@@ -129,23 +129,27 @@ export function ProductCard({
 
       {/* محتوا */}
       <div className={cn("flex flex-1 flex-col p-4", !compact && "sm:p-5")}>
-        <div className="mb-2 flex items-center gap-2 font-mono text-micro tracking-wider text-[var(--fg-subtle)]">
+        <div className="mb-2 flex items-center gap-2 text-micro text-[var(--fg-subtle)]">
           {product.brandName && (
             <Link
               href={`/brands/${product.brandSlug}`}
-              className="uppercase transition-colors hover:text-[var(--brand)]"
+              className="shrink-0 font-medium transition-colors hover:text-[var(--brand)]"
             >
               {product.brandName}
             </Link>
           )}
-          {product.brandName && product.model && <span aria-hidden>·</span>}
-          {product.model && <span dir="ltr">{product.model}</span>}
+          {product.brandName && product.model && <span className="shrink-0" aria-hidden>·</span>}
+          {product.model && (
+            <span dir="ltr" className="min-w-0 truncate font-mono tracking-wider" title={product.model}>
+              {product.model}
+            </span>
+          )}
         </div>
 
         <h3 className="mb-2">
           <Link
             href={`/products/${product.slug}`}
-            className="clamp-2 text-[0.9375rem] font-semibold leading-7 text-[var(--fg-primary)] transition-colors group-hover:text-[var(--brand)]"
+            className="clamp-2 text-base font-semibold leading-7 text-[var(--fg-primary)] transition-colors group-hover:text-[var(--brand)]"
           >
             {product.name}
           </Link>
@@ -153,13 +157,16 @@ export function ProductCard({
 
         {/* مشخصات کلیدی — همان چیزی که خریدار صنعتی اول نگاه می‌کند */}
         {product.keySpecs.length > 0 && !compact && (
-          <dl className="mb-4 grid grid-cols-2 gap-x-3 gap-y-1.5 border-y border-[var(--border-hairline)] py-3">
+          <dl className="mb-4 grid grid-cols-1 gap-x-3 gap-y-1.5 border-y border-[var(--border-hairline)] py-3 sm:grid-cols-2">
             {product.keySpecs.slice(0, 2).map((spec) => (
               <div key={spec.label} className="min-w-0">
+                {/* برچسب ۱۳px و مقدار ۱۴px: پیش‌تر هر دو ۱۲px بودند و جفت
+                    برچسب/مقدار هیچ سلسله‌مراتبی نداشت — درست همان‌جایی که
+                    خریدار صنعتی اول نگاه می‌کند. */}
                 <dt className="truncate text-micro text-[var(--fg-subtle)]">{spec.label}</dt>
-                <dd className="truncate text-xs font-medium text-[var(--fg-secondary)]">
+                <dd className="clamp-2 text-meta font-semibold leading-6 text-[var(--fg-secondary)]">
                   {spec.value}
-                  {spec.unit && <span className="text-[var(--fg-subtle)]"> {spec.unit}</span>}
+                  {spec.unit && <span className="text-micro font-normal text-[var(--fg-subtle)]"> {spec.unit}</span>}
                 </dd>
               </div>
             ))}
@@ -171,27 +178,26 @@ export function ProductCard({
             {hasPrice ? (
               <div>
                 {discount && (
-                  <span className="block text-xs text-[var(--fg-subtle)] line-through">
+                  <span className="block text-meta text-[var(--fg-subtle)] line-through">
                     {formatPrice(product.comparePrice, { withUnit: false })}
                   </span>
                 )}
-                <span className="font-display text-base font-bold text-[var(--fg-primary)]">
+                {/* قیمت اصلی‌ترین عددِ کارت است؛ ۱۸px تا از نام محصول جدا بایستد */}
+                <span className="font-display text-lg font-bold text-[var(--fg-primary)]">
                   {formatPrice(product.price)}
                 </span>
               </div>
             ) : (
-              <span className="text-sm font-medium text-[var(--brand)]">
-                {product.priceMode === "CALL" ? "تماس بگیرید" : "استعلام قیمت"}
-              </span>
+              <span className="text-sm font-medium text-[var(--brand)]">استعلام قیمت</span>
             )}
           </div>
 
           <div className="flex gap-2">
             <Link
               href={`/products/${product.slug}`}
-              className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md bg-[var(--brand)] text-meta font-medium text-[var(--fg-on-brand)] transition-[background-color,box-shadow] duration-200 group-hover:shadow-[var(--shadow-brand)] group-has-[:focus-visible]:shadow-[var(--shadow-brand)] hover:bg-[var(--brand-hover)]"
+              className="flex h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-[var(--brand)] text-sm font-medium text-[var(--fg-on-brand)] transition-[background-color,box-shadow] duration-200 group-hover:shadow-[var(--shadow-brand)] group-has-[:focus-visible]:shadow-[var(--shadow-brand)] hover:bg-[var(--brand-hover)]"
             >
-              {product.priceMode === "PUBLIC" ? "ثبت سفارش" : "استعلام قیمت"}
+              {hasPrice ? "ثبت سفارش" : "استعلام قیمت"}
             </Link>
             {cartEnabled && (
             <button
@@ -199,7 +205,7 @@ export function ProductCard({
               onClick={onAdd}
               aria-label={`افزودن ${product.name} به سبد استعلام`}
               title="افزودن به سبد استعلام"
-              className="grid size-10 shrink-0 place-items-center rounded-md border border-[var(--border-subtle)] text-[var(--fg-muted)] transition-[color,border-color,background-color] duration-200 group-hover:border-[var(--border-default)] hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+              className="hidden size-10 shrink-0 place-items-center rounded-md border border-[var(--border-subtle)] text-[var(--fg-muted)] transition-[color,border-color,background-color] duration-200 group-hover:border-[var(--border-default)] hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)] sm:grid"
             >
               <svg viewBox="0 0 20 20" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M3 3h2l1.6 8.4a1.5 1.5 0 0 0 1.5 1.2h6.3a1.5 1.5 0 0 0 1.5-1.2L17 6H5.4" strokeLinecap="round" strokeLinejoin="round" />

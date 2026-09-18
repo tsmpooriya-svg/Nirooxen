@@ -35,6 +35,22 @@
  * =============================================================================
  */
 
+const DEV_SITE_URL = "http://localhost:3000";
+
+function resolveSiteUrl(): string {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+
+  if (configured) return configured.replace(/\/+$/, "");
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "NEXT_PUBLIC_SITE_URL تعریف نشده است. بدون آن canonical، Open Graph و sitemap به localhost اشاره می‌کنند. مقدار آن را از روی .env.example تنظیم کنید.",
+    );
+  }
+
+  return DEV_SITE_URL;
+}
+
 export const siteConfig = {
   /** نام کوتاه — در لوگو و عنوان صفحات */
   name: "نیروژن",
@@ -46,7 +62,7 @@ export const siteConfig = {
   description:
     "تأمین‌کننده تخصصی پمپ آب، الکتروپمپ صنعتی، مخازن تحت فشار، اتصالات و شیرآلات صنعتی؛ همراه با مشاوره فنی، طراحی و نصب تخصصی در سراسر کشور.",
 
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: resolveSiteUrl(),
   locale: "fa_IR",
   direction: "rtl",
 
@@ -89,11 +105,22 @@ export const siteConfig = {
     geo: { lat: 0, lng: 0 },
   },
 
+  /**
+   * شبکه‌های اجتماعی.
+   *
+   * `verified` یعنی «این نشانی واقعاً حساب همین کسب‌وکار است». فقط همین‌ها در
+   * `sameAs` داده ساختاریافته منتشر می‌شوند، چون `sameAs` یک **ادعا** است:
+   * به گوگل می‌گوید این حساب‌ها متعلق به این سازمان‌اند. تا امروز هر چهار
+   * نشانی زیر منتشر می‌شد، در حالی که دوتاشان صفحهٔ اصلی خود آن شبکه است نه
+   * حساب کسی، و شمارهٔ واتس‌اپ هم نمونه است و به شخص دیگری تعلق دارد.
+   *
+   * وقتی نشانی واقعی ثبت شد، `verified: true` را همان‌جا بگذارید.
+   */
   social: [
-    { label: "اینستاگرام", href: "https://instagram.com", icon: "instagram" },
-    { label: "تلگرام", href: "https://t.me", icon: "telegram" },
-    { label: "واتس‌اپ", href: "https://wa.me/989121234567", icon: "whatsapp" },
-    { label: "لینکدین", href: "https://linkedin.com", icon: "linkedin" },
+    { label: "اینستاگرام", href: "https://instagram.com", icon: "instagram", verified: false },
+    { label: "تلگرام", href: "https://t.me", icon: "telegram", verified: false },
+    { label: "واتس‌اپ", href: "https://wa.me/989121234567", icon: "whatsapp", verified: false },
+    { label: "لینکدین", href: "https://linkedin.com", icon: "linkedin", verified: false },
   ],
 
   /**
@@ -137,6 +164,7 @@ export const mainNav = [
   { title: "صفحه اصلی", href: "/" },
   { title: "محصولات", href: "/products", hasMegaMenu: true },
   { title: "راهکارها", href: "/solutions" },
+  { title: "آتش‌نشانی", href: "/fire-safety" },
   { title: "برندها", href: "/brands", collapse: "always" },
   { title: "خدمات", href: "/services", collapse: "xl" },
   { title: "پروژه‌ها", href: "/projects", collapse: "always" },
@@ -152,6 +180,7 @@ export const footerNav = [
     links: [
       { title: "محصولات", href: "/products" },
       { title: "راهکارها", href: "/solutions" },
+      { title: "تجهیزات آتش‌نشانی", href: "/fire-safety" },
       { title: "برندها", href: "/brands" },
       { title: "خدمات فنی", href: "/services" },
       { title: "پروژه‌های اجراشده", href: "/projects" },

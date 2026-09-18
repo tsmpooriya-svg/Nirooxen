@@ -1,16 +1,20 @@
 import Link from "next/link";
 
+import { DeletePostButton } from "@/components/admin/post-form";
 import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/components/admin/ui";
 import { Pagination } from "@/components/ui/pagination";
 import { POST_STATUS } from "@/lib/constants";
 import { buildQuery, formatDate, formatRelative, toFaDigits } from "@/lib/utils";
 import { listAdminPosts } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export const dynamic = "force-dynamic";
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 export default async function AdminPostsPage({ searchParams }: { searchParams: SearchParams }) {
+  await requirePageAccess("posts");
+
   const params = await searchParams;
   const q = first(params.q);
   const page = Math.max(1, Number(first(params.page) ?? 1) || 1);
@@ -65,7 +69,8 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: S
                 {post.publishedAt ? formatDate(post.publishedAt) : "منتشر نشده"}
                 <span className="mt-0.5 block">{formatRelative(post.updatedAt)}</span>
               </Td>
-              <Td className="w-16">
+              <Td className="w-24">
+                <div className="flex items-center gap-0.5">
                 <Link
                   href={`/news/${post.slug}`}
                   target="_blank"
@@ -76,6 +81,8 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: S
                     <path d="M6 3h7v7M13 3 6.5 9.5M11 10.5V13H3V5h2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </Link>
+                <DeletePostButton id={post.id} title={post.title} />
+                </div>
               </Td>
             </Tr>
           ))}

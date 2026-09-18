@@ -2,8 +2,12 @@
  * محدودسازی نرخ درخواست — پیاده‌سازی in-memory با پنجره لغزان.
  *
  * برای یک نصب تک‌سروری (که حالت رایج این پروژه است) کافی است.
- * اگر روزی چند instance اجرا شد، تنها همین فایل باید به Redis مهاجرت کند؛
- * امضای تابع تغییری نمی‌کند.
+ *
+ * ⚠️ وضعیت در حافظهٔ همین پروسه نگهداری می‌شود. با چند instance (چند process
+ * در PM2، چند کانتینر، یا استقرار افقی) هر instance شمارندهٔ خودش را دارد و
+ * سقف مؤثر در عمل در تعداد instance ها ضرب می‌شود. استقرار چند-instance به
+ * وضعیت مشترک (مثلاً Redis) نیاز دارد؛ تنها همین فایل باید عوض شود، امضای
+ * تابع تغییری نمی‌کند.
  */
 import "server-only";
 
@@ -12,11 +16,35 @@ type Bucket = { count: number; resetAt: number };
 const buckets = new Map<string, Bucket>();
 let lastSweep = Date.now();
 
-function sweep(now: number) {
-  if (now - lastSweep < 60_000) return;
-  lastSweep = now;
+/*
+  کلید هر سطل از IP ساخته می‌شود، یعنی مهاجم آن را کنترل می‌کند. جاروی زمانی
+  فقط هر ۶۰ ثانیه اجرا می‌شود و سطل‌ها تا پایان پنجره (برای خبرنامه یک ساعت)
+  زنده‌اند؛ پس بدون سقف، سیلی از IP های جعلی می‌توانست حافظهٔ پروسه را پر کند.
+  سقف زیر آن حالت را به یک هزینهٔ ثابت تبدیل می‌کند.
+*/
+const MAX_BUCKETS = 20_000;
+/** پس از پر شدن، تا این اندازه کوچک می‌شود تا حذف در هر درخواست تکرار نشود */
+const TARGET_BUCKETS = 16_000;
+
+function dropExpired(now: number) {
   for (const [key, bucket] of buckets) {
     if (bucket.resetAt <= now) buckets.delete(key);
+  }
+}
+
+function sweep(now: number) {
+  if (now - lastSweep >= 60_000) {
+    lastSweep = now;
+    dropExpired(now);
+  }
+
+  if (buckets.size <= MAX_BUCKETS) return;
+
+  // زیر فشار، اول منقضی‌ها؛ اگر باز هم زیاد بود قدیمی‌ترین‌ها (ترتیب درج Map)
+  dropExpired(now);
+  for (const key of buckets.keys()) {
+    if (buckets.size <= TARGET_BUCKETS) break;
+    buckets.delete(key);
   }
 }
 
@@ -56,10 +84,34 @@ export function rateLimit(
 export const RATE_LIMITS = {
   /** ثبت سفارش/استعلام: ۵ بار در ۱۰ دقیقه از هر IP */
   order: { limit: 5, windowMs: 10 * 60_000 },
-  /** فرم تماس: ۳ بار در ۱۰ دقیقه */
+  /**
+   * فرم تماس — دو سطل، عمداً.
+   *
+   * سطل سخت‌گیر فقط پیام‌هایی را می‌شمارد که واقعاً ثبت می‌شوند. سطل دوم هر
+   * تلاش را می‌شمارد، حتی آنی که اعتبارسنجی ردش کرده.
+   *
+   * چرا: قبلاً یک سطل بود و پیش از اعتبارسنجی شمرده می‌شد، یعنی کسی که سه بار
+   * ایمیلش را غلط می‌نوشت ده دقیقه بیرون می‌ماند — بی‌آنکه حتی یک پیام فرستاده
+   * باشد. این در آزمون واقعی دیده شد. سقف تلاش همچنان جلوی کوبیدن مداوم نقطهٔ
+   * انتها را می‌گیرد.
+   */
   contact: { limit: 3, windowMs: 10 * 60_000 },
+  contactAttempt: { limit: 20, windowMs: 10 * 60_000 },
   /** ورود به پنل: ۸ تلاش در ۱۵ دقیقه */
   login: { limit: 8, windowMs: 15 * 60_000 },
   /** خبرنامه */
   subscribe: { limit: 3, windowMs: 60 * 60_000 },
+  /** جستجوی سریع: سخاوتمند برای تایپِ debounce شده، ولی جلوی برداشت انبوه کاتالوگ را می‌گیرد */
+  search: { limit: 30, windowMs: 60_000 },
+  /**
+   * ثبت بازدید: یک بار به ازای هر صفحه‌ای که باز می‌شود، پس بازدیدکنندهٔ فعال
+   * هم به این نزدیک نمی‌شود. سقف برای این است که یک اسکریپت نتواند گزارش را
+   * با چند هزار ردیف جعلی بی‌معنا کند.
+   */
+  view: { limit: 60, windowMs: 60_000 },
 } as const;
+
+/** فقط برای بررسی و تست — اندازهٔ فعلی جدول سطل‌ها */
+export function rateLimitBucketCount(): number {
+  return buckets.size;
+}

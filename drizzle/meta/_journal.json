@@ -15,6 +15,48 @@
       "when": 1787450928376,
       "tag": "0001_plain_red_ghost",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788956570490,
+      "tag": "0002_fat_moon_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789058789567,
+      "tag": "0003_solid_dark_beast",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789612275554,
+      "tag": "0004_blue_moonstone",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1789669233179,
+      "tag": "0005_light_xavin",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789673298079,
+      "tag": "0006_keen_gamora",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1789676447130,
+      "tag": "0007_exotic_valkyrie",
+      "breakpoints": true
     }
   ]
 }

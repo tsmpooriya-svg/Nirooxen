@@ -94,7 +94,7 @@ export default async function SolutionsPage() {
                   <h2 className="font-display text-[1.5rem] font-bold leading-[1.5] tracking-tight sm:text-[1.875rem]">
                     شرایط پروژه‌تان را بگویید، ما تجهیز مناسب را پیشنهاد می‌دهیم
                   </h2>
-                  <p className="mt-5 max-w-xl text-[0.9375rem] leading-8 text-[var(--fg-muted)]">
+                  <p className="mt-5 max-w-xl text-sm leading-8 text-[var(--fg-muted)]">
                     اگر نمی‌دانید مسئله شما در کدام دسته می‌گنجد، لازم نیست حدس بزنید. ارتفاع
                     ساختمان، مساحت زمین یا کاربری مورد نظرتان را برای کارشناسان ما بفرستید؛ گزینه
                     مناسب، قیمت و زمان تحویل مشخص می‌شود.

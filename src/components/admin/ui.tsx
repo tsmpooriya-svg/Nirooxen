@@ -137,7 +137,7 @@ export function Panel({
     >
       {(title || action) && (
         <header className="flex items-center justify-between gap-3 border-b border-[var(--border-hairline)] px-5 py-4">
-          {title && <h2 className="font-display text-[0.9375rem] font-bold">{title}</h2>}
+          {title && <h2 className="font-display text-sm font-bold">{title}</h2>}
           {action}
         </header>
       )}

@@ -6,7 +6,7 @@ import { after } from "next/server";
 
 import { Breadcrumb } from "@/components/site/breadcrumb";
 import { JsonLd, articleJsonLd, pageMetadata } from "@/lib/seo";
-import { formatDate, toFaDigits } from "@/lib/utils";
+import { decodeRouteParam, formatDate, toFaDigits } from "@/lib/utils";
 import {
   getAllPostSlugs,
   getPostBySlug,
@@ -24,7 +24,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const data = await getPostBySlug(slug);
   if (!data) return pageMetadata({ title: "مطلب یافت نشد", path: `/news/${slug}`, noIndex: true });
 
@@ -40,7 +41,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function PostPage({ params }: { params: Params }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const data = await getPostBySlug(slug);
   if (!data) notFound();
 
@@ -96,7 +98,7 @@ export default async function PostPage({ params }: { params: Params }) {
           </h1>
 
           {post.excerpt && (
-            <p className="mt-5 border-s-2 border-[var(--brand)] ps-5 text-[0.9375rem] leading-9 text-[var(--fg-muted)]">
+            <p className="mt-5 border-s-2 border-[var(--brand)] ps-5 text-sm leading-9 text-[var(--fg-muted)]">
               {post.excerpt}
             </p>
           )}
@@ -147,7 +149,7 @@ export default async function PostPage({ params }: { params: Params }) {
                     <p className="mb-2 font-mono text-micro text-[var(--fg-subtle)]">
                       {formatDate(item.publishedAt)}
                     </p>
-                    <h3 className="clamp-3 text-[0.875rem] font-semibold leading-7 transition-colors group-hover:text-[var(--brand)]">
+                    <h3 className="clamp-3 text-sm font-semibold leading-7 transition-colors group-hover:text-[var(--brand)]">
                       {item.title}
                     </h3>
                   </Link>
@@ -188,7 +190,7 @@ function PostBody({ content }: { content: string }) {
           return (
             <blockquote
               key={index}
-              className="border-s-2 border-[var(--brand)] bg-[var(--brand-soft)] px-6 py-5 text-[0.9375rem] leading-9 text-[var(--fg-secondary)]"
+              className="border-s-2 border-[var(--brand)] bg-[var(--brand-soft)] px-6 py-5 text-sm leading-9 text-[var(--fg-secondary)]"
             >
               {trimmed.replace(/^> /gm, "")}
             </blockquote>
@@ -200,7 +202,7 @@ function PostBody({ content }: { content: string }) {
           return (
             <ul key={index} className="space-y-2.5 ps-1">
               {items.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-[0.9375rem] leading-9 text-[var(--fg-secondary)]">
+                <li key={i} className="flex items-start gap-3 text-sm leading-9 text-[var(--fg-secondary)]">
                   <span className="mt-3.5 size-1.5 shrink-0 rounded-full bg-[var(--brand)]" aria-hidden />
                   <span>{renderInline(item.replace(/^[-*] /, ""))}</span>
                 </li>
@@ -214,7 +216,7 @@ function PostBody({ content }: { content: string }) {
           return (
             <ol key={index} className="space-y-2.5">
               {items.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-[0.9375rem] leading-9 text-[var(--fg-secondary)]">
+                <li key={i} className="flex items-start gap-3 text-sm leading-9 text-[var(--fg-secondary)]">
                   <span className="mt-1.5 grid size-6 shrink-0 place-items-center rounded-full bg-[var(--brand-soft)] font-mono text-micro text-[var(--brand)]">
                     {toFaDigits(i + 1)}
                   </span>
@@ -226,7 +228,7 @@ function PostBody({ content }: { content: string }) {
         }
 
         return (
-          <p key={index} className="text-[0.9375rem] leading-9 text-[var(--fg-secondary)]">
+          <p key={index} className="text-sm leading-9 text-[var(--fg-secondary)]">
             {renderInline(trimmed)}
           </p>
         );

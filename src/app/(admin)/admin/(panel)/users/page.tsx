@@ -1,13 +1,22 @@
 import { UserDialog } from "@/components/admin/user-form";
 import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/components/admin/ui";
+import { RecordDeleteButton } from "@/components/admin/record-delete";
 import { USER_ROLE } from "@/lib/constants";
 import { formatDateTime, formatRelative } from "@/lib/utils";
 import { listUsers } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
+  const actor = await requirePageAccess("users");
+
   const users = await listUsers();
+  /*
+    حذف آخرین مدیر ارشدِ فعال، پنل را بدون مدیر می‌گذارد. سرور هم همین را رد
+    می‌کند؛ این شمارش فقط برای آن است که دکمه از همان ابتدا غیرفعال دیده شود.
+  */
+  const activeOwners = users.filter((u) => u.role === "OWNER" && u.isActive).length;
 
   return (
     <>
@@ -23,7 +32,7 @@ export default async function AdminUsersPage() {
       />
 
       <Panel padded={false}>
-        <DataTable head={["کاربر", "سطح دسترسی", "وضعیت", "آخرین ورود", ""]} empty={users.length === 0}>
+        <DataTable head={["کاربر", "سطح دسترسی", "وضعیت", "آخرین ورود", "", ""]} empty={users.length === 0}>
           {users.map((user) => (
             <Tr key={user.id}>
               <Td>
@@ -58,6 +67,20 @@ export default async function AdminUsersPage() {
                   }}
                   trigger={{ kind: "icon", label: `ویرایش ${user.name}` }}
                     />
+              </Td>
+              <Td className="w-12">
+                <RecordDeleteButton
+                  kind="user"
+                  id={user.id}
+                  name={user.name}
+                  blockedReason={
+                    user.id === actor.id
+                      ? "حساب خودتان را نمی‌توانید حذف کنید"
+                      : user.role === "OWNER" && user.isActive && activeOwners === 1
+                        ? "تنها مدیر ارشد فعال است"
+                        : undefined
+                  }
+                />
               </Td>
             </Tr>
           ))}

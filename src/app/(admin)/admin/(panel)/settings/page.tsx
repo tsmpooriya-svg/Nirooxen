@@ -1,10 +1,13 @@
 import { SettingsForm } from "@/components/admin/settings-form";
 import { AdminPageHeader } from "@/components/admin/ui";
 import { getSettings } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage() {
+  await requirePageAccess("settings");
+
   const settings = await getSettings();
 
   return (

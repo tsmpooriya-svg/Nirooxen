@@ -1,0 +1,29 @@
+# =============================================================================
+#  اجرای یک‌بارهٔ پشتیبان‌گیری — با nirooxen-backup.timer زمان‌بندی می‌شود
+# =============================================================================
+#  نصب:
+#      sudo cp deploy/nirooxen-backup.{service,timer} /etc/systemd/system/
+#      sudo systemctl daemon-reload
+#      sudo systemctl enable --now nirooxen-backup.timer
+#
+#  اجرای دستی برای آزمایش:  sudo systemctl start nirooxen-backup.service
+#  دیدن نتیجه:              journalctl -u nirooxen-backup -n 20 --no-pager
+# =============================================================================
+[Unit]
+Description=پشتیبان‌گیری نیروکسن — پایگاه داده و فایل‌های آپلودشده
+After=postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=oneshot
+# با root اجرا می‌شود: برای runuser به postgres، خواندن پوشهٔ مدیا و نوشتن در
+# پوشه‌ای که فقط root به آن دسترسی دارد. خودِ اسکریپت هیچ رمزی نمی‌خواند.
+ExecStart=/usr/bin/bash /var/www/nirooxen/deploy/backup-nirooxen.sh
+
+# پشتیبان‌گیری هیچ‌وقت نباید جلوی سرویس سایت را بگیرد
+Nice=10
+IOSchedulingClass=idle
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nirooxen-backup

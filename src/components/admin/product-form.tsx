@@ -5,6 +5,7 @@ import * as React from "react";
 import { useActionState } from "react";
 
 import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
+import { useReadOnly } from "./shell";
 import { useToast } from "@/components/ui/toast";
 import { PRICE_MODE, PRODUCT_STATUS, STOCK_STATUS } from "@/lib/constants";
 import { cn, toFaDigits } from "@/lib/utils";
@@ -27,17 +28,29 @@ export type ProductFormValues = {
   priceMode: string;
   price: string;
   comparePrice: string;
+  priceConditionCode: string;
+  priceConditionText: string;
+  isPromotional: boolean;
+  sourceRef: string;
   unit: string;
   stockStatus: string;
   leadTimeDays: string;
   minOrderQty: string;
   warrantyMonths: string;
+  position: string;
   isFeatured: boolean;
   isNew: boolean;
   tags: string;
   metaTitle: string;
   metaDescription: string;
-  images: { url: string; alt?: string }[];
+  images: {
+    url: string;
+    alt?: string;
+    storageKey?: string;
+    width?: number;
+    height?: number;
+    backdrop?: string;
+  }[];
   specs: { groupName: string; label: string; value: string; unit?: string; isKey?: boolean }[];
 };
 
@@ -69,6 +82,7 @@ export function ProductForm({
 
   const action = saveProduct.bind(null, values.id ?? null);
   const [state, formAction, pending] = useActionState(action, initialState);
+  const readOnly = useReadOnly();
 
   const [priceMode, setPriceMode] = React.useState(values.priceMode);
   const [images, setImages] = React.useState(values.images);
@@ -247,8 +261,28 @@ export function ProductForm({
               <Input id="minOrderQty" name="minOrderQty" defaultValue={values.minOrderQty || "1"} dir="ltr" inputMode="numeric" className="text-start font-mono" />
             </Field>
 
+            <Field label="ترتیب نمایش" htmlFor="position">
+              <Input id="position" name="position" defaultValue={values.position} dir="ltr" inputMode="numeric" className="text-start font-mono" />
+            </Field>
+
             <Field label="گارانتی (ماه)" htmlFor="warrantyMonths">
               <Input id="warrantyMonths" name="warrantyMonths" defaultValue={values.warrantyMonths} dir="ltr" inputMode="numeric" className="text-start font-mono" />
+            </Field>
+
+            {/*
+              شرط قیمتی جدا از قیمت پایه نوشته می‌شود؛ قیمت پایه همان چیزی
+              می‌ماند که منبع اعلام کرده است.
+            */}
+            <Field label="کد شرط قیمت" htmlFor="priceConditionCode" hint="مثلاً SURCHARGE_3_PERCENT">
+              <Input id="priceConditionCode" name="priceConditionCode" defaultValue={values.priceConditionCode} dir="ltr" className="text-start font-mono text-xs" />
+            </Field>
+
+            <Field label="متن شرط قیمت" htmlFor="priceConditionText" hint="روی صفحه محصول، پایین عدد قیمت دیده می‌شود.">
+              <Input id="priceConditionText" name="priceConditionText" defaultValue={values.priceConditionText} />
+            </Field>
+
+            <Field label="ارجاع منبع (داخلی)" htmlFor="sourceRef" hint="فقط کد خنثی؛ در سایت نمایش داده نمی‌شود.">
+              <Input id="sourceRef" name="sourceRef" defaultValue={values.sourceRef} dir="ltr" className="text-start font-mono text-xs" />
             </Field>
           </div>
         </fieldset>
@@ -271,6 +305,7 @@ export function ProductForm({
           <div className="flex flex-col justify-end gap-3 pb-1">
             <Checkbox name="isFeatured" defaultChecked={values.isFeatured} label="محصول شاخص (نمایش در صفحه اصلی)" />
             <Checkbox name="isNew" defaultChecked={values.isNew} label="نشان «جدید»" />
+            <Checkbox name="isPromotional" defaultChecked={values.isPromotional} label="فروش ویژه" />
           </div>
         </div>
       </div>
@@ -282,7 +317,7 @@ export function ProductForm({
 
       {/* — تصاویر — */}
       <div className={cn(tab !== "media" && "hidden")}>
-        <ImageEditor images={images} onChange={setImages} />
+        <ImageEditor images={images} onChange={setImages} productId={values.id} />
       </div>
 
       {/* — سئو — */}
@@ -300,13 +335,15 @@ export function ProductForm({
         <p className="text-xs text-[var(--fg-subtle)]">
           {values.id ? "ویرایش محصول موجود" : "ایجاد محصول جدید"}
         </p>
-        <button
-          type="submit"
-          disabled={pending}
-          className="h-11 rounded-md bg-[var(--brand)] px-6 text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)] disabled:opacity-60"
-        >
-          {pending ? "در حال ذخیره…" : "ذخیره محصول"}
-        </button>
+        {!readOnly && (
+          <button
+            type="submit"
+            disabled={pending}
+            className="h-11 rounded-md bg-[var(--brand)] px-6 text-sm font-medium text-[var(--fg-on-brand)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)] disabled:opacity-60"
+          >
+            {pending ? "در حال ذخیره…" : "ذخیره محصول"}
+          </button>
+        )}
       </div>
     </form>
   );
@@ -444,18 +481,86 @@ function SpecEditor({
 function ImageEditor({
   images,
   onChange,
+  productId,
 }: {
   images: ProductFormValues["images"];
   onChange: (next: ProductFormValues["images"]) => void;
+  productId?: string;
 }) {
+  const { toast } = useToast();
   const [url, setUrl] = React.useState("");
+  const [uploading, setUploading] = React.useState(false);
+  const fileRef = React.useRef<HTMLInputElement>(null);
+  const readOnly = useReadOnly();
+
+  async function onPick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !productId) return;
+
+    setUploading(true);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      body.append("productId", productId);
+      const response = await fetch("/api/admin/media", { method: "POST", body });
+      const result = (await response.json()) as {
+        url?: string;
+        storageKey?: string;
+        width?: number;
+        height?: number;
+        backdrop?: string;
+        error?: string;
+      };
+      if (!response.ok || !result.url) {
+        toast({ title: "بارگذاری ناموفق", description: result.error ?? "خطای نامشخص", tone: "error" });
+        return;
+      }
+      onChange([
+        ...images,
+        {
+          url: result.url,
+          storageKey: result.storageKey,
+          width: result.width,
+          height: result.height,
+          backdrop: result.backdrop,
+        },
+      ]);
+      toast({ title: "تصویر بارگذاری شد", tone: "success" });
+    } catch {
+      toast({ title: "بارگذاری ناموفق", description: "ارتباط با سرور برقرار نشد.", tone: "error" });
+    } finally {
+      setUploading(false);
+    }
+  }
 
   return (
     <div className="space-y-4">
       <p className="text-xs leading-6 text-[var(--fg-muted)]">
-        نشانی تصویر را وارد کنید یا یکی از تصاویر فنی آماده را انتخاب کنید. اولین تصویر، تصویر اصلی
-        محصول است.
+        تصویر را بارگذاری کنید، نشانی آن را وارد کنید یا یکی از تصاویر فنی آماده را انتخاب کنید. اولین
+        تصویر، تصویر اصلی محصول است.
       </p>
+
+      <div className="flex items-center gap-2">
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={onPick}
+          className="hidden"
+        />
+        <button
+          type="button"
+          disabled={readOnly || !productId || uploading}
+          onClick={() => fileRef.current?.click()}
+          className="h-10 rounded-md bg-[var(--brand)] px-4 text-xs font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)] disabled:opacity-60"
+        >
+          {uploading ? "در حال بارگذاری…" : "بارگذاری تصویر"}
+        </button>
+        <span className="text-micro text-[var(--fg-subtle)]">
+          {productId ? "JPEG، PNG یا WebP" : "برای بارگذاری، ابتدا محصول را ذخیره کنید"}
+        </span>
+      </div>
 
       <div className="flex gap-2">
         <input

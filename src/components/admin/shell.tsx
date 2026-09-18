@@ -7,7 +7,7 @@ import * as React from "react";
 import { ThemeToggle } from "@/components/theme-provider";
 import { Logomark } from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
-import { USER_ROLE, can, type PermissionKey } from "@/lib/constants";
+import { USER_ROLE, can, isReadOnly, type PermissionKey } from "@/lib/constants";
 import type { SessionUser } from "@/lib/auth";
 import { cn, initials, toFaDigits } from "@/lib/utils";
 
@@ -121,6 +121,12 @@ const navGroups: { label: string; items: NavItem[] }[] = [
         icon: icon("M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM8.6 2.8h2.8l.4 2 1.7 1 1.9-.7 1.4 2.4-1.5 1.3v2l1.5 1.3-1.4 2.4-1.9-.7-1.7 1-.4 2H8.6l-.4-2-1.7-1-1.9.7-1.4-2.4L4.7 12v-2L3.2 8.7l1.4-2.4 1.9.7 1.7-1z"),
       },
       {
+        href: "/admin/analytics",
+        title: "آمار بازدید",
+        permission: "logs",
+        icon: icon("M3.5 16.5V9M8 16.5V4M12.5 16.5v-5M17 16.5V7"),
+      },
+      {
         href: "/admin/logs",
         title: "لاگ فعالیت‌ها",
         permission: "logs",
@@ -129,6 +135,13 @@ const navGroups: { label: string; items: NavItem[] }[] = [
     ],
   },
 ];
+
+const ReadOnlyContext = React.createContext(false);
+
+/** نقش فقط-خواندنی: دکمه‌های تغییر نباید نمایش داده شوند. سرور مستقل بررسی می‌کند. */
+export function useReadOnly() {
+  return React.useContext(ReadOnlyContext);
+}
 
 export function AdminShell({
   user,
@@ -154,7 +167,7 @@ export function AdminShell({
       <div className="flex h-16 shrink-0 items-center gap-2.5 border-b border-[var(--border-hairline)] px-5">
         <Logomark className="size-8 text-[var(--brand)]" />
         <div className="min-w-0 leading-none">
-          <p className="truncate font-display text-[0.9375rem] font-bold">{siteConfig.name}</p>
+          <p className="truncate font-display text-sm font-bold">{siteConfig.name}</p>
           <p className="mt-1 font-mono text-label tracking-[0.2em] text-[var(--fg-subtle)]">
             ADMIN CONSOLE
           </p>
@@ -217,7 +230,15 @@ export function AdminShell({
       </nav>
 
       <div className="shrink-0 border-t border-[var(--border-hairline)] p-3">
-        <div className="flex items-center gap-3 rounded-md p-2">
+        {/*
+          کارت کاربر خودش لینک پروفایل است. جای دیگری هم می‌شد گذاشت، ولی اولین
+          جایی که آدم دنبال «حساب من» می‌گردد همین‌جاست — و این صفحه مجوز بخشی
+          نمی‌خواهد، پس برای همه دیده می‌شود.
+        */}
+        <Link
+          href="/admin/profile"
+          className="flex items-center gap-3 rounded-md p-2 transition-colors hover:bg-[var(--bg-elev-3)]"
+        >
           <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[var(--brand-soft)] font-display text-xs font-bold text-[var(--brand)]">
             {initials(user.name)}
           </span>
@@ -227,7 +248,18 @@ export function AdminShell({
               {USER_ROLE[user.role].label}
             </p>
           </div>
-        </div>
+          <svg
+            aria-hidden
+            viewBox="0 0 20 20"
+            className="size-4 shrink-0 text-[var(--fg-subtle)] rtl:rotate-180"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <path d="m8 5 5 5-5 5" />
+          </svg>
+          <span className="sr-only">حساب کاربری</span>
+        </Link>
         <LogoutButton />
       </div>
     </>
@@ -292,7 +324,9 @@ export function AdminShell({
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
+          <ReadOnlyContext.Provider value={isReadOnly(user.role)}>{children}</ReadOnlyContext.Provider>
+        </main>
       </div>
     </div>
   );

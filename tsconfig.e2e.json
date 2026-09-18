@@ -1,0 +1,15 @@
+{
+  /*
+    تایپ‌چکِ آزمون‌ها، جدا از برنامه.
+
+    جدا است چون `next build` از tsconfig.json استفاده می‌کند و آنجا نباید
+    وابستگی توسعه لازم باشد. اینجا چنین محدودیتی نیست.
+  */
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "incremental": false
+  },
+  "include": ["e2e/**/*.ts", "playwright.config.ts"],
+  "exclude": ["node_modules"]
+}

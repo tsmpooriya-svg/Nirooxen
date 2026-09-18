@@ -126,7 +126,7 @@ function CategoryChip({ href, active, label }: { href: string; active: boolean; 
       className={
         "rounded-full border px-4 py-2 text-xs font-medium transition-all duration-300 " +
         (active
-          ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand)]"
+          ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand-on-soft)]"
           : "border-[var(--border-subtle)] text-[var(--fg-muted)] hover:border-[var(--border-brand)] hover:text-[var(--brand)]")
       }
     >

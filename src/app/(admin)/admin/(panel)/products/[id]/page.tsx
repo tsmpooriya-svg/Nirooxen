@@ -5,12 +5,15 @@ import { AdminPageHeader, Panel } from "@/components/admin/ui";
 import { ProductForm, type ProductFormValues } from "@/components/admin/product-form";
 import { formatDateTime, toFaDigits } from "@/lib/utils";
 import { getAdminProduct, getBrandOptions, getCategoryOptions } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 type Params = Promise<{ id: string }>;
 
 export const dynamic = "force-dynamic";
 
 export default async function EditProductPage({ params }: { params: Params }) {
+  await requirePageAccess("products");
+
   const { id } = await params;
   const data = await getAdminProduct(id);
   if (!data) notFound();
@@ -32,17 +35,28 @@ export default async function EditProductPage({ params }: { params: Params }) {
     priceMode: product.priceMode,
     price: product.price ? String(product.price) : "",
     comparePrice: product.comparePrice ? String(product.comparePrice) : "",
+    priceConditionCode: product.priceConditionCode ?? "",
+    priceConditionText: product.priceConditionText ?? "",
+    isPromotional: product.isPromotional,
+    sourceRef: product.sourceRef ?? "",
     unit: product.unit,
     stockStatus: product.stockStatus,
     leadTimeDays: product.leadTimeDays ? String(product.leadTimeDays) : "",
     minOrderQty: String(product.minOrderQty),
     warrantyMonths: product.warrantyMonths ? String(product.warrantyMonths) : "",
+    position: String(product.position ?? 0),
     isFeatured: product.isFeatured,
     isNew: product.isNew,
     tags: product.tags.join("، "),
     metaTitle: product.metaTitle ?? "",
     metaDescription: product.metaDescription ?? "",
-    images: images.map((image) => ({ url: image.url, alt: image.alt ?? undefined })),
+    images: images.map((image) => ({
+      url: image.url,
+      alt: image.alt ?? undefined,
+      storageKey: image.storageKey ?? undefined,
+      width: image.width ?? undefined,
+      height: image.height ?? undefined,
+    })),
     specs: specs.map((spec) => ({
       groupName: spec.groupName,
       label: spec.label,

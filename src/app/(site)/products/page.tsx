@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { Suspense } from "react";
 
 import { Reveal } from "@/components/motion/reveal";
@@ -6,12 +9,12 @@ import { PageHeader } from "@/components/site/breadcrumb";
 import { ProductCard } from "@/components/site/product-card";
 import { ProductFilters, ProductToolbar } from "@/components/site/product-filters";
 import { Pagination } from "@/components/ui/pagination";
+import { logSearch } from "@/lib/search-log";
 import { ProductCardSkeleton } from "@/components/ui/skeleton";
-import type { StockStatus } from "@/db/schema";
-import type { SortOption } from "@/lib/constants";
 import { pageMetadata } from "@/lib/seo";
 import { SPEC_PARAM_PREFIX, parseSpecParams } from "@/lib/spec-filter-params";
 import { buildQuery } from "@/lib/utils";
+import { sortFilterSchema, stockFilterSchema } from "@/lib/validation";
 import {
   getBrandBySlug,
   getBrands,
@@ -54,7 +57,19 @@ export async function generateMetadata({
       return pageMetadata({
         title: `محصولات ${brand.name}`,
         description: brand.description ?? undefined,
-        path: `/products?brand=${brand.slug}`,
+        /*
+          canonical عمداً به `‎/brands/{slug}` می‌رود، نه به خودِ این نشانی.
+
+          این دو صفحه دقیقاً یک چیز را نشان می‌دهند — همان فهرست محصولات همان
+          برند، با همان عنوان — و هر دو تا امروز canonical خودشان را داشتند.
+          یعنی یک محتوا با دو نشانیِ ایندکس‌پذیر، که سیگنال‌ها را بین خودشان
+          تقسیم می‌کرد. `‎/brands/{slug}` همانی است که در sitemap هست، پس
+          مرجع همان می‌شود.
+
+          نشانی فیلتر عوض نمی‌شود و ریدایرکت هم در کار نیست: کاربر همان‌جا
+          می‌ماند و فیلترش کار می‌کند.
+        */
+        path: `/brands/${brand.slug}`,
       });
     }
   }
@@ -92,9 +107,9 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
     q: first(params.q),
     category: categorySlug,
     brand: first(params.brand),
-    stock: first(params.stock) as StockStatus | undefined,
+    stock: stockFilterSchema.parse(first(params.stock)),
     onlyPriced: first(params.priced) === "1",
-    sort: (first(params.sort) ?? "newest") as SortOption,
+    sort: sortFilterSchema.parse(first(params.sort)),
     page: Math.max(1, Number(first(params.page) ?? 1) || 1),
     specs,
   };
@@ -108,6 +123,26 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
       filters.category ? getCategoryBySlug(filters.category) : Promise.resolve(null),
       filters.brand ? getBrandBySlug(filters.brand) : Promise.resolve(null),
     ]);
+
+  /*
+    فقط صفحهٔ نخست ثبت می‌شود: ورق زدن نتایج، جست‌وجوی تازه نیست و شمارش را
+    باد می‌کند. ثبت با after انجام می‌شود تا پاسخ منتظر یک درج نماند.
+  */
+  if (filters.q && filters.page === 1) {
+    const term = filters.q;
+    after(() => logSearch(term, total, "catalog"));
+  }
+
+  if (filters.page > pageCount) redirect(hrefForPage(pageCount));
+
+  const hasActiveFilters = Boolean(
+    filters.q ||
+      filters.category ||
+      filters.brand ||
+      filters.stock ||
+      filters.onlyPriced ||
+      filters.specs.length > 0,
+  );
 
   const title = category?.name ?? (brand ? `محصولات ${brand.name}` : "کاتالوگ محصولات");
   const description =
@@ -159,7 +194,15 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
 
       <div className="shell py-10">
         <div className="grid gap-8 lg:grid-cols-[17rem_1fr]">
-          <aside className="hidden lg:block">
+          <aside className="hidden lg:block" aria-labelledby="filters-heading">
+            {/*
+              ستون فیلتر عنوان دیداری ندارد، ولی گروه‌هایش h3 هستند و بدون h2ی
+              بالای سرشان، ترتیب سرفصل‌ها از h1 صفحه یک‌باره به h3 می‌پرید.
+              نسخهٔ موبایل همین عنوان را دیداری دارد؛ اینجا فقط برای صفحه‌خوان.
+            */}
+            <h2 id="filters-heading" className="sr-only">
+              فیلترها
+            </h2>
             <div className="sticky top-[calc(var(--header-h)+1.5rem)]">
               <Suspense fallback={null}>{filtersPanel}</Suspense>
             </div>
@@ -171,7 +214,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
             </Suspense>
 
             {items.length === 0 ? (
-              <EmptyResults query={filters.q} />
+              <EmptyResults query={filters.q} hasActiveFilters={hasActiveFilters} />
             ) : (
               <>
                 {/*
@@ -179,7 +222,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
                   این h2 پنهان، پرش سطح تیتر را برای صفحه‌خوان‌ها می‌بندد.
                 */}
                 <h2 className="sr-only">فهرست محصولات</h2>
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
                   {items.map((product, index) => (
                     <Reveal key={product.id} delay={Math.min(index, 6) * 60}>
                       <ProductCard product={product} />
@@ -197,7 +240,14 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
   );
 }
 
-function EmptyResults({ query }: { query?: string }) {
+function EmptyResults({ query, hasActiveFilters }: { query?: string; hasActiveFilters: boolean }) {
+  const heading = hasActiveFilters ? "نتیجه‌ای پیدا نشد" : "هنوز کالایی در کاتالوگ ثبت نشده است";
+  const body = query
+    ? `کالایی مطابق «${query}» در کاتالوگ نبود. ممکن است بتوانیم آن را برایتان تأمین کنیم.`
+    : hasActiveFilters
+      ? "با این ترکیب فیلترها کالایی وجود ندارد. چند فیلتر را حذف کنید."
+      : "کاتالوگ در حال تکمیل است. برای استعلام مستقیم با کارشناسان ما تماس بگیرید.";
+
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border-default)] px-6 py-20 text-center">
       <span className="mb-5 grid size-16 place-items-center rounded-full border border-[var(--border-subtle)] bg-[var(--bg-elev-2)] text-[var(--fg-subtle)]">
@@ -206,19 +256,52 @@ function EmptyResults({ query }: { query?: string }) {
           <path d="m15.5 15.5 4.5 4.5" strokeLinecap="round" />
         </svg>
       </span>
-      <h2 className="font-display text-lg font-bold">نتیجه‌ای پیدا نشد</h2>
-      <p className="mt-3 max-w-md text-sm leading-8 text-[var(--fg-muted)]">
-        {query
-          ? `کالایی مطابق «${query}» در کاتالوگ نبود. ممکن است بتوانیم آن را برایتان تأمین کنیم.`
-          : "با این ترکیب فیلترها کالایی وجود ندارد. چند فیلتر را حذف کنید."}
-      </p>
+      <h2 className="font-display text-lg font-bold">{heading}</h2>
+      <p className="mt-3 max-w-md text-sm leading-8 text-[var(--fg-muted)]">{body}</p>
+      {query ? (
+        /*
+          جست‌وجوی بی‌نتیجه، دقیقاً همان چیزی است که مشتری می‌خواهد و ما
+          صفحه‌اش را نداریم. متن بالا می‌گفت «ممکن است بتوانیم تأمینش کنیم»
+          ولی تنها دکمهٔ صفحه «نمایش همه محصولات» بود — یعنی همان نیت، همان‌جا
+          از بین می‌رفت. حالا جست‌وجو با خودش به فرم تماس می‌رود و در موضوع
+          می‌نشیند.
+        */
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href={`/contact?subject=${encodeURIComponent(query)}`}
+            className="inline-flex h-11 items-center rounded-md bg-[var(--brand)] px-6 text-sm font-medium text-[var(--fg-on-brand)] transition-colors duration-300 hover:bg-[var(--brand-hover)]"
+          >
+            درخواست تأمین این کالا
+          </Link>
+          <Link
+            href="/products"
+            className="inline-flex h-11 items-center rounded-md border border-[var(--border-default)] px-6 text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+          >
+            نمایش همه محصولات
+          </Link>
+        </div>
+      ) : hasActiveFilters ? (
+        <Link
+          href="/products"
+          className="mt-6 inline-flex h-11 items-center rounded-md border border-[var(--border-default)] px-6 text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+        >
+          نمایش همه محصولات
+        </Link>
+      ) : (
+        <Link
+          href="/contact"
+          className="mt-6 inline-flex h-11 items-center rounded-md border border-[var(--border-default)] px-6 text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+        >
+          تماس با کارشناسان
+        </Link>
+      )}
     </div>
   );
 }
 
 export function ProductsLoading() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
         <ProductCardSkeleton key={i} />
       ))}

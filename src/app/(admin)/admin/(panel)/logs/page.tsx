@@ -1,8 +1,9 @@
 import { AdminPageHeader, DataTable, Panel, Td, Tr } from "@/components/admin/ui";
 import { Pagination } from "@/components/ui/pagination";
 import { buildQuery, formatDateTime, formatRelative, toFaDigits } from "@/lib/utils";
-import { listActivityLogs } from "@/modules/admin/queries";
+import { getSearchInsights, listActivityLogs } from "@/modules/admin/queries";
 import Link from "next/link";
+import { requirePageAccess } from "@/lib/auth";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export const dynamic = "force-dynamic";
@@ -16,10 +17,15 @@ const ACTION_LABEL: Record<string, string> = {
 const ENTITIES = ["order", "product", "category", "brand", "customer", "post", "message", "user", "settings"];
 
 export default async function AdminLogsPage({ searchParams }: { searchParams: SearchParams }) {
+  await requirePageAccess("logs");
+
   const params = await searchParams;
   const entity = first(params.entity);
   const page = Math.max(1, Number(first(params.page) ?? 1) || 1);
-  const { items, total, pageCount } = await listActivityLogs({ entity, page });
+  const [{ items, total, pageCount }, search] = await Promise.all([
+    listActivityLogs({ entity, page }),
+    getSearchInsights(),
+  ]);
 
   return (
     <>
@@ -27,6 +33,52 @@ export default async function AdminLogsPage({ searchParams }: { searchParams: Se
         title="لاگ فعالیت‌ها"
         description={`${toFaDigits(total)} رویداد ثبت شده است. این فهرست فقط خواندنی است و قابل ویرایش نیست.`}
       />
+
+      {/*
+        جست‌وجوهای بازدیدکنندگان. ستون راست فقط می‌گوید مردم دنبال چه می‌گردند؛
+        ستون چپ می‌گوید دنبال چه گشته‌اند و چیزی پیدا نکرده‌اند — و آن یکی
+        فهرست کارِ بعدی است: یا کالا را نداریم، یا نامش با زبان مشتری نمی‌خواند.
+      */}
+      <div className="mb-8 grid gap-4 lg:grid-cols-2">
+        <Panel
+          title="پرجست‌وجوترین عبارت‌ها"
+          action={
+            <span className="text-micro text-[var(--fg-subtle)]">
+              {toFaDigits(search.total)} جست‌وجو در {toFaDigits(search.days)} روز گذشته
+            </span>
+          }
+          padded={false}
+        >
+          <DataTable head={["عبارت", "دفعات", "میانگین نتایج", "آخرین بار"]} empty={search.top.length === 0}>
+            {search.top.map((row) => (
+              <Tr key={row.term}>
+                <Td className="font-medium">{row.term}</Td>
+                <Td className="font-mono text-xs">{toFaDigits(row.hits)}</Td>
+                <Td className="font-mono text-xs text-[var(--fg-muted)]">{toFaDigits(row.avgResults ?? 0)}</Td>
+                <Td className="text-micro text-[var(--fg-subtle)]">{formatRelative(row.lastAt)}</Td>
+              </Tr>
+            ))}
+          </DataTable>
+        </Panel>
+
+        <Panel
+          title="جست‌وجوهای بی‌نتیجه"
+          action={
+            <span className="text-micro text-[var(--fg-subtle)]">هیچ کالایی پیدا نشد</span>
+          }
+          padded={false}
+        >
+          <DataTable head={["عبارت", "دفعات", "آخرین بار"]} empty={search.empty.length === 0}>
+            {search.empty.map((row) => (
+              <Tr key={row.term}>
+                <Td className="font-medium text-[var(--danger-text)]">{row.term}</Td>
+                <Td className="font-mono text-xs">{toFaDigits(row.hits)}</Td>
+                <Td className="text-micro text-[var(--fg-subtle)]">{formatRelative(row.lastAt)}</Td>
+              </Tr>
+            ))}
+          </DataTable>
+        </Panel>
+      </div>
 
       <div className="mb-4 flex flex-wrap gap-1.5">
         <Chip href="/admin/logs" active={!entity}>همه</Chip>

@@ -164,7 +164,10 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
   try {
     const rows = await db.select({ key: settings.key, value: settings.value }).from(settings);
     return resolveSiteSettings(rows);
-  } catch {
+  } catch (error) {
+    // نبودِ پایگاه داده نباید کل سایت را از کار بیندازد؛ تنظیمات به پیش‌فرض
+    // ثابتِ config برمی‌گردد. اما خطا باید در لاگ بماند وگرنه قطعی دیده نمی‌شود.
+    console.error("[settings] خواندن تنظیمات سایت ناموفق بود؛ مقدار پیش‌فرض استفاده شد:", error);
     return resolveSiteSettings([]);
   }
 });

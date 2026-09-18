@@ -5,7 +5,7 @@
  *  ماژول مدیریت — عملیات نوشتن
  * =============================================================================
  *  هر اکشن سه کار را همیشه انجام می‌دهد:
- *   1. requirePermission — چون layout فقط رندر را محافظت می‌کند نه اکشن‌ها
+ *   1. requireWritePermission — چون layout فقط رندر را محافظت می‌کند نه اکشن‌ها
  *   2. اعتبارسنجی با Zod
  *   3. ثبت لاگ فعالیت
  * =============================================================================
@@ -40,8 +40,10 @@ import {
 } from "@/db/schema";
 import { buildSpecRows } from "@/modules/catalog/spec-writer";
 import { logActivity } from "@/lib/activity";
-import { AuthError, destroyAllSessions, hashPassword, requirePermission } from "@/lib/auth";
-import { ORDER_STATUS } from "@/lib/constants";
+import { deleteAssetByPrefix } from "@/lib/media/assets";
+import { isOwnProductAssetPrefix } from "@/lib/storage/keys";
+import { AuthError, destroyAllSessions, hashPassword, requireWritePermission } from "@/lib/auth";
+import { ORDER_PRIORITY, ORDER_STATUS } from "@/lib/constants";
 import { readingTime, slugify, stripHtml, truncate } from "@/lib/utils";
 import {
   brandFormSchema,
@@ -111,7 +113,7 @@ async function uniqueSlug(
 
 export async function updateOrderStatus(orderId: string, status: OrderStatus): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
 
     const [current] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
     if (!current) return { status: "error", message: "سفارش پیدا نشد." };
@@ -149,7 +151,7 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus): P
 
 export async function updateOrderPriority(orderId: string, priority: OrderPriority): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
     await db.update(orders).set({ priority, updatedAt: new Date() }).where(eq(orders.id, orderId));
     await db.insert(orderEvents).values({
       orderId,
@@ -158,6 +160,15 @@ export async function updateOrderPriority(orderId: string, priority: OrderPriori
       message: `اولویت پرونده تغییر کرد.`,
       meta: { priority },
     });
+
+    await logActivity({
+      userId: user.id,
+      action: "update",
+      entity: "order",
+      entityId: orderId,
+      summary: `اولویت سفارش به «${ORDER_PRIORITY[priority].label}» تغییر کرد.`,
+    });
+
     revalidatePath(`/admin/orders/${orderId}`);
     return { status: "success", message: "اولویت به‌روزرسانی شد." };
   });
@@ -165,7 +176,7 @@ export async function updateOrderPriority(orderId: string, priority: OrderPriori
 
 export async function assignOrder(orderId: string, assigneeId: string | null): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
 
     let assigneeName = "هیچ‌کس";
     if (assigneeId) {
@@ -197,7 +208,7 @@ export async function assignOrder(orderId: string, assigneeId: string | null): P
 
 export async function addOrderNote(orderId: string, body: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
     const text = body.trim();
     if (text.length < 2) return { status: "error", message: "متن یادداشت خیلی کوتاه است." };
 
@@ -209,6 +220,14 @@ export async function addOrderNote(orderId: string, body: string): Promise<Actio
     });
     await db.update(orders).set({ updatedAt: new Date() }).where(eq(orders.id, orderId));
 
+    await logActivity({
+      userId: user.id,
+      action: "update",
+      entity: "order",
+      entityId: orderId,
+      summary: "یادداشت به سفارش افزوده شد.",
+    });
+
     revalidatePath(`/admin/orders/${orderId}`);
     return { status: "success", message: "یادداشت ثبت شد." };
   });
@@ -216,75 +235,126 @@ export async function addOrderNote(orderId: string, body: string): Promise<Actio
 
 export async function logOrderContact(orderId: string, note: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
     await db.insert(orderEvents).values({
       orderId,
       userId: user.id,
       type: "CONTACTED",
       message: note.trim() || "تماس با مشتری برقرار شد.",
     });
+
+    await logActivity({
+      userId: user.id,
+      action: "update",
+      entity: "order",
+      entityId: orderId,
+      summary: "تماس با مشتری ثبت شد.",
+    });
+
     revalidatePath(`/admin/orders/${orderId}`);
     return { status: "success", message: "تماس ثبت شد." };
   });
 }
 
 /** ثبت قیمت اعلامی برای اقلام و انتقال پرونده به وضعیت «قیمت اعلام شد» */
+export async function deleteOrder(orderId: string): Promise<ActionState> {
+  return guard(async () => {
+    const user = await requireWritePermission("orders");
+    const [order] = await db
+      .select({ number: orders.number, contactName: orders.contactName })
+      .from(orders)
+      .where(eq(orders.id, orderId))
+      .limit(1);
+    if (!order) return { status: "error", message: "این سفارش پیدا نشد؛ شاید قبلاً حذف شده باشد." };
+
+    /*
+      اقلام، رویدادها و پرداخت‌های سفارش با کلید خارجی cascade پاک می‌شوند؛
+      اینجا دستی حذفشان نمی‌کنیم تا تنها یک جای حقیقت برای این رفتار بماند.
+    */
+    await db.delete(orders).where(eq(orders.id, orderId));
+
+    await logActivity({
+      userId: user.id,
+      action: "delete",
+      entity: "order",
+      entityId: orderId,
+      summary: `حذف سفارش ${order.number} («${order.contactName}»)`,
+    });
+
+    revalidatePath("/admin/orders");
+    revalidatePath("/admin");
+    return { status: "success", message: `سفارش ${order.number} حذف شد.` };
+  });
+}
+
 export async function submitQuote(
   orderId: string,
   prices: { itemId: string; price: number }[],
   extra: { discount?: number; tax?: number; shipping?: number; validDays?: number } = {},
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("orders");
+    const user = await requireWritePermission("orders");
 
     const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
     if (items.length === 0) return { status: "error", message: "این پرونده قلمی ندارد." };
 
-    let subtotal = 0;
-
-    for (const item of items) {
-      const entry = prices.find((p) => p.itemId === item.id);
-      const unit = entry
-        ? Math.max(0, Math.round(entry.price))
-        : (item.quotedUnitPrice ?? item.unitPrice ?? 0);
-      const lineTotal = unit * item.quantity;
-      subtotal += lineTotal;
-
-      if (entry) {
-        await db
-          .update(orderItems)
-          .set({ quotedUnitPrice: unit, lineTotal })
-          .where(eq(orderItems.id, item.id));
-      }
-    }
-
     const discount = Math.max(0, extra.discount ?? 0);
     const tax = Math.max(0, extra.tax ?? 0);
     const shipping = Math.max(0, extra.shipping ?? 0);
-    const total = Math.max(0, subtotal - discount + tax + shipping);
     const validUntil = new Date(Date.now() + (extra.validDays ?? 7) * 864e5);
 
-    await db
-      .update(orders)
-      .set({
-        subtotal,
-        discount,
-        tax,
-        shipping,
-        total,
-        status: "QUOTED",
-        quotedAt: new Date(),
-        quoteValidUntil: validUntil,
-        updatedAt: new Date(),
-      })
-      .where(eq(orders.id, orderId));
+    /*
+      همه در یک تراکنش.
 
-    await db.insert(orderEvents).values({
-      orderId,
-      userId: user.id,
-      type: "QUOTE_SENT",
-      message: `پیش‌فاکتور با مبلغ کل ${total.toLocaleString("en-US")} تومان ثبت شد.`,
-      meta: { subtotal, discount, tax, shipping, total },
+      پیش‌تر اقلام یکی‌یکی و بیرون از تراکنش به‌روز می‌شدند و بعد خود سفارش. هر
+      خطایی در میانهٔ راه — قطع اتصال، مهلت تمام‌شده — پرونده‌ای می‌ساخت که
+      نیمی از اقلامش قیمت خورده بود ولی وضعیتش هنوز عوض نشده بود، و هیچ‌چیز در
+      پنل نشان نمی‌داد کدام نیمه. ثبت سفارش از همان اول این کار را درست
+      می‌کرد؛ اینجا هم همان الگو.
+    */
+    await db.transaction(async (tx) => {
+      let subtotal = 0;
+
+      for (const item of items) {
+        const entry = prices.find((p) => p.itemId === item.id);
+        const unit = entry
+          ? Math.max(0, Math.round(entry.price))
+          : (item.quotedUnitPrice ?? item.unitPrice ?? 0);
+        const lineTotal = unit * item.quantity;
+        subtotal += lineTotal;
+
+        if (entry) {
+          await tx
+            .update(orderItems)
+            .set({ quotedUnitPrice: unit, lineTotal })
+            .where(eq(orderItems.id, item.id));
+        }
+      }
+
+      const sum = Math.max(0, subtotal - discount + tax + shipping);
+
+      await tx
+        .update(orders)
+        .set({
+          subtotal,
+          discount,
+          tax,
+          shipping,
+          total: sum,
+          status: "QUOTED",
+          quotedAt: new Date(),
+          quoteValidUntil: validUntil,
+          updatedAt: new Date(),
+        })
+        .where(eq(orders.id, orderId));
+
+      await tx.insert(orderEvents).values({
+        orderId,
+        userId: user.id,
+        type: "QUOTE_SENT",
+        message: `پیش‌فاکتور با مبلغ کل ${sum.toLocaleString("en-US")} تومان ثبت شد.`,
+        meta: { subtotal, discount, tax, shipping, total: sum },
+      });
     });
 
     await logActivity({
@@ -311,7 +381,7 @@ export async function saveProduct(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
 
     const parsed = productFormSchema.safeParse({
       name: formData.get("name"),
@@ -326,6 +396,10 @@ export async function saveProduct(
       priceMode: formData.get("priceMode") || "ON_REQUEST",
       price: formData.get("price") || undefined,
       comparePrice: formData.get("comparePrice") || undefined,
+      priceConditionCode: formData.get("priceConditionCode") || undefined,
+      priceConditionText: formData.get("priceConditionText") || undefined,
+      isPromotional: formData.get("isPromotional"),
+      sourceRef: formData.get("sourceRef") || undefined,
       unit: formData.get("unit") || "دستگاه",
       stockStatus: formData.get("stockStatus") || "ORDER_ONLY",
       leadTimeDays: formData.get("leadTimeDays") || undefined,
@@ -333,6 +407,7 @@ export async function saveProduct(
       warrantyMonths: formData.get("warrantyMonths") || undefined,
       isFeatured: formData.get("isFeatured"),
       isNew: formData.get("isNew"),
+      position: formData.get("position") || 0,
       tags: String(formData.get("tags") ?? "")
         .split(",")
         .map((t) => t.trim())
@@ -361,6 +436,10 @@ export async function saveProduct(
       priceMode: input.priceMode,
       price: input.priceMode === "PUBLIC" ? (input.price ?? null) : null,
       comparePrice: input.priceMode === "PUBLIC" ? (input.comparePrice ?? null) : null,
+      priceConditionCode: input.priceConditionCode ?? null,
+      priceConditionText: input.priceConditionText ?? null,
+      isPromotional: input.isPromotional,
+      sourceRef: input.sourceRef ?? null,
       unit: input.unit,
       stockStatus: input.stockStatus,
       leadTimeDays: input.leadTimeDays ?? null,
@@ -368,6 +447,7 @@ export async function saveProduct(
       warrantyMonths: input.warrantyMonths ?? null,
       isFeatured: input.isFeatured,
       isNew: input.isNew,
+      position: input.position,
       tags: input.tags,
       metaTitle: input.metaTitle ?? null,
       metaDescription: input.metaDescription ?? null,
@@ -376,52 +456,132 @@ export async function saveProduct(
     };
 
     // تصاویر و مشخصات به‌صورت JSON از فرم می‌آیند
-    const images = safeJson<{ url: string; alt?: string }[]>(formData.get("images"), []);
+    const images = safeJson<
+      {
+        url: string;
+        alt?: string;
+        storageKey?: string;
+        width?: number;
+        height?: number;
+        /** از پاسخ آپلود می‌آید؛ برای تصویر دستی تهی می‌ماند و یعنی «بدون ترکیب» */
+        backdrop?: string;
+      }[]
+    >(formData.get("images"), []);
     const specs = safeJson<{ groupName: string; label: string; value: string; unit?: string; isKey?: boolean }[]>(
       formData.get("specs"),
       [],
     );
 
-    let id = productId;
-
-    if (id) {
-      const [existing] = await db.select({ publishedAt: products.publishedAt }).from(products).where(eq(products.id, id)).limit(1);
-      await db
-        .update(products)
-        .set({ ...values, publishedAt: existing?.publishedAt ?? values.publishedAt })
-        .where(eq(products.id, id));
-    } else {
-      const [created] = await db.insert(products).values(values).returning({ id: products.id });
-      id = created!.id;
+    /*
+      کلید ذخیره‌سازی از کلاینت برمی‌گردد و هنگام ذخیره مبنای حذف فایل است. اگر
+      کلید محصول دیگری پذیرفته شود، ویرایش بعدیِ همین محصول دارایی آن محصول را
+      پاک می‌کند. پس پیش از هر نوشتنی رد می‌شود.
+    */
+    const foreignAsset = images.some(
+      (image) => image.storageKey && !isOwnProductAssetPrefix(image.storageKey, productId ?? undefined),
+    );
+    if (foreignAsset) {
+      return { status: "error", message: "شناسه یکی از تصاویر معتبر نیست. صفحه را تازه کنید و دوباره تلاش کنید." };
     }
 
-    // جایگزینی کامل تصاویر و مشخصات — ساده‌تر و قابل اتکاتر از diff جزئی
-    await db.delete(productImages).where(eq(productImages.productId, id!));
-    if (images.length > 0) {
-      await db.insert(productImages).values(
-        images.map((image, index) => ({
-          productId: id!,
-          url: image.url,
-          alt: image.alt ?? input.name,
-          position: index,
-          isPrimary: index === 0,
-        })),
-      );
-    }
+    /*
+      کلیدهای فعلی و ردیف‌های مشخصات پیش از تراکنش آماده می‌شوند — هر دو فقط
+      خواندن و محاسبه‌اند. دلیلش دو چیز است: ورودی نامعتبرِ مشخصات باید پیش از
+      هر نوشتنی رد شود، و buildSpecRows نباید داخل تراکنش یک اتصال دوم از
+      استخر بگیرد (با استخر پر، همان‌جا قفل می‌شد).
 
-    await db.delete(productSpecs).where(eq(productSpecs.productId, id!));
-    if (specs.length > 0) {
-      // از buildSpecRows عبور می‌کند تا مقادیر نوع‌دار و مقدار پایه ساخته
-      // شوند؛ درج مستقیم، محصول را بی‌صدا از فیلترها حذف می‌کرد.
-      const rows = await buildSpecRows(id!, specs);
-      await db.insert(productSpecs).values(rows);
+      برای محصول تازه هنوز شناسه‌ای وجود ندارد؛ ردیف‌ها با شناسهٔ واقعی داخل
+      تراکنش مهر می‌خورند و طبعاً تصویر قبلی هم ندارد.
+    */
+    const previousKeys = new Set(
+      productId
+        ? (
+            await db
+              .select({ storageKey: productImages.storageKey })
+              .from(productImages)
+              .where(eq(productImages.productId, productId))
+          )
+            .map((row) => row.storageKey)
+            .filter((key): key is string => Boolean(key))
+        : [],
+    );
+
+    // از buildSpecRows عبور می‌کند تا مقادیر نوع‌دار و مقدار پایه ساخته شوند؛
+    // درج مستقیم، محصول را بی‌صدا از فیلترها حذف می‌کرد.
+    const specRows = await buildSpecRows(productId ?? "", specs);
+
+    /*
+      محصول، تصاویر و مشخصات یک واحد منطقی‌اند. اگر درج مشخصات شکست بخورد و
+      حذفشان جدا کامیت شده باشد، محصول بی‌صدا بدون هیچ مشخصه‌ای می‌ماند و از
+      فیلترهای کاتالوگ بیرون می‌افتد — دقیقاً همان حالتی که برای تصاویر هم
+      یک بار رخ داد. پس هر چهار نوشتن در یک تراکنش‌اند.
+    */
+    const id = await db.transaction(async (tx) => {
+      let resolved = productId;
+
+      if (resolved) {
+        const [existing] = await tx
+          .select({ publishedAt: products.publishedAt })
+          .from(products)
+          .where(eq(products.id, resolved))
+          .limit(1);
+        await tx
+          .update(products)
+          .set({ ...values, publishedAt: existing?.publishedAt ?? values.publishedAt })
+          .where(eq(products.id, resolved));
+      } else {
+        const [created] = await tx.insert(products).values(values).returning({ id: products.id });
+        resolved = created!.id;
+      }
+
+      await tx.delete(productImages).where(eq(productImages.productId, resolved));
+      if (images.length > 0) {
+        await tx.insert(productImages).values(
+          images.map((image, index) => ({
+            productId: resolved!,
+            url: image.url,
+            storageKey: image.storageKey ?? null,
+            width: image.width ?? null,
+            height: image.height ?? null,
+            // فقط مقدار شناخته‌شده پذیرفته می‌شود؛ هر چیز دیگری یعنی نامعلوم
+            backdrop: image.backdrop === "light" || image.backdrop === "dark" ? image.backdrop : null,
+            alt: image.alt ?? input.name,
+            position: index,
+            isPrimary: index === 0,
+          })),
+        );
+      }
+
+      await tx.delete(productSpecs).where(eq(productSpecs.productId, resolved));
+      if (specRows.length > 0) {
+        await tx.insert(productSpecs).values(specRows.map((row) => ({ ...row, productId: resolved! })));
+      }
+
+      return resolved!;
+    });
+
+    /*
+      فایل دارایی‌هایی که مدیر از فهرست برداشته، فقط پس از کامیت شدن تراکنش از
+      دیسک پاک می‌شوند؛ وگرنه یک rollback فایلی را نابود می‌کرد که رکوردش هنوز
+      هست. حذف فایل تراکنشی نیست، پس شکستش ذخیره را برنمی‌گرداند و فقط لاگ
+      می‌شود.
+    */
+    for (const image of images) {
+      if (image.storageKey) previousKeys.delete(image.storageKey);
+    }
+    let orphaned = 0;
+    for (const orphan of previousKeys) {
+      orphaned += await deleteAssetByPrefix(orphan);
+    }
+    if (orphaned > 0) {
+      console.error(`[admin] ذخیرهٔ محصول ${id} انجام شد اما ${orphaned} فایل دارایی روی دیسک باقی ماند.`);
     }
 
     await logActivity({
       userId: user.id,
       action: productId ? "update" : "create",
       entity: "product",
-      entityId: id!,
+      entityId: id,
       summary: `${productId ? "ویرایش" : "ایجاد"} محصول «${input.name}»`,
     });
 
@@ -429,16 +589,55 @@ export async function saveProduct(
     revalidatePath("/products");
     revalidatePath(`/products/${slug}`);
 
-    return { status: "success", message: productId ? "محصول به‌روزرسانی شد." : "محصول ایجاد شد.", id: id! };
+    return { status: "success", message: productId ? "محصول به‌روزرسانی شد." : "محصول ایجاد شد.", id };
   });
 }
 
 export async function deleteProduct(productId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
     const [product] = await db.select({ name: products.name }).from(products).where(eq(products.id, productId)).limit(1);
 
+    /*
+      کلیدهای دارایی پیش از حذف خوانده می‌شوند، چون حذف محصول ردیف‌های
+      product_images را هم cascade می‌کند و بعد از آن دیگر معلوم نیست کدام فایل
+      به این محصول تعلق داشت.
+
+      فیلتر مالکیت لازم است: ردیف‌های قدیمی (پیش از افزوده شدن بررسی مالکیت در
+      saveProduct) ممکن است کلیدی از محصول دیگر داشته باشند و حذف محصول نباید
+      دارایی محصول دیگری را پاک کند. ردیف‌های میراثی با storage_key تهی —
+      فایلشان در public/ است — اصلاً وارد این فهرست نمی‌شوند.
+    */
+    const ownedKeys = [
+      ...new Set(
+        (
+          await db
+            .select({ storageKey: productImages.storageKey })
+            .from(productImages)
+            .where(eq(productImages.productId, productId))
+        )
+          .map((row) => row.storageKey)
+          .filter((key): key is string => Boolean(key) && isOwnProductAssetPrefix(key!, productId)),
+      ),
+    ];
+
     await db.delete(products).where(eq(products.id, productId));
+
+    /*
+      فایل‌ها فقط پس از کامیت شدن حذفِ پایگاه داده پاک می‌شوند. ترتیب عکس،
+      در صورت شکست تراکنش، دارایی محصولی را نابود می‌کرد که هنوز وجود دارد.
+      حذف فایل تراکنشی نیست، پس شکستش حذف محصول را برنمی‌گرداند؛ فقط لاگ
+      می‌شود و فایل به‌عنوان یتیمِ مستند باقی می‌ماند.
+    */
+    let orphaned = 0;
+    for (const key of ownedKeys) {
+      orphaned += await deleteAssetByPrefix(key);
+    }
+    if (orphaned > 0) {
+      console.error(
+        `[admin] حذف محصول ${productId} انجام شد اما ${orphaned} فایل دارایی روی دیسک باقی ماند.`,
+      );
+    }
 
     await logActivity({
       userId: user.id,
@@ -459,7 +658,7 @@ export async function bulkUpdateProductStatus(
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED",
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
     if (ids.length === 0) return { status: "error", message: "محصولی انتخاب نشده است." };
 
     await db
@@ -491,7 +690,7 @@ export async function saveCategory(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("categories");
+    const user = await requireWritePermission("categories");
 
     const parsed = categoryFormSchema.safeParse({
       name: formData.get("name"),
@@ -551,7 +750,7 @@ export async function saveCategory(
 
 export async function deleteCategory(categoryId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("categories");
+    const user = await requireWritePermission("categories");
 
     const [{ total }] = await db
       .select({ total: sql<number>`count(*)::int` })
@@ -585,7 +784,7 @@ export async function saveBrand(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("brands");
+    const user = await requireWritePermission("brands");
 
     const parsed = brandFormSchema.safeParse({
       name: formData.get("name"),
@@ -640,7 +839,7 @@ export async function saveBrand(
 
 export async function deleteBrand(brandId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("brands");
+    const user = await requireWritePermission("brands");
     await db.delete(brands).where(eq(brands.id, brandId));
     await logActivity({ userId: user.id, action: "delete", entity: "brand", entityId: brandId, summary: "حذف برند" });
     revalidatePath("/admin/brands");
@@ -659,7 +858,7 @@ export async function saveCustomer(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("customers");
+    const user = await requireWritePermission("customers");
 
     const parsed = customerFormSchema.safeParse({
       fullName: formData.get("fullName"),
@@ -716,13 +915,59 @@ export async function saveCustomer(
 /*  اخبار                                                                       */
 /* ========================================================================== */
 
+export async function deleteCustomer(customerId: string): Promise<ActionState> {
+  return guard(async () => {
+    const user = await requireWritePermission("customers");
+    const [customer] = await db
+      .select({ fullName: customers.fullName })
+      .from(customers)
+      .where(eq(customers.id, customerId))
+      .limit(1);
+    if (!customer) return { status: "error", message: "این مشتری پیدا نشد؛ شاید قبلاً حذف شده باشد." };
+
+    /*
+      سفارش‌های مشتری پاک نمی‌شوند: کلید خارجی‌شان set null است، پس سفارش با
+      همان نام و شمارهٔ تماسِ ثبت‌شده در خودش می‌ماند و فقط اتصالش به پروندهٔ
+      مشتری قطع می‌شود. سابقهٔ فروش نباید با حذف یک پرونده از بین برود.
+      یادداشت‌های مشتری اما cascade پاک می‌شوند، چون بیرون از آن پرونده معنایی
+      ندارند.
+    */
+    const detached = await db
+      .select({ id: orders.id })
+      .from(orders)
+      .where(eq(orders.customerId, customerId));
+
+    await db.delete(customers).where(eq(customers.id, customerId));
+
+    await logActivity({
+      userId: user.id,
+      action: "delete",
+      entity: "customer",
+      entityId: customerId,
+      summary:
+        `حذف مشتری «${customer.fullName}»` +
+        (detached.length > 0 ? ` — ${detached.length} سفارش بدون مشتری ماند` : ""),
+    });
+
+    revalidatePath("/admin/customers");
+    revalidatePath("/admin/orders");
+    return {
+      status: "success",
+      message:
+        detached.length > 0
+          ? `مشتری حذف شد. ${detached.length} سفارش باقی ماند و بدون مشتری شد.`
+          : "مشتری حذف شد.",
+    };
+  });
+}
+
 export async function savePost(
   postId: string | null,
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("posts");
+    const user = await requireWritePermission("posts");
 
     const parsed = postFormSchema.safeParse({
       title: formData.get("title"),
@@ -795,7 +1040,7 @@ export async function savePost(
 
 export async function deletePost(postId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("posts");
+    const user = await requireWritePermission("posts");
     await db.delete(posts).where(eq(posts.id, postId));
     await logActivity({ userId: user.id, action: "delete", entity: "post", entityId: postId, summary: "حذف مطلب" });
     revalidatePath("/admin/posts");
@@ -820,7 +1065,7 @@ export async function saveUnit(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
 
     const parsed = unitFormSchema.safeParse({
       code: formData.get("code"),
@@ -886,7 +1131,7 @@ export async function saveSpecDefinition(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
 
     const parsed = specDefinitionFormSchema.safeParse({
       key: formData.get("key"),
@@ -947,7 +1192,7 @@ export async function saveSpecDefinition(
 
 export async function deleteSpecDefinition(definitionId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("products");
+    const user = await requireWritePermission("products");
 
     /*
      * حذف تعریف، definition_id ردیف‌های مقدار را null می‌کند (ON DELETE SET
@@ -980,7 +1225,7 @@ export async function deleteSpecDefinition(definitionId: string): Promise<Action
 
 export async function saveCategorySpec(_prev: ActionState, formData: FormData): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("categories");
+    const user = await requireWritePermission("categories");
 
     const parsed = categorySpecFormSchema.safeParse({
       categoryId: formData.get("categoryId"),
@@ -1021,7 +1266,7 @@ export async function saveCategorySpec(_prev: ActionState, formData: FormData): 
 
 export async function deleteCategorySpec(linkId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("categories");
+    const user = await requireWritePermission("categories");
     await db.delete(categorySpecs).where(eq(categorySpecs.id, linkId));
     await logActivity({
       userId: user.id, action: "delete", entity: "category", entityId: linkId,
@@ -1043,7 +1288,7 @@ export async function saveProject(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("projects");
+    const user = await requireWritePermission("projects");
 
     const parsed = projectFormSchema.safeParse({
       title: formData.get("title"),
@@ -1108,7 +1353,7 @@ export async function saveProject(
 
 export async function deleteProject(projectId: string): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("projects");
+    const user = await requireWritePermission("projects");
     await db.delete(projects).where(eq(projects.id, projectId));
     await logActivity({
       userId: user.id, action: "delete", entity: "project", entityId: projectId, summary: "حذف پروژه",
@@ -1126,7 +1371,7 @@ export async function deleteProject(projectId: string): Promise<ActionState> {
 
 export async function updateMessageStatus(messageId: string, status: MessageStatus): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("messages");
+    const user = await requireWritePermission("messages");
     await db.update(contactMessages).set({ status }).where(eq(contactMessages.id, messageId));
     await logActivity({
       userId: user.id,
@@ -1151,7 +1396,7 @@ export async function saveUser(
   formData: FormData,
 ): Promise<ActionState> {
   return guard(async () => {
-    const actor = await requirePermission("users");
+    const actor = await requireWritePermission("users");
 
     const parsed = userFormSchema.safeParse({
       name: formData.get("name"),
@@ -1209,13 +1454,63 @@ export async function saveUser(
   });
 }
 
+export async function deleteUser(userId: string): Promise<ActionState> {
+  return guard(async () => {
+    const actor = await requireWritePermission("users");
+
+    if (userId === actor.id) {
+      return { status: "error", message: "نمی‌توانید حساب خودتان را حذف کنید." };
+    }
+
+    const [target] = await db
+      .select({ name: users.name, role: users.role })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    if (!target) return { status: "error", message: "این کاربر پیدا نشد؛ شاید قبلاً حذف شده باشد." };
+
+    /*
+      حذف آخرین مدیر ارشدِ فعال یعنی قفل شدن پنل روی همه. بررسی روی «فعال»
+      انجام می‌شود، نه صرفاً نقش: یک OWNER غیرفعال نمی‌تواند وارد شود، پس
+      جانشین حساب نمی‌آید.
+    */
+    if (target.role === "OWNER") {
+      const others = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(and(eq(users.role, "OWNER"), eq(users.isActive, true), sql`${users.id} <> ${userId}`));
+      if (others.length === 0) {
+        return { status: "error", message: "این تنها مدیر ارشد فعال است و حذفش پنل را بدون مدیر می‌گذارد." };
+      }
+    }
+
+    /*
+      نشست‌ها با کلید خارجی cascade پاک می‌شوند، ولی صریح باطلشان می‌کنیم تا
+      اگر روزی آن کلید عوض شد، کاربرِ حذف‌شده با کوکی قدیمی داخل نماند.
+    */
+    await destroyAllSessions(userId);
+    await db.delete(users).where(eq(users.id, userId));
+
+    await logActivity({
+      userId: actor.id,
+      action: "delete",
+      entity: "user",
+      entityId: userId,
+      summary: `حذف کاربر پنل «${target.name}»`,
+    });
+
+    revalidatePath("/admin/users");
+    return { status: "success", message: "کاربر حذف شد." };
+  });
+}
+
 /* ========================================================================== */
 /*  تنظیمات                                                                     */
 /* ========================================================================== */
 
 export async function saveSettings(_prev: ActionState, formData: FormData): Promise<ActionState> {
   return guard(async () => {
-    const user = await requirePermission("settings");
+    const user = await requireWritePermission("settings");
 
     const entries = Array.from(formData.entries()).filter(([key]) => key.startsWith("setting:"));
 

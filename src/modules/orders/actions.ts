@@ -13,11 +13,13 @@
  * =============================================================================
  */
 
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 
 import { db } from "@/db";
+import { newOrderMessage, notifyStaff } from "@/lib/notify";
 import {
   counters,
   customers,
@@ -30,19 +32,57 @@ import {
 import { getClientIp } from "@/lib/auth";
 import { RATE_LIMITS, rateLimit } from "@/lib/rate-limit";
 import { toFieldErrors, orderInputSchema, type FieldErrors } from "@/lib/validation";
-import { normalizePhone } from "@/lib/utils";
+import { normalizePhone, toFaDigits } from "@/lib/utils";
+
+/**
+ * مقادیری که کاربر فرستاده بود، تا فرم پس از خطا خالی برنگردد.
+ *
+ * React ۱۹ فرمِ کنترل‌نشده را بعد از اجرای action ریست می‌کند، پس یک رقمِ
+ * اشتباه در شمارهٔ تماس کل فرم استعلام را پاک می‌کرد — نام، شرکت، شهر و
+ * توضیحی که کاربر نوشته بود. در مسیری که کارش گرفتنِ سرنخ فروش است، این یعنی
+ * از دست دادن همان سرنخ.
+ *
+ * فقط در حالت خطا برمی‌گردد.
+ */
+export type OrderValues = {
+  contactName?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  contactCompany?: string;
+  contactCity?: string;
+  note?: string;
+};
 
 export type OrderActionState = {
   status: "idle" | "success" | "error";
   message?: string;
   orderNumber?: string;
   errors?: FieldErrors;
+  values?: OrderValues;
 };
 
+/** honeypot عمداً برنمی‌گردد */
+function echo(formData: FormData): OrderValues {
+  const text = (key: string) => {
+    const value = formData.get(key);
+    return typeof value === "string" ? value : undefined;
+  };
+  return {
+    contactName: text("contactName"),
+    contactPhone: text("contactPhone"),
+    contactEmail: text("contactEmail"),
+    contactCompany: text("contactCompany"),
+    contactCity: text("contactCity"),
+    note: text("note"),
+  };
+}
+
+type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
 /** شماره پرونده خوانا: ARQ-1404-0042 */
-async function nextOrderNumber(type: OrderType): Promise<string> {
+async function nextOrderNumber(tx: Tx, type: OrderType): Promise<string> {
   const key = `order:${type}`;
-  const [row] = await db
+  const [row] = await tx
     .insert(counters)
     .values({ key, value: 1 })
     .onConflictDoUpdate({ target: counters.key, set: { value: sql`${counters.value} + 1` } })
@@ -72,7 +112,8 @@ export async function createOrder(
   if (!limit.success) {
     return {
       status: "error",
-      message: `تعداد درخواست‌های شما زیاد است. لطفاً ${Math.ceil(limit.retryAfterSeconds / 60)} دقیقه دیگر تلاش کنید.`,
+      message: `تعداد درخواست‌های شما زیاد است. لطفاً ${toFaDigits(Math.ceil(limit.retryAfterSeconds / 60))} دقیقه دیگر تلاش کنید.`,
+      values: echo(formData),
     };
   }
 
@@ -80,7 +121,7 @@ export async function createOrder(
   try {
     itemsRaw = JSON.parse(String(formData.get("items") ?? "[]"));
   } catch {
-    return { status: "error", message: "اطلاعات محصولات نامعتبر است." };
+    return { status: "error", message: "اطلاعات محصولات نامعتبر است.", values: echo(formData) };
   }
 
   const parsed = orderInputSchema.safeParse({
@@ -101,6 +142,7 @@ export async function createOrder(
       status: "error",
       message: "لطفاً خطاهای فرم را برطرف کنید.",
       errors: toFieldErrors(parsed.error),
+      values: echo(formData),
     };
   }
 
@@ -125,25 +167,50 @@ export async function createOrder(
             price: products.price,
             priceMode: products.priceMode,
             minOrderQty: products.minOrderQty,
+            imageUrl: sql<string | null>`(
+              select pi.url from product_images pi
+              where pi.product_id = products.id
+              order by pi.is_primary desc, pi.position asc
+              limit 1
+            )`,
           })
           .from(products)
-          .where(and(eq(products.status, "PUBLISHED"), sql`${products.id} = any(${productIds})`))
+          .where(and(eq(products.status, "PUBLISHED"), inArray(products.id, productIds)))
       : [];
 
     const productMap = new Map(dbProducts.map((p) => [p.id, p]));
 
-    const lines = input.items.map((item) => {
-      const product = item.productId ? productMap.get(item.productId) : undefined;
-      const quantity = Math.max(item.quantity, product?.minOrderQty ?? 1);
-      const unitPrice = product?.priceMode === "PUBLIC" ? product.price : null;
+    /*
+      هر قلم باید به یک محصول منتشرشده برسد. اگر شناسه‌ای وجود نداشته باشد یا به
+      محصول پیش‌نویس/بایگانی‌شده اشاره کند، کل درخواست رد می‌شود؛ در غیر این صورت
+      قلمی با product_id تهی و نامِ ارسالی کلاینت در پرونده ثبت می‌شد.
+    */
+    const resolved = input.items.map((item) =>
+      item.productId ? productMap.get(item.productId) : undefined,
+    );
+
+    if (resolved.some((product) => !product)) {
       return {
-        productId: product?.id ?? null,
-        productName: product?.name ?? item.productName,
-        productSku: product?.sku ?? item.productSku ?? null,
-        productSlug: product?.slug ?? item.productSlug ?? null,
-        imageUrl: item.imageUrl ?? null,
+        status: "error",
+        message:
+          "برخی از اقلام سبد شما دیگر در دسترس نیستند. لطفاً سبد را بازبینی کنید و دوباره تلاش کنید.",
+        values: echo(formData),
+      };
+    }
+
+    const lines = input.items.map((item, index) => {
+      // پس از بررسی بالا، حتماً مقدار دارد
+      const product = resolved[index]!;
+      const quantity = Math.max(item.quantity, product.minOrderQty);
+      const unitPrice = product.priceMode === "PUBLIC" ? product.price : null;
+      return {
+        productId: product.id,
+        productName: product.name,
+        productSku: product.sku,
+        productSlug: product.slug,
+        imageUrl: product.imageUrl,
         quantity,
-        unit: product?.unit ?? item.unit ?? "دستگاه",
+        unit: product.unit,
         unitPrice,
         lineTotal: unitPrice ? unitPrice * quantity : null,
         note: item.note ?? null,
@@ -151,79 +218,105 @@ export async function createOrder(
     });
 
     const subtotal = lines.reduce((sum, l) => sum + (l.lineTotal ?? 0), 0);
-    const number = await nextOrderNumber(input.type);
     const phone = normalizePhone(input.contactPhone);
 
-    /* ---------- مشتری: اگر شماره قبلاً ثبت شده، همان رکورد به‌روز شود ---------- */
-    const [customer] = await db
-      .insert(customers)
-      .values({
-        fullName: input.contactName,
-        phone,
-        email: input.contactEmail ?? null,
-        companyName: input.contactCompany ?? null,
-        city: input.contactCity ?? null,
-        type: input.contactCompany ? "COMPANY" : "INDIVIDUAL",
-      })
-      .onConflictDoUpdate({
-        target: customers.phone,
-        set: {
+    /*
+      شماره‌گذاری، مشتری، پرونده، اقلام و رویداد یک واحد منطقی‌اند: اگر میان دو
+      نوشتن خطایی رخ دهد نباید پرونده‌ای بدون قلم در پنل باقی بماند.
+    */
+    const number = await db.transaction(async (tx) => {
+      const orderNumber = await nextOrderNumber(tx, input.type);
+
+      /* ---------- مشتری: اگر شماره قبلاً ثبت شده، همان رکورد به‌روز شود ---------- */
+      const [customer] = await tx
+        .insert(customers)
+        .values({
           fullName: input.contactName,
-          email: sql`coalesce(excluded.email, ${customers.email})`,
-          companyName: sql`coalesce(excluded.company_name, ${customers.companyName})`,
-          city: sql`coalesce(excluded.city, ${customers.city})`,
-          updatedAt: new Date(),
-        },
-      })
-      .returning();
+          phone,
+          email: input.contactEmail ?? null,
+          companyName: input.contactCompany ?? null,
+          city: input.contactCity ?? null,
+          type: input.contactCompany ? "COMPANY" : "INDIVIDUAL",
+        })
+        .onConflictDoUpdate({
+          target: customers.phone,
+          set: {
+            fullName: input.contactName,
+            email: sql`coalesce(excluded.email, ${customers.email})`,
+            companyName: sql`coalesce(excluded.company_name, ${customers.companyName})`,
+            city: sql`coalesce(excluded.city, ${customers.city})`,
+            updatedAt: new Date(),
+          },
+        })
+        .returning();
 
-    /* --------------------------- ثبت پرونده --------------------------- */
-    const [order] = await db
-      .insert(orders)
-      .values({
-        number,
-        type: input.type,
-        source: input.source,
-        status: "NEW",
-        priority: lines.length > 3 ? "HIGH" : "NORMAL",
-        customerId: customer!.id,
-        contactName: input.contactName,
-        contactPhone: phone,
-        contactEmail: input.contactEmail ?? null,
-        contactCompany: input.contactCompany ?? null,
-        contactCity: input.contactCity ?? null,
-        note: input.note ?? null,
-        subtotal,
-        total: subtotal,
-        ip,
-        userAgent: headerList.get("user-agent")?.slice(0, 400) ?? null,
-        referrer: headerList.get("referer")?.slice(0, 400) ?? null,
-      })
-      .returning();
+      /* --------------------------- ثبت پرونده --------------------------- */
+      const [order] = await tx
+        .insert(orders)
+        .values({
+          number: orderNumber,
+          type: input.type,
+          source: input.source,
+          status: "NEW",
+          priority: lines.length > 3 ? "HIGH" : "NORMAL",
+          customerId: customer!.id,
+          contactName: input.contactName,
+          contactPhone: phone,
+          contactEmail: input.contactEmail ?? null,
+          contactCompany: input.contactCompany ?? null,
+          contactCity: input.contactCity ?? null,
+          note: input.note ?? null,
+          subtotal,
+          total: subtotal,
+          ip,
+          userAgent: headerList.get("user-agent")?.slice(0, 400) ?? null,
+          referrer: headerList.get("referer")?.slice(0, 400) ?? null,
+        })
+        .returning();
 
-    await db.insert(orderItems).values(lines.map((line) => ({ ...line, orderId: order!.id })));
+      await tx.insert(orderItems).values(lines.map((line) => ({ ...line, orderId: order!.id })));
 
-    await db.insert(orderEvents).values({
-      orderId: order!.id,
-      type: "CREATED",
-      message:
-        input.type === "QUOTE"
-          ? "درخواست استعلام قیمت از سایت ثبت شد."
-          : "سفارش جدید از سایت ثبت شد.",
-      meta: { itemCount: lines.length, subtotal },
+      await tx.insert(orderEvents).values({
+        orderId: order!.id,
+        type: "CREATED",
+        message:
+          input.type === "QUOTE"
+            ? "درخواست استعلام قیمت از سایت ثبت شد."
+            : "سفارش جدید از سایت ثبت شد.",
+        meta: { itemCount: lines.length, subtotal },
+      });
+
+      // شمارنده سفارش محصولات — برای گزارش «پرفروش‌ترین‌ها»
+      for (const line of lines) {
+        if (!line.productId) continue;
+        await tx
+          .update(products)
+          .set({ orderCount: sql`${products.orderCount} + 1` })
+          .where(eq(products.id, line.productId));
+      }
+
+      return orderNumber;
     });
-
-    // شمارنده سفارش محصولات — برای گزارش «پرفروش‌ترین‌ها»
-    for (const line of lines) {
-      if (!line.productId) continue;
-      await db
-        .update(products)
-        .set({ orderCount: sql`${products.orderCount} + 1` })
-        .where(eq(products.id, line.productId));
-    }
 
     revalidatePath("/admin");
     revalidatePath("/admin/orders");
+
+    /*
+      اعلان پس از ارسال پاسخ به مشتری فرستاده می‌شود: نه او منتظر سرویس پیامک
+      می‌ماند، و نه قطعی آن سرویس درخواستی را که همین حالا ثبت شده از بین
+      می‌برد. اگر پیامک تنظیم نشده باشد، notifyStaff بی‌صدا برمی‌گردد.
+    */
+    after(() =>
+      notifyStaff(
+        newOrderMessage({
+          type: input.type,
+          number,
+          contactName: input.contactName,
+          contactPhone: input.contactPhone,
+          itemCount: lines.length,
+        }),
+      ),
+    );
 
     return {
       status: "success",
@@ -238,6 +331,7 @@ export async function createOrder(
     return {
       status: "error",
       message: "در ثبت درخواست خطایی رخ داد. لطفاً دوباره تلاش کنید یا تلفنی تماس بگیرید.",
+      values: echo(formData),
     };
   }
 }

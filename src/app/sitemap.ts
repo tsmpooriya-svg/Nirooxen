@@ -10,19 +10,6 @@ export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url.replace(/\/$/, "");
 
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${base}/`, changeFrequency: "daily", priority: 1 },
-    { url: `${base}/products`, changeFrequency: "daily", priority: 0.9 },
-    { url: `${base}/solutions`, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${base}/brands`, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${base}/services`, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${base}/projects`, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${base}/news`, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${base}/about`, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.3 },
-  ];
-
   const [products, posts, brands, categories, projects] = await Promise.all([
     getAllProductSlugs(),
     getAllPostSlugs(),
@@ -31,44 +18,81 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getProjects(),
   ]);
 
+  /*
+    پروژه‌ها صفحهٔ مستقل ندارند و فقط لنگر روی همان یک صفحه‌اند.
+
+    تا امروز هر پروژه یک ردیف `‎/projects#slug` در sitemap می‌گرفت. موتورهای
+    جست‌وجو قطعهٔ بعد از `#` را نادیده می‌گیرند، پس آن ردیف‌ها همگی به یک نشانی
+    تبدیل می‌شدند: چند نسخهٔ تکراری از `‎/projects`. تازگی‌شان اما واقعی است، و
+    جایش روی خودِ آن صفحه است.
+  */
+  const projectsUpdatedAt = projects.reduce<Date | undefined>((latest, project) => {
+    const updated = project.updatedAt ?? undefined;
+    if (!updated) return latest;
+    return !latest || updated > latest ? updated : latest;
+  }, undefined);
+
+  const staticRoutes: MetadataRoute.Sitemap = [
+    { url: `${base}/`, changeFrequency: "daily", priority: 1 },
+    { url: `${base}/products`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${base}/solutions`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${base}/fire-safety`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${base}/brands`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${base}/services`, changeFrequency: "monthly", priority: 0.8 },
+    {
+      url: `${base}/projects`,
+      lastModified: projectsUpdatedAt,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    { url: `${base}/news`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${base}/about`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.3 },
+  ];
+
   return [
     ...staticRoutes,
     ...solutions.map((solution) => ({
-      url: `${base}/solutions/${solution.slug}`,
+      url: encodeURI(`${base}/solutions/${solution.slug}`),
       changeFrequency: "monthly" as const,
       priority: 0.8,
     })),
     ...categories.flatMap((category) => [
-      { url: `${base}/products?category=${category.slug}`, changeFrequency: "weekly" as const, priority: 0.8 },
+      { url: encodeURI(`${base}/products?category=${category.slug}`), changeFrequency: "weekly" as const, priority: 0.8 },
       ...category.children.map((child) => ({
-        url: `${base}/products?category=${child.slug}`,
+        url: encodeURI(`${base}/products?category=${child.slug}`),
         changeFrequency: "weekly" as const,
         priority: 0.7,
       })),
     ]),
     ...products.map((product) => ({
-      url: `${base}/products/${product.slug}`,
+      url: encodeURI(`${base}/products/${product.slug}`),
       lastModified: product.updatedAt,
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })),
-    ...brands.map((brand) => ({
-      url: `${base}/brands/${brand.slug}`,
-      lastModified: brand.updatedAt,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
+    /*
+      برندِ بی‌محصول در sitemap نمی‌آید.
+
+      صفحه‌اش سر جایش می‌ماند و ۴۰۴ نمی‌شود — نشانی موجود را خراب نمی‌کنیم و
+      حالت خالیِ درستی هم دارد. ولی صفحه‌ای که هیچ محصولی ندارد چیزی برای
+      رتبه‌گرفتن ندارد، و فرستادنش به گوگل فقط بودجهٔ خزش را خرج می‌کند.
+      به‌محض اینکه محصولی به برند اضافه شود، خودش برمی‌گردد.
+    */
+    ...brands
+      .filter((brand) => brand.productCount > 0)
+      .map((brand) => ({
+        url: encodeURI(`${base}/brands/${brand.slug}`),
+        lastModified: brand.updatedAt,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      })),
     ...posts.map((post) => ({
-      url: `${base}/news/${post.slug}`,
+      url: encodeURI(`${base}/news/${post.slug}`),
       lastModified: post.updatedAt,
       changeFrequency: "monthly" as const,
       priority: 0.6,
-    })),
-    ...projects.map((project) => ({
-      url: `${base}/projects#${project.slug}`,
-      lastModified: project.updatedAt,
-      changeFrequency: "yearly" as const,
-      priority: 0.4,
     })),
   ];
 }

@@ -188,6 +188,19 @@ export const users = pgTable(
     avatarUrl: text("avatar_url"),
     isActive: boolean("is_active").notNull().default(true),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+    /*
+     * قفل در سطح حساب، کنارِ محدودسازی نرخ در سطح IP.
+     *
+     * آن یکی یک مهاجم را کند می‌کند؛ این یکی یک حساب را در برابر حمله‌ای که
+     * از صد آی‌پی می‌آید نگه می‌دارد — حالتی که سقفِ IP اصلاً نمی‌بیندش، چون
+     * هیچ آی‌پی‌ای به سقف خودش نمی‌رسد.
+     *
+     * شمارنده پنجره دارد: سه تلاش ناموفق پراکنده در یک سال نباید کسی را قفل
+     * کند، پس اگر آخرین شکست از پنجره قدیمی‌تر باشد شمارش از نو شروع می‌شود.
+     */
+    failedLoginCount: integer("failed_login_count").notNull().default(0),
+    failedLoginAt: timestamp("failed_login_at", { withTimezone: true }),
+    lockedUntil: timestamp("locked_until", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -295,6 +308,16 @@ export const products = pgTable(
     price: integer("price"),
     comparePrice: integer("compare_price"),
     currency: varchar("currency", { length: 8 }).notNull().default("IRT"),
+
+    /*
+     * شرط قیمتی — مثل «افزایش ۳٪» یا «تخفیف بر اساس تعداد». عمداً از price جدا
+     * است: قیمت پایه هرگز نباید شرط را در خود حل کند. در tags هم نمی‌آید چون
+     * tags عمومی است و در جست‌وجو و محصولات مرتبط مشارکت می‌کند.
+     */
+    priceConditionCode: varchar("price_condition_code", { length: 32 }),
+    priceConditionText: varchar("price_condition_text", { length: 200 }),
+    /** فروش ویژه — بدون هیچ قیمت مقایسه‌ای ساختگی */
+    isPromotional: boolean("is_promotional").notNull().default(false),
     unit: varchar("unit", { length: 32 }).notNull().default("دستگاه"),
 
     stockStatus: stockStatusEnum("stock_status").notNull().default("ORDER_ONLY"),
@@ -317,6 +340,12 @@ export const products = pgTable(
     metaTitle: varchar("meta_title", { length: 190 }),
     metaDescription: text("meta_description"),
 
+    /*
+     * ارجاع خنثای منبع داده — فقط کد داخلی. هرگز نباید نام فروشنده، کانال،
+     * شماره تماس یا نشانی در آن بیاید و در هیچ مسیر عمومی خوانده نمی‌شود.
+     */
+    sourceRef: varchar("source_ref", { length: 64 }),
+
     publishedAt: timestamp("published_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
@@ -338,9 +367,23 @@ export const productImages = pgTable(
       .notNull()
       .references(() => products.id, { onDelete: "cascade" }),
     url: text("url").notNull(),
+    /*
+     * ارجاع مستقل از provider به دارایی آپلودشده — پیشوند مشترک نسخه‌ها.
+     * برای رکوردهای قدیمی که فایلشان در public/ است تهی می‌ماند و url مبنا است.
+     */
+    storageKey: text("storage_key"),
+    width: integer("width"),
+    height: integer("height"),
     alt: varchar("alt", { length: 220 }),
     position: integer("position").notNull().default(0),
     isPrimary: boolean("is_primary").notNull().default(false),
+    /*
+     * «light» یعنی پس‌زمینهٔ عکس روشن است و می‌شود آن را با قاب نقشه‌کشی ترکیب
+     * کرد تا سفیدش ناپدید شود. «dark» یعنی نمی‌شود — ضرب کردنش یک مستطیل سیاه
+     * می‌سازد. تهی یعنی هنوز بررسی نشده، و همان هم حالت امن است: بدون ترکیب.
+     * تشخیص در src/lib/media/backdrop.ts، یک بار هنگام آپلود.
+     */
+    backdrop: varchar("backdrop", { length: 8 }),
   },
   (t) => [index("product_images_product_idx").on(t.productId, t.position)],
 );
@@ -360,6 +403,46 @@ export const productImages = pgTable(
  * مقدار پایه هنگام ذخیره محاسبه و در `product_specs.value_base` نگهداری
  * می‌شود تا کوئری بازه‌ای بتواند از ایندکس استفاده کند.
  */
+/**
+ * مشاهدات قیمت از منابع مختلف و تاریخ‌های مختلف. قیمت جاری محصول در
+ * products.price می‌ماند؛ این جدول تاریخچه را نگه می‌دارد تا با هر به‌روزرسانی
+ * قیمت، مشاهدهٔ قبلی از بین نرود. هیچ مسیر عمومی از آن نمی‌خواند.
+ */
+export const productPriceObservations = pgTable(
+  "product_price_observations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    /** کد خنثای منبع — بدون هویت فروشنده */
+    sourceRef: varchar("source_ref", { length: 64 }).notNull(),
+    /*
+     * تاریخ چاپ‌شدهٔ منبع؛ ممکن است فقط ماه و سال باشد. رشتهٔ خالی یعنی منبع
+     * تاریخی چاپ نکرده — عمداً NOT NULL است، چون در ایندکس یکتا مقدار NULL با
+     * NULL برابر شمرده نمی‌شود و ورود دوباره ردیف تکراری می‌ساخت.
+     */
+    sourceDate: varchar("source_date", { length: 16 }).notNull().default(""),
+    /** مقدار دقیقاً همان‌طور که در منبع چاپ شده — هرگز اصلاح نمی‌شود */
+    rawPrice: varchar("raw_price", { length: 32 }),
+    /** عدد پاک‌شده پیش از تبدیل واحد */
+    normalizedPrice: numeric("normalized_price", { precision: 20, scale: 0 }),
+    /** ضریب مقیاس بخش منبع (مثلاً ۱۰۰۰ برای فهرست هزارتومانی) */
+    priceScale: integer("price_scale").notNull().default(1),
+    /** مقدار نهایی به تومان — همان واحدی که products.price دارد */
+    finalPrice: integer("final_price"),
+    currency: varchar("currency", { length: 8 }),
+    priceStatus: varchar("price_status", { length: 32 }),
+    conditionCode: varchar("condition_code", { length: 32 }),
+    observedAt: timestamp("observed_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    /** یک منبع در یک تاریخ فقط یک مشاهده برای هر محصول دارد — ورود دوباره بی‌اثر است */
+    uniqueIndex("price_obs_unique").on(t.productId, t.sourceRef, t.sourceDate),
+    index("price_obs_product_idx").on(t.productId, t.sourceDate),
+  ],
+);
+
 export const units = pgTable(
   "units",
   {
@@ -866,6 +949,80 @@ export const activityLogs = pgTable(
   ],
 );
 
+/**
+ * جست‌وجوهای بازدیدکنندگان.
+ *
+ * ارزش این جدول در ردیف‌هایی است که resultCount صفر دارند: عبارتی که مشتری
+ * دنبالش گشته و چیزی پیدا نکرده، یا یعنی آن کالا را نداریم، یا داریم و نامش
+ * با زبان مشتری نمی‌خواند. هیچ‌کدام را از جای دیگری نمی‌شود فهمید.
+ *
+ * عبارت پس از همان یکسان‌سازی‌ای ذخیره می‌شود که خودِ جست‌وجو رویش کار می‌کند،
+ * وگرنه «كپسول» عربی و «کپسول» فارسی دو ردیف جدا می‌شدند و شمارش بی‌معنا.
+ * هیچ چیزی که کاربر را شناسایی کند اینجا نوشته نمی‌شود — نه IP، نه نشست.
+ */
+export const searchQueries = pgTable(
+  "search_queries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** عبارت یکسان‌شده؛ همان چیزی که با ستون‌ها مقایسه شده */
+    term: varchar("term", { length: 120 }).notNull(),
+    resultCount: integer("result_count").notNull(),
+    /** dialog = جست‌وجوی سریع Ctrl+K · catalog = صافی صفحهٔ محصولات */
+    source: varchar("source", { length: 16 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("search_queries_created_idx").on(t.createdAt),
+    index("search_queries_term_idx").on(t.term),
+    // گزارش «بی‌نتیجه‌ها» همیشه روی همین دو ستون فیلتر می‌کند
+    index("search_queries_empty_idx").on(t.resultCount, t.createdAt),
+  ],
+);
+
+/**
+ * بازدید صفحه‌ها.
+ *
+ * هدف یک چیز است: بدانیم مردم به چه چیزی نگاه می‌کنند. بدون این، تنها بازخوردی
+ * که از سایت می‌گیریم استعلام‌های ثبت‌شده است — یعنی فقط آن تکه‌ای از ترافیک که
+ * تا انتها رفته، و هیچ خبری از بقیه.
+ *
+ * دو تصمیم عمدی، هر دو به یک دلیل — نباید بشود از این جدول به آدم رسید:
+ *
+ *   • **IP ذخیره نمی‌شود.** ستون visitor یک درهمِ کوتاه از IP و مرورگر است با
+ *     نمکی که هر روز عوض می‌شود. همان بازدیدکننده فردا مقدار دیگری می‌گیرد، پس
+ *     شمارش «چند نفر امروز» ممکن است و دنبال‌کردن کسی در طول زمان ممکن نیست.
+ *     نمک هم جایی صادر نمی‌شود، بنابراین درهم برگشت‌پذیر نیست.
+ *
+ *   • **از ارجاع‌دهنده فقط دامنه.** نشانی کامل می‌تواند عبارت جست‌وجو یا شناسهٔ
+ *     کارزار را با خودش بیاورد؛ برای پاسخ به «از کجا می‌آیند» دامنه کافی است.
+ *
+ * kind از روی مسیر یک بار در لحظهٔ ثبت تعیین می‌شود، نه در گزارش: گزارشی که
+ * مجبور باشد رشته تجزیه کند هم کند است و هم با هر تغییر مسیر می‌شکند.
+ */
+export const pageViews = pgTable(
+  "page_views",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** مسیر بدون کوئری‌استرینگ */
+    path: varchar("path", { length: 200 }).notNull(),
+    /** product | category | news | solution | brand | page */
+    kind: varchar("kind", { length: 16 }).notNull(),
+    /** فقط دامنهٔ ارجاع‌دهنده؛ خالی یعنی ورود مستقیم */
+    referrerHost: varchar("referrer_host", { length: 120 }),
+    /** درهم روزانه — هویت نیست، فقط برای شمارش یکتا در همان روز */
+    visitor: varchar("visitor", { length: 16 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("page_views_created_idx").on(t.createdAt),
+    // گزارش «پربازدیدترین‌ها» همیشه با بازهٔ زمانی همراه است
+    index("page_views_path_idx").on(t.path, t.createdAt),
+    index("page_views_kind_idx").on(t.kind, t.createdAt),
+    index("page_views_visitor_idx").on(t.visitor, t.createdAt),
+    index("page_views_referrer_idx").on(t.referrerHost, t.createdAt),
+  ],
+);
+
 /** شمارنده اتمی برای تولید شماره سفارش بدون تداخل */
 export const counters = pgTable("counters", {
   key: varchar("key", { length: 48 }).primaryKey(),
@@ -907,6 +1064,11 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   images: many(productImages),
   specs: many(productSpecs),
   documents: many(productDocuments),
+  priceObservations: many(productPriceObservations),
+}));
+
+export const productPriceObservationsRelations = relations(productPriceObservations, ({ one }) => ({
+  product: one(products, { fields: [productPriceObservations.productId], references: [products.id] }),
 }));
 
 export const productImagesRelations = relations(productImages, ({ one }) => ({
@@ -1012,6 +1174,7 @@ export type Post = typeof posts.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type ActivityLog = typeof activityLogs.$inferSelect;
+export type SearchQuery = typeof searchQueries.$inferSelect;
 export type Setting = typeof settings.$inferSelect;
 export type Media = typeof media.$inferSelect;
 

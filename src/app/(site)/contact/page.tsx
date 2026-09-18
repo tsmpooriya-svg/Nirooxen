@@ -13,7 +13,23 @@ export const metadata: Metadata = pageMetadata({
   path: "/contact",
 });
 
-export default async function ContactPage() {
+/** طول موضوعِ از پیش پرشده — بیش از این، دیگر «موضوع» نیست */
+const SUBJECT_MAX = 80;
+
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ subject?: string | string[] }>;
+}) {
+  /*
+    موضوع از نشانی می‌آید — مسیرش جست‌وجوی بی‌نتیجهٔ کاتالوگ است. ورودی کاربر
+    است، پس کوتاه می‌شود؛ React خودش آن را فرار می‌دهد و zod سمت سرور هم
+    دوباره اعتبارسنجی می‌کند.
+  */
+  const params = await searchParams;
+  const rawSubject = Array.isArray(params.subject) ? params.subject[0] : params.subject;
+  const defaultSubject = (rawSubject ?? "").trim().slice(0, SUBJECT_MAX);
+
   // اطلاعات تماس از تنظیمات مدیر می‌آید و روی پیش‌فرض config می‌نشیند
   const settings = await getSiteSettings();
   // ۰،۰ یعنی مختصات دفتر هنوز در تنظیمات ثبت نشده است
@@ -43,7 +59,7 @@ export default async function ContactPage() {
                     <li key={phone}>
                       <a
                         href={`tel:${settings.contact.phonesRaw[i]}`}
-                        className="num text-[0.9375rem] font-medium text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
+                        className="num text-sm font-medium text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
                       >
                         {phone}
                       </a>
@@ -61,7 +77,7 @@ export default async function ContactPage() {
               >
                 <a
                   href={`tel:${settings.contact.mobileRaw}`}
-                  className="num text-[0.9375rem] font-medium text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
+                  className="num text-sm font-medium text-[var(--fg-primary)] transition-colors hover:text-[var(--brand)]"
                 >
                   {settings.contact.mobile}
                 </a>
@@ -79,7 +95,7 @@ export default async function ContactPage() {
                   </>
                 }
               >
-                <ul className="space-y-1.5 text-[0.875rem]">
+                <ul className="space-y-1.5 text-sm">
                   <li>
                     <a
                       href={`mailto:${settings.contact.email}`}
@@ -107,10 +123,10 @@ export default async function ContactPage() {
                 title="دفتر مرکزی"
                 icon={<path d="M10 2.5c3 3.3 5 6 5 8.2a5 5 0 0 1-10 0c0-2.2 2-4.9 5-8.2Z" />}
               >
-                <p className="text-[0.875rem] leading-8 text-[var(--fg-primary)]">
+                <p className="text-sm leading-8 text-[var(--fg-primary)]">
                   {settings.contact.address}
                 </p>
-                <p className="mt-2 text-xs text-[var(--fg-subtle)]">
+                <p className="mt-2 text-meta text-[var(--fg-subtle)]">
                   کد پستی: <span className="num">{settings.contact.postalCode}</span>
                 </p>
               </ContactCard>
@@ -156,7 +172,7 @@ export default async function ContactPage() {
                 فرم زیر را پر کنید؛ درخواست شما مستقیماً در پنل کارشناسان ثبت می‌شود و پیگیری خواهد شد.
               </p>
               <div className="mt-6">
-                <ContactForm />
+                <ContactForm defaultSubject={defaultSubject} />
               </div>
             </div>
           </Reveal>

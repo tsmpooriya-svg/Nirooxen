@@ -6,9 +6,10 @@ import { Reveal } from "@/components/motion/reveal";
 import { Breadcrumb } from "@/components/site/breadcrumb";
 import { ProductCard } from "@/components/site/product-card";
 import { ProductDetail } from "@/components/site/product-detail";
-import { getSiteSettings } from "@/modules/settings/queries";
 import { SectionHeading } from "@/components/site/section";
 import { JsonLd, pageMetadata, productJsonLd } from "@/lib/seo";
+import { productSummary, productTitle } from "@/modules/catalog/summary";
+import { decodeRouteParam } from "@/lib/utils";
 import {
   getAllProductSlugs,
   getCategoryPath,
@@ -28,30 +29,36 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const data = await getProductBySlug(slug);
   if (!data) return pageMetadata({ title: "محصول یافت نشد", path: `/products/${slug}`, noIndex: true });
 
-  const { product, images } = data;
+  const { product, category, brand, images, specs } = data;
   return pageMetadata({
-    title: product.metaTitle ?? product.name,
-    description: product.metaDescription ?? product.shortDescription ?? undefined,
+    title: productTitle(product),
+    /*
+      اگر این خالی بماند، pageMetadata توضیح خودِ سایت را می‌گذارد و محصول
+      توضیحی می‌گیرد که ۳۷۷ محصول دیگر هم دارند. productSummary اول متن
+      نوشته‌شده را برمی‌دارد و اگر نبود از داده‌های همان ردیف جمله می‌سازد.
+    */
+    description: productSummary({ product, category, brand, specs }) ?? undefined,
     path: `/products/${product.slug}`,
     image: images[0]?.url ?? null,
   });
 }
 
 export default async function ProductPage({ params }: { params: Params }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeRouteParam(rawSlug);
   const data = await getProductBySlug(slug);
   if (!data) notFound();
 
-  const { product, category, brand, images, specGroups } = data;
+  const { product, category, brand, images, specs, specGroups } = data;
 
-  const [related, categoryPath, settings] = await Promise.all([
-    getRelatedProducts(product.id, product.categoryId),
+  const [related, categoryPath] = await Promise.all([
+    getRelatedProducts(product.id, product.categoryId, category.parentId, product.brandId),
     getCategoryPath(category.slug),
-    getSiteSettings(),
   ]);
 
   // شمارنده بازدید پس از ارسال پاسخ اجرا می‌شود تا رندر صفحه را کند نکند
@@ -63,7 +70,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         data={productJsonLd({
           name: product.name,
           slug: product.slug,
-          description: product.shortDescription ?? product.description,
+          description: productSummary({ product, category, brand, specs }),
           sku: product.sku,
           brandName: brand?.name ?? null,
           image: images[0]?.url ?? null,
@@ -87,7 +94,6 @@ export default async function ProductPage({ params }: { params: Params }) {
 
       <div className="shell py-10">
         <ProductDetail
-          salesPhoneRaw={settings.contact.phonesRaw[0]}
           product={{
             id: product.id,
             name: product.name,
@@ -99,6 +105,8 @@ export default async function ProductPage({ params }: { params: Params }) {
             priceMode: product.priceMode,
             price: product.price,
             comparePrice: product.comparePrice,
+            priceConditionText: product.priceConditionText,
+            isPromotional: product.isPromotional,
             unit: product.unit,
             stockStatus: product.stockStatus,
             leadTimeDays: product.leadTimeDays,
@@ -108,7 +116,12 @@ export default async function ProductPage({ params }: { params: Params }) {
           }}
           category={{ name: category.name, slug: category.slug }}
           brand={brand ? { name: brand.name, slug: brand.slug, latinName: brand.latinName } : null}
-          images={images.map((image) => ({ id: image.id, url: image.url, alt: image.alt }))}
+          images={images.map((image) => ({
+            id: image.id,
+            url: image.url,
+            alt: image.alt,
+            backdrop: image.backdrop,
+          }))}
           specGroups={specGroups.map((group) => ({
             name: group.name,
             items: group.items.map((item) => ({
