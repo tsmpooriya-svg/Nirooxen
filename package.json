@@ -29,6 +29,7 @@
     "db:apply": "node scripts/apply-migration.mjs",
     "db:backdrops": "tsx scripts/detect-image-backdrops.ts --apply",
     "db:backdrops:dry": "tsx scripts/detect-image-backdrops.ts",
+    "og:build": "tsx scripts/build-og-images.ts",
     "audit:seo": "tsx scripts/audit-seo.ts",
     "photos:plan": "tsx scripts/photo-plan.ts",
     "photos:apply": "tsx scripts/apply-family-photos.ts",
