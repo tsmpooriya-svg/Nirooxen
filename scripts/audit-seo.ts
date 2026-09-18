@@ -21,7 +21,7 @@ import "dotenv/config";
 import { Client } from "pg";
 
 import { siteConfig } from "../src/config/site";
-import { productSummary } from "../src/modules/catalog/summary";
+import { productSummary, productTitle } from "../src/modules/catalog/summary";
 
 const JSON_OUT = process.argv.includes("--json");
 
@@ -89,7 +89,7 @@ async function main() {
   let longTitle = 0;
 
   for (const row of rows) {
-    const title = row.meta_title ?? row.name;
+    const title = productTitle({ name: row.name, model: row.model, metaTitle: row.meta_title });
     titles.push(title);
     if (title.length < TITLE_SHORT) shortTitle += 1;
     if (title.length > TITLE_LONG) longTitle += 1;

@@ -118,3 +118,30 @@ export function productSummary(input: SummaryInput): string | null {
   const sentence = facts.length > 0 ? `${head.join(" · ")}. ${facts.join(" · ")}.` : `${head.join(" · ")}.`;
   return truncate(sentence, TARGET);
 }
+
+/**
+ * عنوان محصول برای متادیتا.
+ *
+ * دو محصول واقعاً متفاوت در کاتالوگ هم‌نام بودند — «ست کنترل با درجه و پریز»
+ * از برند وتو، یکی مدل DSK-2.2 و دیگری DSK-8.2. نه تکراری‌اند که حذف شوند و
+ * نه قابل تشخیص، چون تنها چیزی که از هم جداشان می‌کند در `name` نیامده بود.
+ *
+ * مدل، همان تفاوت است و همان چیزی است که خریدار صنعتی با آن جست‌وجو می‌کند.
+ * پس هر جا مدلی ثبت شده و در نام تکرار نشده، به عنوان اضافه می‌شود. عنوانِ
+ * دست‌نویسِ مدیر همیشه مقدم است و دست نمی‌خورد.
+ *
+ * `slug` عوض نمی‌شود — نشانی محصول همان می‌ماند که بود.
+ */
+export function productTitle(product: {
+  name: string;
+  model?: string | null;
+  metaTitle?: string | null;
+}): string {
+  const authored = product.metaTitle?.trim();
+  if (authored) return authored;
+
+  const name = product.name.trim();
+  const model = product.model?.trim();
+  if (!model || name.includes(model)) return name;
+  return `${name} ${model}`;
+}

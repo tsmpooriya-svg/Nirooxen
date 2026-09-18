@@ -8,7 +8,7 @@ import { ProductCard } from "@/components/site/product-card";
 import { ProductDetail } from "@/components/site/product-detail";
 import { SectionHeading } from "@/components/site/section";
 import { JsonLd, pageMetadata, productJsonLd } from "@/lib/seo";
-import { productSummary } from "@/modules/catalog/summary";
+import { productSummary, productTitle } from "@/modules/catalog/summary";
 import { decodeRouteParam } from "@/lib/utils";
 import {
   getAllProductSlugs,
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
   const { product, category, brand, images, specs } = data;
   return pageMetadata({
-    title: product.metaTitle ?? product.name,
+    title: productTitle(product),
     /*
       اگر این خالی بماند، pageMetadata توضیح خودِ سایت را می‌گذارد و محصول
       توضیحی می‌گیرد که ۳۷۷ محصول دیگر هم دارند. productSummary اول متن
