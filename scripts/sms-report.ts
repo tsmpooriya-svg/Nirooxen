@@ -128,7 +128,13 @@ type Row = {
 function describe(state?: number | null): string {
   if (state === null || state === undefined) return "هنوز گزارشی نیامده";
   if (state === 1) return "رسید";
-  if (state === 2) return "نرسید";
+  if (state === 2) return "نرسید به گوشی";
+  if (state === 3) return "رسیده به مخابرات";
+  if (state === 4) return "نرسیده به مخابرات";
+  if (state === 5) return "رسیده به اپراتور";
+  if (state === 6) return "ناموفق";
+  if (state === 7) return "لیست سیاه";
+  if (state === 8) return "نامشخص";
   return `وضعیت ${state}`;
 }
 
