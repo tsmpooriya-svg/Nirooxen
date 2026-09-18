@@ -304,10 +304,10 @@ export function newOrderMessage(input: {
     text: `نیروکسن | ${kind} تازه ${input.number} · ${input.contactName} · ${toFa(input.itemCount)} قلم · ${phone}`,
     parameters: {
       KIND: slot(kind),
-      NUMBER: slot(input.number),
+      ORDER_NUMBER: slot(input.number),
       NAME: slot(input.contactName),
       PHONE: slot(phone),
-      COUNT: slot(String(input.itemCount)),
+      ITEMS_COUNT: slot(String(input.itemCount)),
     },
   };
 }
