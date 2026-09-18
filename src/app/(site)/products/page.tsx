@@ -57,7 +57,19 @@ export async function generateMetadata({
       return pageMetadata({
         title: `محصولات ${brand.name}`,
         description: brand.description ?? undefined,
-        path: `/products?brand=${brand.slug}`,
+        /*
+          canonical عمداً به `‎/brands/{slug}` می‌رود، نه به خودِ این نشانی.
+
+          این دو صفحه دقیقاً یک چیز را نشان می‌دهند — همان فهرست محصولات همان
+          برند، با همان عنوان — و هر دو تا امروز canonical خودشان را داشتند.
+          یعنی یک محتوا با دو نشانیِ ایندکس‌پذیر، که سیگنال‌ها را بین خودشان
+          تقسیم می‌کرد. `‎/brands/{slug}` همانی است که در sitemap هست، پس
+          مرجع همان می‌شود.
+
+          نشانی فیلتر عوض نمی‌شود و ریدایرکت هم در کار نیست: کاربر همان‌جا
+          می‌ماند و فیلترش کار می‌کند.
+        */
+        path: `/brands/${brand.slug}`,
       });
     }
   }

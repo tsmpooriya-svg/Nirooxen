@@ -10,20 +10,6 @@ export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url.replace(/\/$/, "");
 
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${base}/`, changeFrequency: "daily", priority: 1 },
-    { url: `${base}/products`, changeFrequency: "daily", priority: 0.9 },
-    { url: `${base}/solutions`, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${base}/fire-safety`, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${base}/brands`, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${base}/services`, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${base}/projects`, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${base}/news`, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${base}/about`, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.3 },
-  ];
-
   const [products, posts, brands, categories, projects] = await Promise.all([
     getAllProductSlugs(),
     getAllPostSlugs(),
@@ -31,6 +17,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getCategoryTree(),
     getProjects(),
   ]);
+
+  /*
+    پروژه‌ها صفحهٔ مستقل ندارند و فقط لنگر روی همان یک صفحه‌اند.
+
+    تا امروز هر پروژه یک ردیف `‎/projects#slug` در sitemap می‌گرفت. موتورهای
+    جست‌وجو قطعهٔ بعد از `#` را نادیده می‌گیرند، پس آن ردیف‌ها همگی به یک نشانی
+    تبدیل می‌شدند: چند نسخهٔ تکراری از `‎/projects`. تازگی‌شان اما واقعی است، و
+    جایش روی خودِ آن صفحه است.
+  */
+  const projectsUpdatedAt = projects.reduce<Date | undefined>((latest, project) => {
+    const updated = project.updatedAt ?? undefined;
+    if (!updated) return latest;
+    return !latest || updated > latest ? updated : latest;
+  }, undefined);
+
+  const staticRoutes: MetadataRoute.Sitemap = [
+    { url: `${base}/`, changeFrequency: "daily", priority: 1 },
+    { url: `${base}/products`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${base}/solutions`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${base}/fire-safety`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${base}/brands`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${base}/services`, changeFrequency: "monthly", priority: 0.8 },
+    {
+      url: `${base}/projects`,
+      lastModified: projectsUpdatedAt,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    { url: `${base}/news`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${base}/about`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${base}/contact`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/terms`, changeFrequency: "yearly", priority: 0.3 },
+  ];
 
   return [
     ...staticRoutes,
@@ -64,12 +83,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: post.updatedAt,
       changeFrequency: "monthly" as const,
       priority: 0.6,
-    })),
-    ...projects.map((project) => ({
-      url: encodeURI(`${base}/projects#${project.slug}`),
-      lastModified: project.updatedAt,
-      changeFrequency: "yearly" as const,
-      priority: 0.4,
     })),
   ];
 }
