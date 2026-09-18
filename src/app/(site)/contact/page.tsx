@@ -13,7 +13,23 @@ export const metadata: Metadata = pageMetadata({
   path: "/contact",
 });
 
-export default async function ContactPage() {
+/** طول موضوعِ از پیش پرشده — بیش از این، دیگر «موضوع» نیست */
+const SUBJECT_MAX = 80;
+
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ subject?: string | string[] }>;
+}) {
+  /*
+    موضوع از نشانی می‌آید — مسیرش جست‌وجوی بی‌نتیجهٔ کاتالوگ است. ورودی کاربر
+    است، پس کوتاه می‌شود؛ React خودش آن را فرار می‌دهد و zod سمت سرور هم
+    دوباره اعتبارسنجی می‌کند.
+  */
+  const params = await searchParams;
+  const rawSubject = Array.isArray(params.subject) ? params.subject[0] : params.subject;
+  const defaultSubject = (rawSubject ?? "").trim().slice(0, SUBJECT_MAX);
+
   // اطلاعات تماس از تنظیمات مدیر می‌آید و روی پیش‌فرض config می‌نشیند
   const settings = await getSiteSettings();
   // ۰،۰ یعنی مختصات دفتر هنوز در تنظیمات ثبت نشده است
@@ -156,7 +172,7 @@ export default async function ContactPage() {
                 فرم زیر را پر کنید؛ درخواست شما مستقیماً در پنل کارشناسان ثبت می‌شود و پیگیری خواهد شد.
               </p>
               <div className="mt-6">
-                <ContactForm />
+                <ContactForm defaultSubject={defaultSubject} />
               </div>
             </div>
           </Reveal>

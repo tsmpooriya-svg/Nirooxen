@@ -258,7 +258,29 @@ function EmptyResults({ query, hasActiveFilters }: { query?: string; hasActiveFi
       </span>
       <h2 className="font-display text-lg font-bold">{heading}</h2>
       <p className="mt-3 max-w-md text-sm leading-8 text-[var(--fg-muted)]">{body}</p>
-      {hasActiveFilters ? (
+      {query ? (
+        /*
+          جست‌وجوی بی‌نتیجه، دقیقاً همان چیزی است که مشتری می‌خواهد و ما
+          صفحه‌اش را نداریم. متن بالا می‌گفت «ممکن است بتوانیم تأمینش کنیم»
+          ولی تنها دکمهٔ صفحه «نمایش همه محصولات» بود — یعنی همان نیت، همان‌جا
+          از بین می‌رفت. حالا جست‌وجو با خودش به فرم تماس می‌رود و در موضوع
+          می‌نشیند.
+        */
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href={`/contact?subject=${encodeURIComponent(query)}`}
+            className="inline-flex h-11 items-center rounded-md bg-[var(--brand)] px-6 text-sm font-medium text-[var(--fg-on-brand)] transition-colors duration-300 hover:bg-[var(--brand-hover)]"
+          >
+            درخواست تأمین این کالا
+          </Link>
+          <Link
+            href="/products"
+            className="inline-flex h-11 items-center rounded-md border border-[var(--border-default)] px-6 text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+          >
+            نمایش همه محصولات
+          </Link>
+        </div>
+      ) : hasActiveFilters ? (
         <Link
           href="/products"
           className="mt-6 inline-flex h-11 items-center rounded-md border border-[var(--border-default)] px-6 text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"

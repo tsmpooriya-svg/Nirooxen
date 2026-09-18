@@ -7,7 +7,14 @@ import { sendContactMessage, type ContactActionState } from "@/modules/orders/co
 
 const initialState: ContactActionState = { status: "idle" };
 
-export function ContactForm() {
+/**
+ * `subject` از نشانی می‌آید.
+ *
+ * وقتی جست‌وجوی کاربر در کاتالوگ نتیجه‌ای ندارد، متن جست‌وجو همین‌جا در فیلد
+ * موضوع می‌نشیند. آن جست‌وجو دقیقاً همان چیزی است که مشتری می‌خواهد و ما
+ * صفحه‌اش را نداریم؛ بدون این، نیت کاربر همان‌جا از بین می‌رفت.
+ */
+export function ContactForm({ defaultSubject = "" }: { defaultSubject?: string }) {
   const [state, formAction, pending] = useActionState(sendContactMessage, initialState);
 
   if (state.status === "success") {
@@ -71,7 +78,7 @@ export function ContactForm() {
           <Input
             id="subject"
             name="subject"
-            defaultValue={state.values?.subject ?? ""}
+            defaultValue={state.values?.subject ?? defaultSubject}
             placeholder="مثلاً: درخواست مشاوره فنی"
           />
         </Field>
