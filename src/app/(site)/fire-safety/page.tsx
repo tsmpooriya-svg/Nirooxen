@@ -278,7 +278,7 @@ export default async function FireSafetyPage() {
           <SectionHeading
             eyebrow="کاتالوگ"
             title="گروه‌های کالا"
-            description="یازده گروه، از اطفای دستی تا اعلام حریق و تجهیزات فردی."
+            description={`${groups.length > 0 ? toFaDigits(groups.length) : "چند"} گروه، از اطفای دستی تا اعلام حریق و تجهیزات فردی.`}
             action={{ label: "همه محصولات", href: `/products?category=${ROOT_SLUG}` }}
           />
 

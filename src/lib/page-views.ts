@@ -68,6 +68,17 @@ export function today(): string {
  * روزهای گذشته هم قابل بازتولید می‌ماند. چیزی که پاک می‌شود هم قابل بازگرداندن
  * نیست، پس پاک‌کردنش هیچ چیزی را امن‌تر نمی‌کند.
  */
+/** نگه‌داری آمار: ۴۰۰ روز، کافی برای مقایسهٔ سال‌به‌سال */
+const RETENTION_DAYS = 400;
+
+async function pruneOldViews(): Promise<void> {
+  try {
+    await db.delete(pageViews).where(sql`${pageViews.createdAt} < now() - make_interval(days => ${RETENTION_DAYS})`);
+  } catch (error) {
+    console.error("[page-views] پاک‌سازی بازدیدهای قدیمی انجام نشد:", error);
+  }
+}
+
 async function dailySalt(day: string): Promise<string> {
   const key = saltKey(day);
 
@@ -83,6 +94,9 @@ async function dailySalt(day: string): Promise<string> {
     .insert(settings)
     .values({ key, value: fresh, group: "analytics", label: `نمک آمار ${day}` })
     .onConflictDoNothing();
+
+  // روزی یک بار (با ساخته شدن نمک امروز) ردیف‌های قدیمی پاک می‌شوند تا جدول بی‌پایان بزرگ نشود
+  await pruneOldViews();
 
   const settled = await db
     .select({ value: settings.value })
@@ -114,6 +128,8 @@ export async function recordView(input: {
 }): Promise<void> {
   const path = input.path.split("?")[0]?.split("#")[0] ?? "";
   if (!path.startsWith("/") || path.length > 200) return;
+  // فقط نویسه‌های یک مسیر واقعی (لاتین، فارسی، درصدِ کدگذاری، نقطه و خط‌تیره)
+  if (!/^\/[A-Za-z0-9\-_.~%\/\u0600-\u06FF\u200c]*$/.test(path)) return;
   if (IGNORED.some((re) => re.test(path))) return;
   if (input.userAgent && BOT.test(input.userAgent)) return;
 

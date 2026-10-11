@@ -86,6 +86,17 @@ export function ProductForm({
 
   const [priceMode, setPriceMode] = React.useState(values.priceMode);
   const [images, setImages] = React.useState(values.images);
+  /*
+    کلیدهای عکس‌هایی که این فرم می‌شناسد. سرور با آن می‌فهمد عکسی که در فهرست نیست «برداشته شده»
+    یا «همزمان از جای دیگر اضافه شده». پس از هر ذخیرهٔ موفق به‌روز می‌شود.
+  */
+  const keysOf = (list: ProductFormValues["images"]) =>
+    JSON.stringify(list.map((i) => i.storageKey).filter(Boolean));
+  const [initialImageKeys, setInitialImageKeys] = React.useState(() => keysOf(values.images));
+  const imagesRef = React.useRef(images);
+  React.useEffect(() => {
+    imagesRef.current = images;
+  }, [images]);
   const [specs, setSpecs] = React.useState(values.specs);
   const [tab, setTab] = React.useState<"main" | "specs" | "media" | "seo">("main");
 
@@ -96,6 +107,7 @@ export function ProductForm({
       description: state.message,
       tone: state.status === "success" ? "success" : "error",
     });
+    if (state.status === "success") setInitialImageKeys(keysOf(imagesRef.current));
     if (state.status === "success" && !values.id && state.id) {
       router.push(`/admin/products/${state.id}`);
     }
@@ -111,6 +123,7 @@ export function ProductForm({
   return (
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="images" value={JSON.stringify(images)} />
+      <input type="hidden" name="initialImageKeys" value={initialImageKeys} />
       <input type="hidden" name="specs" value={JSON.stringify(specs)} />
 
       <div className="flex gap-1 overflow-x-auto border-b border-[var(--border-hairline)] no-scrollbar">
@@ -504,16 +517,32 @@ function ImageEditor({
       body.append("file", file);
       body.append("productId", productId);
       const response = await fetch("/api/admin/media", { method: "POST", body });
-      const result = (await response.json()) as {
+      /*
+        پاسخ همیشه JSON نیست: وقتی nginx فایلِ بزرگ را رد می‌کند (۴۱۳) یا سرویس پایین است، صفحهٔ
+        HTML برمی‌گردد و response.json() می‌شکست و خطای گمراه‌کنندهٔ «ارتباط برقرار نشد» دیده می‌شد.
+      */
+      let result: {
         url?: string;
         storageKey?: string;
         width?: number;
         height?: number;
         backdrop?: string;
         error?: string;
-      };
+      } = {};
+      try {
+        result = await response.json();
+      } catch {
+        /* بدنهٔ غیر JSON */
+      }
       if (!response.ok || !result.url) {
-        toast({ title: "بارگذاری ناموفق", description: result.error ?? "خطای نامشخص", tone: "error" });
+        const reason =
+          result.error ??
+          (response.status === 413
+            ? "حجم فایل بیش از حد مجاز است. تصویر را کوچک‌تر کنید."
+            : response.status === 401 || response.status === 403
+              ? "نشست شما منقضی شده یا دسترسی ندارید. دوباره وارد شوید."
+              : `خطای سرور (${response.status})`);
+        toast({ title: "بارگذاری ناموفق", description: reason, tone: "error" });
         return;
       }
       onChange([
@@ -526,7 +555,11 @@ function ImageEditor({
           backdrop: result.backdrop,
         },
       ]);
-      toast({ title: "تصویر بارگذاری شد", tone: "success" });
+      toast({
+        title: "تصویر بارگذاری شد",
+        description: "برای ثبت نهایی، دکمهٔ «ذخیره» محصول را بزنید.",
+        tone: "success",
+      });
     } catch {
       toast({ title: "بارگذاری ناموفق", description: "ارتباط با سرور برقرار نشد.", tone: "error" });
     } finally {
@@ -566,15 +599,25 @@ function ImageEditor({
         <input
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          placeholder="/images/products/example.svg یا https://…"
+          placeholder="/images/products/example.svg"
           dir="ltr"
           className="h-10 flex-1 rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-3 text-start text-xs outline-none focus:border-[var(--brand)]"
         />
         <button
           type="button"
           onClick={() => {
-            if (!url.trim()) return;
-            onChange([...images, { url: url.trim() }]);
+            const value = url.trim();
+            if (!value) return;
+            // CSP سایت فقط تصاویر هم‌دامنه را اجازه می‌دهد؛ نشانی خارجی در سایت شکسته دیده می‌شد
+            if (!/^\/(media|images)\/\S+$/.test(value)) {
+              toast({
+                title: "نشانی پذیرفته نیست",
+                description: "فقط مسیر داخلی مثل /images/products/x.svg مجاز است. برای عکس جدید از «بارگذاری تصویر» استفاده کنید.",
+                tone: "error",
+              });
+              return;
+            }
+            onChange([...images, { url: value }]);
             setUrl("");
           }}
           className="h-10 shrink-0 rounded-md bg-[var(--brand)] px-4 text-xs font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
@@ -603,7 +646,7 @@ function ImageEditor({
       {images.length > 0 && (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {images.map((image, index) => (
-            <li key={index} className="overflow-hidden rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-2)]">
+            <li key={image.storageKey ?? `${image.url}-${index}`} className="overflow-hidden rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-2)]">
               <div className="relative aspect-4/3 bg-[var(--bg-inset)]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={image.url} alt={image.alt ?? ""} className="size-full object-contain p-2" />
@@ -626,9 +669,8 @@ function ImageEditor({
                   <button
                     type="button"
                     onClick={() => {
-                      const next = [...images];
-                      [next[index], next[index - 1]] = [next[index - 1]!, next[index]!];
-                      onChange(next);
+                      // واقعاً به ابتدا می‌رود (قبلاً فقط یک جا بالا می‌رفت)
+                      onChange([image, ...images.filter((_, i) => i !== index)]);
                     }}
                     aria-label="انتقال به ابتدا"
                     className="grid size-8 shrink-0 place-items-center rounded-md text-[var(--fg-subtle)] hover:text-[var(--brand)]"

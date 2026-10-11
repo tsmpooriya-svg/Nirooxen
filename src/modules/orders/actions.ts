@@ -108,11 +108,12 @@ export async function createOrder(
   const headerList = await headers();
   const ip = getClientIp(headerList) ?? "unknown";
 
-  const limit = rateLimit(`order:${ip}`, RATE_LIMITS.order);
-  if (!limit.success) {
+  // سقف تلاش، پیش از اعتبارسنجی: جلوی کوبیدن مداوم را می‌گیرد ولی خطای تایپی کسی را بیرون نمی‌اندازد
+  const attempt = rateLimit(`order:attempt:${ip}`, RATE_LIMITS.orderAttempt);
+  if (!attempt.success) {
     return {
       status: "error",
-      message: `تعداد درخواست‌های شما زیاد است. لطفاً ${toFaDigits(Math.ceil(limit.retryAfterSeconds / 60))} دقیقه دیگر تلاش کنید.`,
+      message: `تعداد درخواست‌های شما زیاد است. لطفاً ${toFaDigits(Math.ceil(attempt.retryAfterSeconds / 60))} دقیقه دیگر تلاش کنید.`,
       values: echo(formData),
     };
   }
@@ -151,6 +152,16 @@ export async function createOrder(
   // honeypot — ربات‌ها این فیلد مخفی را پر می‌کنند
   if (input.website) {
     return { status: "success", message: "درخواست شما ثبت شد.", orderNumber: "—" };
+  }
+
+  // سقف سخت‌گیر: فقط درخواستی شمرده می‌شود که از اعتبارسنجی رد شده و قرار است ثبت شود
+  const limit = rateLimit(`order:${ip}`, RATE_LIMITS.order);
+  if (!limit.success) {
+    return {
+      status: "error",
+      message: `تعداد درخواست‌های شما زیاد است. لطفاً ${toFaDigits(Math.ceil(limit.retryAfterSeconds / 60))} دقیقه دیگر تلاش کنید.`,
+      values: echo(formData),
+    };
   }
 
   try {
@@ -241,10 +252,14 @@ export async function createOrder(
         .onConflictDoUpdate({
           target: customers.phone,
           set: {
-            fullName: input.contactName,
-            email: sql`coalesce(excluded.email, ${customers.email})`,
-            companyName: sql`coalesce(excluded.company_name, ${customers.companyName})`,
-            city: sql`coalesce(excluded.city, ${customers.city})`,
+            /*
+              فرم عمومی ناشناس است: هر کسی می‌تواند شمارهٔ مشتریِ دیگری را وارد کند. پس مقدارِ
+              موجود هرگز بازنویسی نمی‌شود؛ فقط جاهای خالی پر می‌شوند. نام و اطلاعاتی که همین
+              درخواست فرستاده در خود پرونده (orders.contact_*) می‌ماند.
+            */
+            email: sql`coalesce(${customers.email}, excluded.email)`,
+            companyName: sql`coalesce(${customers.companyName}, excluded.company_name)`,
+            city: sql`coalesce(${customers.city}, excluded.city)`,
             updatedAt: new Date(),
           },
         })

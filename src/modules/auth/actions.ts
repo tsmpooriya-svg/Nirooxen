@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -88,19 +88,28 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
       شمارنده پیش از ثبت، بر اساس پنجره بازنشانی می‌شود: ده شکستِ پراکنده در
       چند ماه نباید همان وزن ده شکست در یک دقیقه را داشته باشد.
     */
-    const fresh =
-      user.failedLoginAt && Date.now() - user.failedLoginAt.getTime() < WINDOW_MINUTES * 60_000;
-    const count = (fresh ? user.failedLoginCount : 0) + 1;
-    const locked = count >= MAX_FAILURES;
-
-    await db
+    /*
+      افزایش در خود SQL و اتمی انجام می‌شود: خواندن-افزودن-نوشتن در جاوااسکریپت، با
+      درخواست‌های هم‌زمان همه «۰» می‌خواندند و همه «۱» می‌نوشتند و شمارنده هرگز به
+      سقف نمی‌رسید.
+    */
+    const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60_000);
+    const [updated] = await db
       .update(users)
       .set({
-        failedLoginCount: locked ? 0 : count,
+        failedLoginCount: sql`case when ${users.failedLoginAt} is not null and ${users.failedLoginAt} > ${windowStart} then ${users.failedLoginCount} + 1 else 1 end`,
         failedLoginAt: new Date(),
-        lockedUntil: locked ? new Date(Date.now() + LOCK_MINUTES * 60_000) : user.lockedUntil,
       })
-      .where(eq(users.id, user.id));
+      .where(eq(users.id, user.id))
+      .returning({ count: users.failedLoginCount });
+
+    const locked = (updated?.count ?? 0) >= MAX_FAILURES;
+    if (locked) {
+      await db
+        .update(users)
+        .set({ failedLoginCount: 0, lockedUntil: new Date(Date.now() + LOCK_MINUTES * 60_000) })
+        .where(eq(users.id, user.id));
+    }
 
     await logActivity({
       userId: user.id,

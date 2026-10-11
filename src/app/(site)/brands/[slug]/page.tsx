@@ -13,8 +13,14 @@ type Params = Promise<{ slug: string }>;
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const brands = await getBrands();
-  return brands.map((brand) => ({ slug: brand.slug }));
+  try {
+    const brands = await getBrands();
+    return brands.map((brand) => ({ slug: brand.slug }));
+  } catch (error) {
+    // بیلد بدون دسترسی به دیتابیس نباید بشکند؛ صفحه‌ها هنگام درخواست ساخته و کش می‌شوند
+    console.error("[brands] generateStaticParams ناموفق بود:", error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {

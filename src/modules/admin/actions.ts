@@ -456,17 +456,49 @@ export async function saveProduct(
     };
 
     // تصاویر و مشخصات به‌صورت JSON از فرم می‌آیند
-    const images = safeJson<
-      {
-        url: string;
-        alt?: string;
-        storageKey?: string;
-        width?: number;
-        height?: number;
-        /** از پاسخ آپلود می‌آید؛ برای تصویر دستی تهی می‌ماند و یعنی «بدون ترکیب» */
-        backdrop?: string;
-      }[]
-    >(formData.get("images"), []);
+    type ImageInput = {
+      url: string;
+      alt?: string;
+      storageKey?: string;
+      width?: number;
+      height?: number;
+      /** از پاسخ آپلود می‌آید؛ برای تصویر دستی تهی می‌ماند و یعنی «بدون ترکیب» */
+      backdrop?: string;
+    };
+    const rawImages = safeJson<unknown>(formData.get("images"), []);
+    if (!Array.isArray(rawImages) || rawImages.length > 30) {
+      return { status: "error", message: "فهرست تصاویر نامعتبر است." };
+    }
+    /*
+      فقط نشانی‌های داخلی پذیرفته می‌شود: CSP سایت (img-src 'self') هر عکس خارجی را بلاک می‌کند،
+      پس ذخیره‌اش فقط یک تصویر شکسته در سایت می‌سازد. نشانی‌های javascript: و // هم همین‌جا رد می‌شوند.
+    */
+    const INTERNAL_URL = /^\/(media|images)\/[^\s"'<>\\]*$/;
+    const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) && v > 0 ? Math.round(v) : undefined);
+    const images: ImageInput[] = [];
+    for (const item of rawImages) {
+      const row = (item ?? {}) as Record<string, unknown>;
+      if (typeof row.url !== "string" || !INTERNAL_URL.test(row.url) || row.url.length > 500) {
+        return {
+          status: "error",
+          message: "نشانی یکی از تصاویر معتبر نیست. فقط تصاویر بارگذاری‌شده یا مسیرهای داخلی (/images/…) پذیرفته می‌شوند.",
+        };
+      }
+      images.push({
+        url: row.url,
+        alt: typeof row.alt === "string" ? row.alt.slice(0, 300) : undefined,
+        storageKey: typeof row.storageKey === "string" ? row.storageKey : undefined,
+        width: num(row.width),
+        height: num(row.height),
+        backdrop: typeof row.backdrop === "string" ? row.backdrop : undefined,
+      });
+    }
+    // کلیدهایی که فرم هنگام باز شدن داشت — برای تشخیص عکسی که همزمان فرد دیگری اضافه کرده
+    const initialKeysRaw = safeJson<unknown>(formData.get("initialImageKeys"), null);
+    const initialKeys = Array.isArray(initialKeysRaw)
+      ? new Set(initialKeysRaw.filter((k): k is string => typeof k === "string"))
+      : null;
+    const submittedKeys = new Set(images.map((i) => i.storageKey).filter((k): k is string => Boolean(k)));
     const specs = safeJson<{ groupName: string; label: string; value: string; unit?: string; isKey?: boolean }[]>(
       formData.get("specs"),
       [],
@@ -493,19 +525,6 @@ export async function saveProduct(
       برای محصول تازه هنوز شناسه‌ای وجود ندارد؛ ردیف‌ها با شناسهٔ واقعی داخل
       تراکنش مهر می‌خورند و طبعاً تصویر قبلی هم ندارد.
     */
-    const previousKeys = new Set(
-      productId
-        ? (
-            await db
-              .select({ storageKey: productImages.storageKey })
-              .from(productImages)
-              .where(eq(productImages.productId, productId))
-          )
-            .map((row) => row.storageKey)
-            .filter((key): key is string => Boolean(key))
-        : [],
-    );
-
     // از buildSpecRows عبور می‌کند تا مقادیر نوع‌دار و مقدار پایه ساخته شوند؛
     // درج مستقیم، محصول را بی‌صدا از فیلترها حذف می‌کرد.
     const specRows = await buildSpecRows(productId ?? "", specs);
@@ -516,8 +535,10 @@ export async function saveProduct(
       فیلترهای کاتالوگ بیرون می‌افتد — دقیقاً همان حالتی که برای تصاویر هم
       یک بار رخ داد. پس هر چهار نوشتن در یک تراکنش‌اند.
     */
-    const id = await db.transaction(async (tx) => {
+    const { id, orphanKeys } = await db.transaction(async (tx) => {
       let resolved = productId;
+      let imagesToSave = images;
+      const orphans: string[] = [];
 
       if (resolved) {
         const [existing] = await tx
@@ -534,10 +555,49 @@ export async function saveProduct(
         resolved = created!.id;
       }
 
+      /*
+        ردیف‌های فعلی داخل همین تراکنش و با قفل خوانده می‌شوند (نه پیش از آن). عکسی که بعد از باز
+        شدن فرم توسط نشست دیگری اضافه شده در فهرست این فرم نیست؛ پیش‌تر هم از دیتابیس و هم از
+        دیسک پاک می‌شد. حالا نگه داشته می‌شود و فقط عکس‌هایی که همین فرم دیده و برداشته حذف می‌شوند.
+      */
+      const existingRows = productId
+        ? await tx
+            .select({
+              url: productImages.url,
+              alt: productImages.alt,
+              storageKey: productImages.storageKey,
+              width: productImages.width,
+              height: productImages.height,
+              backdrop: productImages.backdrop,
+            })
+            .from(productImages)
+            .where(eq(productImages.productId, resolved))
+            .for("update")
+        : [];
+      for (const row of existingRows) {
+        const key = row.storageKey;
+        if (!key || submittedKeys.has(key)) continue;
+        if (initialKeys && !initialKeys.has(key)) {
+          imagesToSave = [
+            ...imagesToSave,
+            {
+              url: row.url,
+              alt: row.alt ?? undefined,
+              storageKey: key,
+              width: row.width ?? undefined,
+              height: row.height ?? undefined,
+              backdrop: row.backdrop ?? undefined,
+            },
+          ];
+        } else {
+          orphans.push(key);
+        }
+      }
+
       await tx.delete(productImages).where(eq(productImages.productId, resolved));
-      if (images.length > 0) {
+      if (imagesToSave.length > 0) {
         await tx.insert(productImages).values(
-          images.map((image, index) => ({
+          imagesToSave.map((image, index) => ({
             productId: resolved!,
             url: image.url,
             storageKey: image.storageKey ?? null,
@@ -557,7 +617,7 @@ export async function saveProduct(
         await tx.insert(productSpecs).values(specRows.map((row) => ({ ...row, productId: resolved! })));
       }
 
-      return resolved!;
+      return { id: resolved!, orphanKeys: orphans };
     });
 
     /*
@@ -566,11 +626,8 @@ export async function saveProduct(
       هست. حذف فایل تراکنشی نیست، پس شکستش ذخیره را برنمی‌گرداند و فقط لاگ
       می‌شود.
     */
-    for (const image of images) {
-      if (image.storageKey) previousKeys.delete(image.storageKey);
-    }
     let orphaned = 0;
-    for (const orphan of previousKeys) {
+    for (const orphan of orphanKeys) {
       orphaned += await deleteAssetByPrefix(orphan);
     }
     if (orphaned > 0) {

@@ -24,8 +24,13 @@ type Params = Promise<{ slug: string }>;
 export const revalidate = 1800;
 
 export async function generateStaticParams() {
-  const slugs = await getAllProductSlugs();
-  return slugs.map((row) => ({ slug: row.slug }));
+  try {
+    const slugs = await getAllProductSlugs();
+    return slugs.map((row) => ({ slug: row.slug }));
+  } catch (error) {
+    console.error("[products] generateStaticParams ناموفق بود:", error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {

@@ -33,6 +33,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* پیش از اولین رنگ‌آمیزی اجرا می‌شود تا تم بدون پرش اعمال شود */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* بدون جاوااسکریپت، Reveal هرگز کلاس نمایش نمی‌گیرد؛ این‌جا محتوا را آشکار می‌کنیم */}
+        <noscript>
+          <style
+            dangerouslySetInnerHTML={{
+              __html: "[data-reveal]{opacity:1!important;transform:none!important;filter:none!important}",
+            }}
+          />
+        </noscript>
       </head>
       <body>
         <ThemeProvider>

@@ -14,4 +14,4 @@ for (const [input, expected] of cases) {
   assert.equal(normalizeProductNameDigits(input), expected, input);
 }
 
-console.log(\`✓ \${cases.length} نام نرمال‌سازی‌شده مطابق قاعده هستند.\`);
+console.log(`✓ ${cases.length} نام نرمال‌سازی‌شده مطابق قاعده هستند.`);
