@@ -23,6 +23,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
 import * as schema from "./schema";
+import { unitSeeds } from "./spec-catalog";
 
 const {
   brands,
@@ -38,8 +39,19 @@ const {
   productSpecs,
   products,
   settings,
+  units,
   users,
 } = schema;
+
+// این اسکریپت تمام جدول‌ها را TRUNCATE می‌کند؛ روی production هرگز نباید اجرا
+// شود و یادداشت هشدار به‌تنهایی محافظ نیست. راه دور زدن عمداً وجود ندارد.
+if (process.env.NODE_ENV === "production") {
+  console.error(
+    "✖ اجرای db:seed روی محیط production ممنوع است: این اسکریپت تمام جدول‌ها را پاک می‌کند.\n" +
+      "  برای ساخت نخستین حساب مدیر از `npm run bootstrap:admin` استفاده کنید.",
+  );
+  process.exit(1);
+}
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = drizzle(pool, { schema, casing: "snake_case" });
@@ -56,6 +68,36 @@ async function main() {
       activity_logs, media, sessions, users, settings, counters
     RESTART IDENTITY CASCADE
   `);
+
+  /* ------------------------------ واحدها -------------------------------- */
+  // واحدها نباید فقط به backfill وابسته باشند: import-batch1 برای نگاشت
+  // مشخصات فنی به جدول units نیاز دارد. seed توسعه باید پایگاه داده را برای
+  // همان importها قابل بازتولید کند، بدون اینکه دادهٔ production را لمس کند.
+  console.log("→ واحدها…");
+  for (const [position, unit] of unitSeeds.entries()) {
+    await db
+      .insert(units)
+      .values({
+        code: unit.code,
+        label: unit.label,
+        symbol: unit.symbol ?? null,
+        dimension: unit.dimension,
+        toBaseFactor: unit.toBaseFactor,
+        isBase: unit.isBase ?? false,
+        position,
+      })
+      .onConflictDoUpdate({
+        target: units.code,
+        set: {
+          label: unit.label,
+          symbol: unit.symbol ?? null,
+          dimension: unit.dimension,
+          toBaseFactor: unit.toBaseFactor,
+          isBase: unit.isBase ?? false,
+          position,
+        },
+      });
+  }
 
   /* ------------------------------ کاربران ------------------------------- */
   console.log("→ کاربران…");

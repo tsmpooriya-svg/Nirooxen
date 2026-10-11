@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import { siteConfig } from "@/config/site";
+
 /** ادغام امن کلاس‌های Tailwind */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -194,7 +196,34 @@ export function buildQuery(params: Record<string, string | number | undefined | 
   return qs ? `?${qs}` : "";
 }
 
+/**
+ * نشانی مطلق می‌سازد و نامک فارسی را برای مصرف ماشینی درصدی می‌کند.
+ *
+ * encodeURI تنها نویسه‌های خارج از ASCII را رمز می‌کند و «/ ? # & =» را دست
+ * نمی‌زند، پس مسیرهای دارای query یا لنگر سالم می‌مانند. «%» هم رمز نمی‌شود،
+ * بنابراین نشانیِ از پیش رمزشده دوباره رمز نمی‌شود.
+ */
 export function absoluteUrl(path: string, base?: string): string {
-  const origin = base ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  return `${origin.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
+  const origin = base ?? siteConfig.url;
+  return encodeURI(`${origin.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`);
+}
+
+/**
+ * نامک را از حالت درصدی (percent-encoding) بیرون می‌آورد.
+ *
+ * در صفحه‌های App Router مقدار پویا همان‌طور که در نشانی آمده تحویل داده
+ * می‌شود؛ برای نامک فارسی یعنی «%D8%A7…» نه «ا». اگر همین رشته را به پرس‌وجو
+ * بدهیم هیچ ردیفی پیدا نمی‌شود و صفحه ۴۰۴ می‌گیرد. (در Route Handler برعکس
+ * است و مقدار از قبل رمزگشایی شده می‌رسد؛ رمزگشایی دوباره‌اش بی‌خطر است.)
+ *
+ * اگر رشته «%» تنها یا دنبالهٔ ناقص داشته باشد decodeURIComponent استثنا
+ * می‌اندازد؛ در آن حالت همان ورودی برمی‌گردد تا صفحه به‌جای خطای ۵۰۰،
+ * مسیر عادیِ «پیدا نشد» را برود.
+ */
+export function decodeRouteParam(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }

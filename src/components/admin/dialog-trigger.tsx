@@ -2,6 +2,8 @@
 
 import * as React from "react";
 
+import { useReadOnly } from "./shell";
+
 /**
  * دکمه بازکننده مودال.
  *
@@ -24,6 +26,8 @@ export type TriggerConfig =
   | { kind: "icon"; label: string };
 
 export function DialogTrigger({ config, onOpen }: { config: TriggerConfig; onOpen: () => void }) {
+  if (useReadOnly()) return null;
+
   if (config.kind === "icon") {
     return (
       <button

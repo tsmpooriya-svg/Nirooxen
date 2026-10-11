@@ -162,6 +162,10 @@ export function isReadOnly(role: UserRole | undefined): boolean {
   return role === "VIEWER";
 }
 
+export function canWrite(role: UserRole | undefined, key: PermissionKey): boolean {
+  return can(role, key) && !isReadOnly(role);
+}
+
 /* ------------------------------- استان‌ها --------------------------------- */
 
 export const PROVINCES = [

@@ -9,7 +9,15 @@
  */
 import "server-only";
 
-import { and, asc, count, desc, eq, gte, ilike, inArray, isNotNull, lte, ne, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, getTableColumns, gte, inArray, isNotNull, lte, ne, or, sql, type SQL } from "drizzle-orm";
+
+import {
+  FOLD_FROM,
+  FOLD_TO,
+  escapeLikePattern,
+  matchesPattern,
+  searchTokens,
+} from "@/lib/search-text";
 import { cache } from "react";
 
 import { db } from "@/db";
@@ -51,6 +59,8 @@ export type ProductCardData = {
   isNew: boolean;
   isFeatured: boolean;
   imageUrl: string | null;
+  /** «light» یعنی عکس را می‌شود با قاب نقشه‌کشی ترکیب کرد؛ تهی یعنی نامعلوم */
+  imageBackdrop: string | null;
   categoryName: string;
   categorySlug: string;
   brandName: string | null;
@@ -58,7 +68,14 @@ export type ProductCardData = {
   keySpecs: { label: string; value: string; unit: string | null }[];
 };
 
-export type CategoryNode = Category & { children: Category[]; productCount: number };
+/**
+ * شاخهٔ درخت دسته‌بندی. زیرشاخه‌ها هم شمارش محصول خودشان را همراه دارند —
+ * getCategoryTree آن‌ها را از همان فهرستِ شمارش‌شده برمی‌دارد.
+ */
+export type CategoryNode = Category & {
+  children: (Category & { productCount: number })[];
+  productCount: number;
+};
 
 /* -------------------------------------------------------------------------- */
 /*  دسته‌بندی‌ها                                                                */
@@ -84,15 +101,24 @@ export const getCategoryTree = cache(async (): Promise<CategoryNode[]> => {
   const all = rows.map((r) => ({ ...r.category, productCount: r.productCount }));
   const roots = all.filter((c) => !c.parentId);
 
-  return roots.map((root) => {
-    const children = all.filter((c) => c.parentId === root.id);
-    return {
-      ...root,
-      children,
-      // تعداد محصول شاخه = محصولات مستقیم + محصولات زیرشاخه‌ها
-      productCount: root.productCount + children.reduce((sum, c) => sum + c.productCount, 0),
-    };
-  });
+  /*
+    دسته‌های بدون محصول از این درخت بیرون می‌مانند. این درخت فقط به صفحه‌های
+    عمومی و sitemap می‌رسد (پنل مدیریت فهرست خودش را دارد و همهٔ دسته‌ها را
+    می‌بیند)، و دستهٔ خالی در منو یعنی «۰ کالا» جلوی چشم کاربر و یک صفحهٔ
+    بن‌بست در نتایج گوگل. شاخه‌ای که خودش محصول ندارد ولی زیرشاخهٔ پرمحصول
+    دارد می‌ماند، چون مسیر رسیدن به آن‌هاست.
+  */
+  return roots
+    .map((root) => {
+      const children = all.filter((c) => c.parentId === root.id && c.productCount > 0);
+      return {
+        ...root,
+        children,
+        // تعداد محصول شاخه = محصولات مستقیم + محصولات زیرشاخه‌ها
+        productCount: root.productCount + children.reduce((sum, c) => sum + c.productCount, 0),
+      };
+    })
+    .filter((root) => root.productCount > 0);
 });
 
 export const getCategoryBySlug = cache(async (slug: string) => {
@@ -202,6 +228,16 @@ const cardSelection = {
     order by pi.is_primary desc, pi.position asc
     limit 1
   )`,
+  /*
+    از همان ردیفی خوانده می‌شود که url از آن می‌آید — با همان ترتیب، تا اگر
+    محصولی چند تصویر داشت، پرچم به تصویر دیگری نچسبد.
+  */
+  imageBackdrop: sql<string | null>`(
+    select pi.backdrop from product_images pi
+    where pi.product_id = products.id
+    order by pi.is_primary desc, pi.position asc
+    limit 1
+  )`,
 };
 
 async function attachKeySpecs(rows: Omit<ProductCardData, "keySpecs">[]): Promise<ProductCardData[]> {
@@ -211,9 +247,11 @@ async function attachKeySpecs(rows: Omit<ProductCardData, "keySpecs">[]): Promis
       productId: productSpecs.productId,
       label: productSpecs.label,
       value: productSpecs.value,
-      unit: productSpecs.unit,
+      // همان قاعدهٔ صفحهٔ محصول؛ کارت و صفحه نباید واحد متفاوتی نشان بدهند
+      unit: sql<string | null>`coalesce(${units.symbol}, ${units.label}, ${productSpecs.unit})`,
     })
     .from(productSpecs)
+    .leftJoin(units, eq(units.id, productSpecs.unitId))
     .where(and(inArray(productSpecs.productId, rows.map((r) => r.id)), eq(productSpecs.isKey, true)))
     .orderBy(asc(productSpecs.position));
 
@@ -245,15 +283,24 @@ export async function listProducts(filters: ProductFilters = {}) {
 
   const conditions = [eq(products.status, "PUBLISHED")];
 
-  if (q?.trim()) {
-    const term = `%${q.trim()}%`;
+  /*
+    همان قاعده‌ای که دیالوگ Ctrl+K دارد: یکسان‌سازی حروف و ارقام، فرار دادن
+    کاراکترهای الگوی ILIKE، و تطبیق واژه‌به‌واژه به‌جای یک عبارت یکپارچه.
+
+    پیش از این اینجا یک ILIKE خام روی متن خام بود؛ نتیجه‌اش این می‌شد که یک
+    عبارت در جستجوی سریع پیدا می‌شد و در همین صفحه نه. تطبیق واژه‌به‌واژه هم
+    لازم است چون با حذف نیم‌فاصله، «آتش‌نشانی» در پایگاه داده یک واژهٔ چسبیده
+    می‌شود در حالی که کاربر آن را با فاصله می‌نویسد.
+  */
+  for (const token of searchTokens(q ?? "")) {
+    const pattern = `%${escapeLikePattern(token)}%`;
     conditions.push(
       or(
-        ilike(products.name, term),
-        ilike(products.model, term),
-        ilike(products.sku, term),
-        ilike(products.shortDescription, term),
-        sql`${products.tags}::text ilike ${term}`,
+        matchesPattern(products.name, pattern),
+        matchesPattern(products.model, pattern),
+        matchesPattern(products.sku, pattern),
+        matchesPattern(products.shortDescription, pattern),
+        sql`translate(coalesce(${products.tags}::text, ''), ${FOLD_FROM}, ${FOLD_TO}) ilike ${pattern}`,
       )!,
     );
   }
@@ -353,10 +400,17 @@ export async function listProducts(filters: ProductFilters = {}) {
     switch (sort) {
       case "popular":
         return [desc(products.viewCount), desc(products.publishedAt)];
+      // جهت مرتب‌سازی داخل خود قطعه SQL نوشته شده، نه با asc()/desc().
+      // آن دو کمک‌کننده کلمه‌ی جهت را به انتهای هرچه بگیرند می‌چسبانند، پس
+      // asc(sql`price nulls last`) به «price nulls last asc» تبدیل می‌شد و
+      // پستگرس آن را رد می‌کرد؛ دستور زبان صحیح
+      // ORDER BY expr [ASC|DESC] [NULLS FIRST|LAST] است و NULLS بعد از جهت می‌آید.
+      // کالای بدون قیمت (استعلامی و تماس بگیرید) در هر دو جهت آخر می‌ماند —
+      // همان رفتاری که nulls last از ابتدا قصدش را داشت.
       case "price-asc":
-        return [asc(sql`${products.price} nulls last`), asc(products.name)];
+        return [sql`${products.price} asc nulls last`, asc(products.name)];
       case "price-desc":
-        return [desc(sql`${products.price} nulls last`), asc(products.name)];
+        return [sql`${products.price} desc nulls last`, asc(products.name)];
       case "name":
         return [asc(products.name)];
       default:
@@ -370,6 +424,9 @@ export async function listProducts(filters: ProductFilters = {}) {
     .where(where)
     .then((r) => (r.length ? r : [{ total: 0 }]));
 
+  const pageCount = Math.max(1, Math.ceil((total ?? 0) / pageSize));
+  const currentPage = Math.min(page, pageCount);
+
   const rows = await db
     .select(cardSelection)
     .from(products)
@@ -378,14 +435,14 @@ export async function listProducts(filters: ProductFilters = {}) {
     .where(where)
     .orderBy(...orderBy)
     .limit(pageSize)
-    .offset((page - 1) * pageSize);
+    .offset((currentPage - 1) * pageSize);
 
   return {
     items: await attachKeySpecs(rows as Omit<ProductCardData, "keySpecs">[]),
     total: total ?? 0,
-    page,
+    page: currentPage,
     pageSize,
-    pageCount: Math.max(1, Math.ceil((total ?? 0) / pageSize)),
+    pageCount,
   };
 }
 
@@ -687,9 +744,20 @@ export const getProductBySlug = cache(async (slug: string) => {
       .from(productImages)
       .where(eq(productImages.productId, row.product.id))
       .orderBy(desc(productImages.isPrimary), asc(productImages.position)),
+    /*
+      واحد از جدول units خوانده می‌شود، نه از ستون متنی قدیمیِ product_specs.
+      آن ستون از نسخهٔ پیش از سیستم واحدهای تایپ‌دار مانده و در بیشتر ردیف‌ها
+      خالی است، در حالی که unit_id پر است؛ نتیجه‌اش این بود که صفحهٔ محصول
+      «حجم ۱۰۰» نشان می‌داد به‌جای «۱۰۰ لیتر». هر جا واحد تایپ‌دار نباشد،
+      همان متن قدیمی به کار می‌آید تا ردیف‌های میراثی هم واحدشان را از دست ندهند.
+    */
     db
-      .select()
+      .select({
+        ...getTableColumns(productSpecs),
+        unit: sql<string | null>`coalesce(${units.symbol}, ${units.label}, ${productSpecs.unit})`,
+      })
       .from(productSpecs)
+      .leftJoin(units, eq(units.id, productSpecs.unitId))
       .where(eq(productSpecs.productId, row.product.id))
       .orderBy(asc(productSpecs.position)),
   ]);
@@ -710,23 +778,50 @@ export const getProductBySlug = cache(async (slug: string) => {
 
 /** محصولات مشابه: هم‌دسته، به‌جز خودش */
 export const getRelatedProducts = cache(
-  async (productId: string, categoryId: string, limit = 4): Promise<ProductCardData[]> => {
-    const rows = await db
-      .select(cardSelection)
-      .from(products)
-      .innerJoin(categories, eq(products.categoryId, categories.id))
-      .leftJoin(brands, eq(products.brandId, brands.id))
-      .where(
-        and(
-          eq(products.status, "PUBLISHED"),
-          eq(products.categoryId, categoryId),
-          ne(products.id, productId),
-        ),
-      )
-      .orderBy(desc(products.isFeatured), desc(products.viewCount))
-      .limit(limit);
+  async (
+    productId: string,
+    categoryId: string,
+    parentCategoryId: string | null = null,
+    brandId: string | null = null,
+    limit = 4,
+  ): Promise<ProductCardData[]> => {
+    const familyRootId = parentCategoryId ?? categoryId;
+    const familyRows = await db
+      .select({ id: categories.id })
+      .from(categories)
+      .where(or(eq(categories.id, familyRootId), eq(categories.parentId, familyRootId)));
+    const familyIds = familyRows.map((row) => row.id);
 
-    return attachKeySpecs(rows as Omit<ProductCardData, "keySpecs">[]);
+    const stages: (SQL | undefined)[] = [
+      eq(products.categoryId, categoryId),
+      familyIds.length > 0 ? inArray(products.categoryId, familyIds) : undefined,
+      brandId ? eq(products.brandId, brandId) : undefined,
+    ];
+
+    const collected: Omit<ProductCardData, "keySpecs">[] = [];
+    const seen = new Set<string>([productId]);
+
+    for (const stage of stages) {
+      if (collected.length >= limit || !stage) continue;
+
+      const rows = await db
+        .select(cardSelection)
+        .from(products)
+        .innerJoin(categories, eq(products.categoryId, categories.id))
+        .leftJoin(brands, eq(products.brandId, brands.id))
+        .where(and(eq(products.status, "PUBLISHED"), ne(products.id, productId), stage))
+        .orderBy(desc(products.isFeatured), desc(products.viewCount))
+        .limit(limit + collected.length);
+
+      for (const row of rows as Omit<ProductCardData, "keySpecs">[]) {
+        if (collected.length >= limit) break;
+        if (seen.has(row.id)) continue;
+        seen.add(row.id);
+        collected.push(row);
+      }
+    }
+
+    return attachKeySpecs(collected);
   },
 );
 

@@ -1,0 +1,1 @@
+ALTER TABLE "product_images" ADD COLUMN "backdrop" varchar(8);

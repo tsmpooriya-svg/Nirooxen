@@ -7,6 +7,7 @@ import { OrderForm } from "@/components/site/order-form";
 import { useMounted } from "@/lib/use-mounted";
 import { formatPrice, toFaDigits } from "@/lib/utils";
 import { useCart } from "@/modules/cart/store";
+import { ProductThumb } from "@/components/site/product-photo";
 
 export function QuoteClient() {
   const { lines, setQuantity, remove, clear } = useCart();
@@ -78,12 +79,7 @@ export function QuoteClient() {
           {lines.map((line) => (
             <li key={line.productId} className="flex flex-wrap items-center gap-4 p-5">
               {line.imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={line.imageUrl}
-                  alt=""
-                  className="size-20 shrink-0 rounded-md border border-[var(--border-hairline)] object-cover"
-                />
+                <ProductThumb src={line.imageUrl} className="size-20 rounded-md" />
               ) : (
                 <span className="size-20 shrink-0 rounded-md border border-[var(--border-hairline)] bg-[var(--bg-inset)]" />
               )}
@@ -91,7 +87,7 @@ export function QuoteClient() {
               <div className="min-w-[12rem] flex-1">
                 <Link
                   href={`/products/${line.slug}`}
-                  className="text-[0.875rem] font-medium leading-7 transition-colors hover:text-[var(--brand)]"
+                  className="text-sm font-medium leading-7 transition-colors hover:text-[var(--brand)]"
                 >
                   {line.name}
                 </Link>

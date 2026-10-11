@@ -96,7 +96,7 @@ export function SolutionCard({
         <p
           className={cn(
             "relative mt-3 text-[var(--fg-muted)]",
-            isFeature ? "text-[0.9375rem] leading-8" : "clamp-2 text-meta leading-7",
+            isFeature ? "text-sm leading-8" : "clamp-2 text-meta leading-7",
           )}
         >
           {isFeature ? solution.situation : solution.summary}

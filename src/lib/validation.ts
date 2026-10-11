@@ -39,9 +39,9 @@ const numericString = z
 export const orderItemInputSchema = z.object({
   productId: z.string().uuid().optional(),
   productName: z.string().trim().min(1).max(220),
-  productSku: z.string().trim().max(64).optional(),
+  productSku: z.string().trim().max(64).nullable().optional(),
   productSlug: z.string().trim().max(250).optional(),
-  imageUrl: z.string().trim().max(500).optional(),
+  imageUrl: z.string().trim().max(500).nullable().optional(),
   unit: z.string().trim().max(32).default("دستگاه"),
   unitPrice: z.number().int().nonnegative().nullable().optional(),
   quantity: z.coerce.number().int().min(1, "حداقل تعداد ۱ است").max(9999),
@@ -113,6 +113,14 @@ export const productFormSchema = z.object({
     .optional()
     .transform((v) => (v ? Number(v.replace(/,/g, "")) : undefined))
     .refine((v) => v === undefined || (Number.isFinite(v) && v >= 0), "قیمت معتبر نیست"),
+  /*
+     شرط قیمتی جدا از قیمت پایه نگه داشته می‌شود؛ افزودن درصد به price باعث
+     می‌شد قیمت منتشرشده با آنچه منبع چاپ کرده فرق کند.
+  */
+  priceConditionCode: z.string().trim().max(32).optional(),
+  priceConditionText: z.string().trim().max(200).optional(),
+  isPromotional: checkbox.default(false),
+  sourceRef: z.string().trim().max(64).optional(),
   unit: z.string().trim().max(32).default("دستگاه"),
   stockStatus: z
     .enum(["IN_STOCK", "LOW_STOCK", "ORDER_ONLY", "OUT_OF_STOCK", "DISCONTINUED"])
@@ -122,6 +130,7 @@ export const productFormSchema = z.object({
   warrantyMonths: z.coerce.number().int().min(0).max(240).optional(),
   isFeatured: checkbox.default(false),
   isNew: checkbox.default(false),
+  position: z.coerce.number().int().min(0).max(9999).default(0),
   tags: z.array(z.string().trim().max(48)).max(20).default([]),
   metaTitle: z.string().trim().max(190).optional(),
   metaDescription: z.string().trim().max(320).optional(),
@@ -275,6 +284,53 @@ export const userFormSchema = z.object({
     .or(z.literal("").transform(() => undefined)),
   isActive: checkbox.default(true),
 });
+
+/* -------------------------------- پروفایل --------------------------------- */
+
+/**
+ * آنچه کاربر دربارهٔ حساب خودش می‌تواند عوض کند: نام و شمارهٔ تماس.
+ *
+ * ایمیل و نقش عمداً اینجا نیستند. ایمیل شناسهٔ ورود است و نقش مرز دسترسی؛
+ * هیچ‌کدام نباید با فرمی که خود کاربر پر می‌کند جابه‌جا شود.
+ */
+export const profileSchema = z.object({
+  name: z.string().trim().min(3, "نام الزامی است").max(120),
+  phone: z.string().trim().max(24).optional(),
+});
+
+export const passwordChangeSchema = z
+  .object({
+    currentPassword: z.string().min(1, "رمز فعلی الزامی است").max(128),
+    newPassword: z.string().min(8, "رمز تازه باید حداقل ۸ کاراکتر باشد").max(128),
+    confirmPassword: z.string().max(128),
+  })
+  .refine((v) => v.newPassword === v.confirmPassword, {
+    message: "تکرار رمز با رمز تازه یکی نیست",
+    path: ["confirmPassword"],
+  })
+  .refine((v) => v.newPassword !== v.currentPassword, {
+    message: "رمز تازه باید با رمز فعلی فرق کند",
+    path: ["newPassword"],
+  });
+
+/* ------------------------- فیلترهای کاتالوگ (URL) -------------------------- */
+
+/**
+ * پارامترهای فیلتر از نوار نشانی می‌آیند و قابل دست‌کاری‌اند. مقدار نامعتبر
+ * باید بی‌صدا کنار گذاشته شود، نه اینکه تا پایگاه داده برود؛ enum پستگرس
+ * مقدار ناشناخته را با خطا رد می‌کند و کل صفحه ۵۰۰ می‌شود.
+ */
+export const stockFilterSchema = z
+  .enum(["IN_STOCK", "LOW_STOCK", "ORDER_ONLY", "OUT_OF_STOCK", "DISCONTINUED"])
+  .optional()
+  .catch(undefined);
+
+export const sortFilterSchema = z
+  .enum(["newest", "popular", "price-asc", "price-desc", "name"])
+  .catch("newest");
+
+/** جستجوی سریع — سقف طول تا الگوی ILIKE بی‌اندازه بزرگ نشود */
+export const searchQuerySchema = z.string().trim().min(2).max(64);
 
 /* -------------------------- تبدیل خطا به فرم ------------------------------ */
 

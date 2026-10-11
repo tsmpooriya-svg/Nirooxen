@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -16,6 +16,25 @@ import {
 } from "@/lib/auth";
 import { RATE_LIMITS, rateLimit } from "@/lib/rate-limit";
 import { loginSchema, toFieldErrors, type FieldErrors } from "@/lib/validation";
+
+/**
+ * قفل در سطح حساب.
+ *
+ * ده شکست پشت‌سرهم در یک ربع ساعت، حساب را یک ربع می‌بندد.
+ *
+ * هر قفلی در سطح حساب این را هم می‌دهد که کسی می‌تواند عمداً حساب دیگری را
+ * ببندد — ده حدس غلط کافی است. مبادله‌اش آگاهانه است: پانزده دقیقه دردسر است،
+ * نه از کار افتادن، در برابر حمله‌ای که سقف IP اصلاً نمی‌بیندش. به همین دلیل
+ * هم آستانه سخاوتمند است و هم مدت کوتاه.
+ *
+ * سقف IP پایین‌تر از این آستانه است، پس از یک آی‌پی هرگز به قفل نمی‌رسیم —
+ * و لازم هم نیست: آنجا خودِ سقف IP جلو را گرفته. این شمارنده برای وقتی است
+ * که تلاش‌ها از ده آی‌پی مختلف بیایند و هیچ‌کدام به سقف خودشان نرسند.
+ */
+const MAX_FAILURES = 10;
+const LOCK_MINUTES = 15;
+/** شکستی قدیمی‌تر از این، دیگر به شمارش امروز ربطی ندارد */
+const WINDOW_MINUTES = 15;
 
 export type LoginState = {
   status: "idle" | "error";
@@ -57,24 +76,90 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
     return invalid;
   }
 
-  if (!user.isActive) {
-    return { status: "error", message: "حساب کاربری شما غیرفعال شده است. با مدیر سیستم تماس بگیرید." };
-  }
-
+  /*
+    ترتیب اینجا امنیتی است: رمز عبور همیشه پیش از هر پیام اختصاصی بررسی می‌شود.
+    اگر «حساب غیرفعال است» پیش از بررسی رمز برگردد، هر کسی با فرستادن یک رمز
+    دلخواه می‌فهمد که آن ایمیل در سیستم وجود دارد — همان چیزی که پیام یکسانِ
+    بالا برای پنهان کردنش هست.
+  */
   const valid = await verifyPassword(parsed.data.password, user.passwordHash);
   if (!valid) {
+    /*
+      شمارنده پیش از ثبت، بر اساس پنجره بازنشانی می‌شود: ده شکستِ پراکنده در
+      چند ماه نباید همان وزن ده شکست در یک دقیقه را داشته باشد.
+    */
+    /*
+      افزایش در خود SQL و اتمی انجام می‌شود: خواندن-افزودن-نوشتن در جاوااسکریپت، با
+      درخواست‌های هم‌زمان همه «۰» می‌خواندند و همه «۱» می‌نوشتند و شمارنده هرگز به
+      سقف نمی‌رسید.
+    */
+    const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60_000);
+    const [updated] = await db
+      .update(users)
+      .set({
+        failedLoginCount: sql`case when ${users.failedLoginAt} is not null and ${users.failedLoginAt} > ${windowStart} then ${users.failedLoginCount} + 1 else 1 end`,
+        failedLoginAt: new Date(),
+      })
+      .where(eq(users.id, user.id))
+      .returning({ count: users.failedLoginCount });
+
+    const locked = (updated?.count ?? 0) >= MAX_FAILURES;
+    if (locked) {
+      await db
+        .update(users)
+        .set({ failedLoginCount: 0, lockedUntil: new Date(Date.now() + LOCK_MINUTES * 60_000) })
+        .where(eq(users.id, user.id));
+    }
+
     await logActivity({
       userId: user.id,
       action: "login_failed",
       entity: "user",
       entityId: user.id,
-      summary: `رمز عبور نادرست برای ${user.email}`,
+      summary: locked
+        ? `حساب ${user.email} پس از ${MAX_FAILURES} تلاش ناموفق قفل شد`
+        : `رمز عبور نادرست برای ${user.email}`,
     });
     return invalid;
   }
 
+  /*
+    از اینجا به بعد، رمز درست بوده.
+
+    پیام‌های اختصاصی عمداً همین‌جا می‌آیند و نه زودتر: کسی که رمز را می‌داند
+    صاحب حساب است، پس گفتن «قفل است» یا «غیرفعال است» به او چیزی لو نمی‌دهد.
+    اگر همین بررسی‌ها پیش از تأیید رمز بودند، هر کسی با یک رمز دلخواه می‌فهمید
+    که آن ایمیل در سیستم وجود دارد — همان چیزی که پیام یکسانِ بالا برای پنهان
+    کردنش هست.
+
+    قفل، ورودِ با رمزِ درست را هم می‌بندد. اگر نمی‌بست، حمله‌ای که سرانجام رمز
+    را پیدا می‌کرد از قفل رد می‌شد و قفل بی‌معنا بود.
+  */
+  if (user.lockedUntil && user.lockedUntil.getTime() > Date.now()) {
+    const minutes = Math.max(1, Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60_000));
+    return {
+      status: "error",
+      message: `حساب شما به‌دلیل تلاش‌های ناموفق موقتاً قفل است. ${minutes} دقیقه دیگر تلاش کنید.`,
+    };
+  }
+
+  if (!user.isActive) {
+    await logActivity({
+      userId: user.id,
+      action: "login_failed",
+      entity: "user",
+      entityId: user.id,
+      summary: `ورود حساب غیرفعال ${user.email}`,
+    });
+    return { status: "error", message: "حساب کاربری شما غیرفعال شده است. با مدیر سیستم تماس بگیرید." };
+  }
+
   await createSession(user.id);
-  await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id));
+  // ورود موفق، صفحه را پاک می‌کند: شمارنده و قفل هر دو می‌روند
+  await db
+    .update(users)
+    .set({ lastLoginAt: new Date(), failedLoginCount: 0, failedLoginAt: null, lockedUntil: null })
+    .where(eq(users.id, user.id));
   await logActivity({
     userId: user.id,
     action: "login",

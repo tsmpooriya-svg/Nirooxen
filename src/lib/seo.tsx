@@ -29,6 +29,9 @@ export function buildBaseMetadata(settings?: {
   };
 }
 
+/** تصویر پیش‌فرض — همان طرح عمومی کاتالوگ، رستر شده */
+const OG_FALLBACK = "/images/og/products/generic.png";
+
 /** متادیتای پایه — مقادیر پیش‌فرض؛ `buildBaseMetadata` آن را با تنظیمات ترکیب می‌کند */
 export const baseMetadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -62,11 +65,18 @@ export const baseMetadata: Metadata = {
     siteName: siteConfig.name,
     title: `${siteConfig.name} | ${siteConfig.tagline}`,
     description: siteConfig.description,
+    /*
+      صفحهٔ اصلی تنها صفحه‌ای بود که متادیتای خودش را نمی‌ساخت و به همین دلیل
+      هیچ og:image نداشت. تصویر پیش‌فرض اینجا می‌نشیند تا هر صفحه‌ای که
+      چیزی نمی‌دهد هم کارت بی‌تصویر ندهد.
+    */
+    images: [{ url: OG_FALLBACK, width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${siteConfig.name} | ${siteConfig.tagline}`,
     description: siteConfig.description,
+    images: [OG_FALLBACK],
   },
   robots: {
     index: true,
@@ -80,6 +90,32 @@ export const baseMetadata: Metadata = {
     },
   },
 };
+
+/* -------------------------------------------------------------------------- */
+/*  تصویر اشتراک‌گذاری                                                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * تصویری که در کارت اجتماعی و در داده ساختاریافته می‌آید.
+ *
+ * تا امروز همان فایل SVG محصول مستقیم در og:image می‌نشست. تگ سرِ جایش بود و
+ * هر ممیزی‌ای که فقط وجود تگ را می‌سنجید سبز می‌شد — ولی **فیسبوک، واتساپ،
+ * تلگرام، لینکدین و ایکس هیچ‌کدام SVG را رندر نمی‌کنند**، و گوگل هم SVG را
+ * به‌عنوان تصویر Product نمی‌پذیرد. یعنی برای تقریباً کل کاتالوگ، لینکِ
+ * به‌اشتراک‌گذاشته‌شده کارت بی‌تصویر می‌داد و محصول در نتایج، تصویری نداشت.
+ *
+ * عکس واقعی محصول (که رستر است) همیشه مقدم است. اگر نبود، همان طرحِ
+ * نقشه‌کشیِ خودِ دسته به نسخهٔ PNG ۱۲۰۰×۶۳۰ نگاشت می‌شود که `npm run og:build`
+ * ساخته است. اگر هیچ‌کدام، تصویر عمومی سایت.
+ */
+export function ogImage(url?: string | null): string {
+  if (!url) return OG_FALLBACK;
+  const placeholder = /^\/images\/products\/([^/]+)\.svg$/.exec(url);
+  if (placeholder) return `/images/og/products/${placeholder[1]}.png`;
+  // هر SVG دیگری هم به همان سرنوشت دچار است، پس به تصویر عمومی می‌افتد
+  if (url.endsWith(".svg")) return OG_FALLBACK;
+  return url;
+}
 
 /** ساخت متادیتای صفحه با canonical و Open Graph درست */
 export function pageMetadata({
@@ -101,6 +137,7 @@ export function pageMetadata({
 }): Metadata {
   const desc = truncate(stripHtml(description ?? siteConfig.description), 300);
   const url = absoluteUrl(path, siteConfig.url);
+  const card = ogImage(image);
 
   return {
     title,
@@ -114,14 +151,14 @@ export function pageMetadata({
       description: desc,
       siteName: siteConfig.name,
       locale: siteConfig.locale,
-      images: image ? [{ url: image, alt: title }] : undefined,
+      images: [{ url: card, alt: title, width: 1200, height: 630 }],
       ...(publishedTime ? { publishedTime } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description: desc,
-      images: image ? [image] : undefined,
+      images: [card],
     },
   };
 }
@@ -139,6 +176,26 @@ export function organizationJsonLd(settings?: {
   const address = settings?.contact.address ?? siteConfig.contact.address;
   const phonesRaw = settings?.contact.phonesRaw ?? siteConfig.contact.phonesRaw;
 
+  /*
+    داده ساختاریافته یک ادعاست، نه یک نمایش.
+
+    روی صفحه، نشانیِ «هنوز ثبت نشده است» و شمارهٔ ۰۲۱-۰۰۰۰۰۰۰۰ عمداً آشکارا
+    جانشین‌اند تا به چشم بیایند. ولی همین مقادیر در JSON-LD مثل واقعیت منتشر
+    می‌شدند: گوگل آن جمله را به‌عنوان streetAddress و آن شماره را به‌عنوان خط
+    فروش می‌خواند.
+
+    محک، مقایسه با همان پیش‌فرضی است که در مخزن نشسته — اگر مدیر مقدار واقعی
+    را در تنظیمات گذاشته باشد، دیگر برابر پیش‌فرض نیست و منتشر می‌شود. حدس و
+    الگوی متنی در کار نیست.
+
+    Organization بدون address و contactPoint معتبر است؛ با نشانی نادرست، نه.
+  */
+  const addressRegistered = address.trim() !== "" && address !== siteConfig.contact.address;
+  const phonesRegistered =
+    phonesRaw.length > 0 && phonesRaw.join(",") !== siteConfig.contact.phonesRaw.join(",");
+  /* `sameAs` فقط حساب‌های تأییدشده — نه صفحهٔ اصلی یک شبکهٔ اجتماعی */
+  const verifiedSocial = siteConfig.social.filter((s) => s.verified).map((s) => s.href);
+
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -149,19 +206,21 @@ export function organizationJsonLd(settings?: {
     description: settings?.description ?? siteConfig.description,
     // فقط وقتی سال تأسیس واقعی ثبت شده باشد در داده ساختاریافته منتشر می‌شود
     ...(siteConfig.foundedYear ? { foundingDate: String(siteConfig.foundedYear) } : {}),
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: address,
-      addressCountry: "IR",
-    },
-    contactPoint: phonesRaw.map((phone) => ({
-      "@type": "ContactPoint",
-      telephone: phone,
-      contactType: "sales",
-      areaServed: "IR",
-      availableLanguage: ["fa"],
-    })),
-    sameAs: siteConfig.social.map((s) => s.href),
+    ...(addressRegistered
+      ? { address: { "@type": "PostalAddress", streetAddress: address, addressCountry: "IR" } }
+      : {}),
+    ...(phonesRegistered
+      ? {
+          contactPoint: phonesRaw.map((phone) => ({
+            "@type": "ContactPoint",
+            telephone: phone,
+            contactType: "sales",
+            areaServed: "IR",
+            availableLanguage: ["fa"],
+          })),
+        }
+      : {}),
+    ...(verifiedSocial.length > 0 ? { sameAs: verifiedSocial } : {}),
   };
 }
 
@@ -223,19 +282,38 @@ export function productJsonLd(product: {
     description: truncate(stripHtml(product.description ?? ""), 400) || undefined,
     sku: product.sku ?? undefined,
     brand: product.brandName ? { "@type": "Brand", name: product.brandName } : undefined,
-    image: product.image ? absoluteUrl(product.image, siteConfig.url) : undefined,
+    image: absoluteUrl(ogImage(product.image), siteConfig.url),
     url: absoluteUrl(`/products/${product.slug}`, siteConfig.url),
-    offers: {
-      "@type": "Offer",
-      url: absoluteUrl(`/products/${product.slug}`, siteConfig.url),
-      priceCurrency: "IRR",
-      // قیمت به ریال گزارش می‌شود (۱ تومان = ۱۰ ریال)
-      ...(product.priceMode === "PUBLIC" && product.price
-        ? { price: product.price * 10 }
-        : { availability: "https://schema.org/PreOrder" }),
-      availability,
-      seller: { "@id": `${siteConfig.url}/#organization` },
-    },
+    /*
+      Offer فقط وقتی می‌آید که قیمتی برای گفتن باشد.
+
+      گوگل Offer بدون price یا priceSpecification را نامعتبر می‌داند و کل
+      داده‌ی ساختاریافتهٔ محصول را کنار می‌گذارد — یعنی برای اکثر کاتالوگ، که
+      قیمتش استعلامی است، کارت محصولی در نتایج ساخته نمی‌شد. نبودنِ offers
+      خطا نیست؛ Product بدون آن معتبر است و موجودی هنوز گفته می‌شود.
+    */
+    ...(product.priceMode === "PUBLIC" && product.price
+      ? {
+          offers: {
+            "@type": "Offer",
+            url: absoluteUrl(`/products/${product.slug}`, siteConfig.url),
+            priceCurrency: "IRR",
+            // قیمت به ریال گزارش می‌شود (۱ تومان = ۱۰ ریال)
+            price: product.price * 10,
+            availability,
+            seller: { "@id": `${siteConfig.url}/#organization` },
+          },
+        }
+      : {}),
+    /*
+      برای محصول استعلامی هیچ `availability` منتشر نمی‌شود.
+
+      قبلاً روی خودِ Product می‌نشست، ولی `availability` در schema.org اصلاً
+      خاصیتِ Product نیست — فقط روی Offer و Demand تعریف شده. یعنی آن مقدار
+      هیچ‌وقت خوانده نمی‌شد و فقط ظاهرِ درستی داشت. راه درستش Offer است، و
+      Offer بدون price هم (طبق همان دلیلِ بالا) کل داده را بی‌اعتبار می‌کند.
+      پس چیزی گفته نمی‌شود؛ نگفتن، از گفتنِ در جای نادرست بهتر است.
+    */
   };
 }
 

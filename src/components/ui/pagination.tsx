@@ -59,7 +59,7 @@ export function Pagination({
             className={cn(
               itemClass,
               item === page
-                ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand)]"
+                ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand-on-soft)]"
                 : "border-[var(--border-subtle)] text-[var(--fg-muted)] hover:border-[var(--border-brand)] hover:text-[var(--brand)]",
             )}
           >

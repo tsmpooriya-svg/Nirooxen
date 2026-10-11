@@ -81,7 +81,7 @@ export default async function ProjectsPage() {
                     <p className="mt-3 text-meta leading-7 text-[var(--fg-muted)]">{project.summary}</p>
                   )}
 
-                  <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-[var(--border-hairline)] pt-4 text-xs sm:grid-cols-4">
+                  <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-[var(--border-hairline)] pt-4 text-meta sm:grid-cols-4">
                     {project.client && <Meta label="کارفرما" value={project.client} />}
                     {project.location && <Meta label="موقعیت" value={project.location} />}
                     {project.year && <Meta label="سال" value={project.year} />}

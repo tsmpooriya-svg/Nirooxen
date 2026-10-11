@@ -2,6 +2,7 @@ import { DeleteProjectButton, ProjectDialog } from "@/components/admin/project-f
 import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/components/admin/ui";
 import { toFaDigits } from "@/lib/utils";
 import { getAdminProjects } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,8 @@ const empty = {
 };
 
 export default async function AdminProjectsPage() {
+  await requirePageAccess("projects");
+
   const projects = await getAdminProjects();
 
   return (

@@ -95,7 +95,7 @@ export default async function ServicesPage() {
                   </span>
                   <h2 className="mt-2 font-display text-xl font-bold">{service.title}</h2>
                   <p className="mt-1.5 text-sm font-medium text-[var(--brand)]">{service.lead}</p>
-                  <p className="mt-4 text-[0.875rem] leading-8 text-[var(--fg-muted)]">{service.body}</p>
+                  <p className="mt-4 text-sm leading-8 text-[var(--fg-muted)]">{service.body}</p>
                 </div>
 
                 <ul className="space-y-2.5 rounded-lg border border-[var(--border-hairline)] bg-[var(--bg-elev-2)] p-4">

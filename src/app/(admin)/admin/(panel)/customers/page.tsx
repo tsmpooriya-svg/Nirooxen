@@ -1,9 +1,11 @@
 import Link from "next/link";
 
 import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/components/admin/ui";
+import { RecordDeleteButton } from "@/components/admin/record-delete";
 import { Pagination } from "@/components/ui/pagination";
 import { buildQuery, formatDate, formatRelative, toFaDigits } from "@/lib/utils";
 import { listCustomers } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export const dynamic = "force-dynamic";
@@ -15,6 +17,8 @@ const TYPE_MAP = {
 };
 
 export default async function AdminCustomersPage({ searchParams }: { searchParams: SearchParams }) {
+  await requirePageAccess("customers");
+
   const params = await searchParams;
   const q = first(params.q);
   const page = Math.max(1, Number(first(params.page) ?? 1) || 1);
@@ -38,7 +42,7 @@ export default async function AdminCustomersPage({ searchParams }: { searchParam
       </form>
 
       <Panel padded={false}>
-        <DataTable head={["مشتری", "تماس", "نوع", "شهر", "درخواست‌ها", "آخرین فعالیت", "عضویت"]} empty={items.length === 0}>
+        <DataTable head={["مشتری", "تماس", "نوع", "شهر", "درخواست‌ها", "آخرین فعالیت", "عضویت", ""]} empty={items.length === 0}>
           {items.map((customer) => (
             <Tr key={customer.id}>
               <Td>
@@ -75,6 +79,14 @@ export default async function AdminCustomersPage({ searchParams }: { searchParam
                 {customer.lastOrderAt ? formatRelative(customer.lastOrderAt) : "—"}
               </Td>
               <Td className="text-micro text-[var(--fg-subtle)]">{formatDate(customer.createdAt)}</Td>
+              <Td className="w-12">
+                <RecordDeleteButton
+                  kind="customer"
+                  id={customer.id}
+                  name={customer.fullName}
+                  orderCount={customer.orderCount}
+                />
+              </Td>
             </Tr>
           ))}
         </DataTable>

@@ -30,8 +30,13 @@ export function Badge({ className, tone = "neutral", size = "md", dot, children,
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border font-medium leading-none",
-        size === "sm" ? "px-2 py-1 text-micro" : "px-2.5 py-1.5 text-xs",
+        // whitespace-nowrap: برچسب وضعیت در ستون‌های باریک (جدول محصولات پنل)
+        // وسط عبارت می‌شکست — «موجود در / انبار». یک نشان دوخطی خوانده نمی‌شود،
+        // پس در یک خط می‌ماند و ستون خودش را باز می‌کند.
+        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border font-medium leading-none",
+        // sm و md قبلاً هر دو ۱۲px بودند (text-micro و text-xs هم‌اندازه بودند)،
+        // یعنی «md» عملاً بزرگ‌تر از «sm» نبود. حالا ۱۳px و ۱۴px.
+        size === "sm" ? "px-2 py-1 text-micro" : "px-2.5 py-1.5 text-meta",
         tones[tone],
         className,
       )}

@@ -5,11 +5,14 @@ import { AdminPageHeader, DataTable, Panel, StatusBadge, Td, Tr } from "@/compon
 import { ORDER_STATUS, ORDER_TYPE } from "@/lib/constants";
 import { formatDate, formatDateTime, formatPrice, toFaDigits } from "@/lib/utils";
 import { getCustomerById } from "@/modules/admin/queries";
+import { requirePageAccess } from "@/lib/auth";
 
 type Params = Promise<{ id: string }>;
 export const dynamic = "force-dynamic";
 
 export default async function CustomerDetailPage({ params }: { params: Params }) {
+  await requirePageAccess("customers");
+
   const { id } = await params;
   const data = await getCustomerById(id);
   if (!data) notFound();

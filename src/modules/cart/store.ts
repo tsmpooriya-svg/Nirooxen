@@ -59,10 +59,9 @@ export const useCart = create<CartState>()(
                   ? { ...l, quantity: Math.min(999, l.quantity + quantity) }
                   : l,
               ),
-              isOpen: true,
             };
           }
-          return { lines: [...state.lines, { ...line, quantity }], isOpen: true };
+          return { lines: [...state.lines, { ...line, quantity }] };
         }),
 
       remove: (productId) =>

@@ -6,7 +6,9 @@ import { useActionState, useTransition } from "react";
 import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { DialogTrigger, type TriggerConfig } from "@/components/admin/dialog-trigger";
 import { ConfirmDialog, Modal } from "@/components/ui/modal";
+import { useReadOnly } from "./shell";
 import { useToast } from "@/components/ui/toast";
+import { toFaDigits } from "@/lib/utils";
 import { domainIcons } from "@/components/ui/icons";
 import { deleteBrand, deleteCategory, saveBrand, saveCategory, type ActionState } from "@/modules/admin/actions";
 
@@ -229,6 +231,10 @@ export function BrandDialog({
               <Input id="brand-site" name="website" defaultValue={values.website} dir="ltr" className="text-start" />
             </Field>
 
+            <Field label="نشانی لوگو" htmlFor="brand-logo">
+              <Input id="brand-logo" name="logoUrl" defaultValue={values.logoUrl} dir="ltr" className="text-start" placeholder="/images/brands/example.svg" />
+            </Field>
+
             <Field label="ترتیب نمایش" htmlFor="brand-position">
               <Input id="brand-position" name="position" defaultValue={values.position} dir="ltr" inputMode="numeric" className="text-start font-mono" />
             </Field>
@@ -279,15 +285,20 @@ export function DeleteTaxonomyButton({
   kind,
   id,
   name,
+  productCount = 0,
 }: {
   kind: "category" | "brand";
   id: string;
   name: string;
+  productCount?: number;
 }) {
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
   const [pending, startTransition] = useTransition();
+  const readOnly = useReadOnly();
 
+
+  if (readOnly) return null;
   return (
     <>
       <button
@@ -307,6 +318,11 @@ export function DeleteTaxonomyButton({
         onClose={() => setOpen(false)}
         loading={pending}
         title={`حذف «${name}»؟`}
+        description={
+          kind === "brand" && productCount > 0
+            ? `${toFaDigits(productCount)} محصول به این برند وصل است. با حذف برند، آن محصولات باقی می‌مانند ولی بدون برند می‌شوند.`
+            : undefined
+        }
         confirmLabel="حذف کن"
         onConfirm={() =>
           startTransition(async () => {

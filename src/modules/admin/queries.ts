@@ -5,7 +5,7 @@
  */
 import "server-only";
 
-import { and, asc, count, desc, eq, gte, ilike, inArray, isNull, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, isNotNull, isNull, or, sql } from "drizzle-orm";
 
 import { db } from "@/db";
 import {
@@ -23,6 +23,8 @@ import {
   productSpecs,
   products,
   projects,
+  pageViews,
+  searchQueries,
   settings,
   specDefinitions,
   units,
@@ -630,6 +632,129 @@ export async function listUsers() {
 
 export async function getSettings() {
   return db.select().from(settings).orderBy(asc(settings.group), asc(settings.key));
+}
+
+/**
+ * آنچه بازدیدکنندگان جست‌وجو کرده‌اند.
+ *
+ * دو فهرست برمی‌گردد و فهرست دوم مهم‌تر است: عبارت‌هایی که هیچ نتیجه‌ای
+ * نداشته‌اند. هر کدامشان یا کالایی است که نداریم، یا کالایی که داریم و نامش
+ * با زبان مشتری نمی‌خواند — و هیچ‌کدام را از جای دیگری نمی‌شود فهمید.
+ */
+export async function getSearchInsights(days = 30) {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const base = gte(searchQueries.createdAt, since);
+
+  const columns = {
+    term: searchQueries.term,
+    hits: count(),
+    lastAt: sql<Date>`max(${searchQueries.createdAt})`,
+  };
+
+  const [top, empty, totalRow] = await Promise.all([
+    db
+      .select({ ...columns, avgResults: sql<number>`round(avg(${searchQueries.resultCount}))::int` })
+      .from(searchQueries)
+      .where(base)
+      .groupBy(searchQueries.term)
+      .orderBy(desc(count()))
+      .limit(15),
+    db
+      .select(columns)
+      .from(searchQueries)
+      .where(and(base, eq(searchQueries.resultCount, 0)))
+      .groupBy(searchQueries.term)
+      .orderBy(desc(count()))
+      .limit(15),
+    db.select({ total: count() }).from(searchQueries).where(base),
+  ]);
+
+  return { top, empty, total: totalRow[0]?.total ?? 0, days };
+}
+
+/**
+ * ترافیک سایت.
+ *
+ * چهار پرسش را جواب می‌دهد و بیشتر از آن را عمداً نه: چند نفر آمدند، روند
+ * چطور بوده، چه چیزی را دیدند، و از کجا آمدند. گزارشی که به همه‌چیز جواب بدهد
+ * در عمل به هیچ‌چیز جواب نمی‌دهد، چون کسی نگاهش نمی‌کند.
+ *
+ * «بازدیدکننده» یعنی درهمِ یکتای همان روز. چون نمک هر روز عوض می‌شود، جمعِ
+ * بازدیدکنندگان روزها با تعداد یکتای کل بازه برابر نیست و نباید باشد: کسی که
+ * دو روز آمده، دو بار شمرده می‌شود. این بهای همان تصمیم است که نشود کسی را در
+ * طول زمان دنبال کرد.
+ *
+ * نام محصول از روی نامک به مسیر وصل می‌شود تا فهرست پربازدیدها خوانا باشد؛
+ * «/products/pump-centrifugal-2in» به تنهایی چیزی به مدیر فروش نمی‌گوید.
+ */
+export async function getTrafficInsights(days = 30) {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const base = gte(pageViews.createdAt, since);
+  // روزها به وقت تهران بریده می‌شوند، وگرنه مرزِ روز با آنچه مدیر می‌بیند نمی‌خواند
+  const localDay = sql<string>`(${pageViews.createdAt} at time zone 'Asia/Tehran')::date`;
+
+  const [daily, totals, pages, referrers, kinds] = await Promise.all([
+    db
+      .select({
+        day: localDay,
+        views: count(),
+        visitors: sql<number>`count(distinct ${pageViews.visitor})::int`,
+      })
+      .from(pageViews)
+      .where(base)
+      .groupBy(localDay)
+      .orderBy(asc(localDay)),
+
+    db
+      .select({
+        views: count(),
+        visitors: sql<number>`count(distinct ${pageViews.visitor})::int`,
+      })
+      .from(pageViews)
+      .where(base),
+
+    db
+      .select({
+        path: pageViews.path,
+        kind: pageViews.kind,
+        views: count(),
+        visitors: sql<number>`count(distinct ${pageViews.visitor})::int`,
+        title: sql<string | null>`max(${products.name})`,
+      })
+      .from(pageViews)
+      .leftJoin(products, sql`'/products/' || ${products.slug} = ${pageViews.path}`)
+      .where(base)
+      .groupBy(pageViews.path, pageViews.kind)
+      .orderBy(desc(count()))
+      .limit(20),
+
+    db
+      .select({ host: pageViews.referrerHost, views: count() })
+      .from(pageViews)
+      .where(and(base, isNotNull(pageViews.referrerHost)))
+      .groupBy(pageViews.referrerHost)
+      .orderBy(desc(count()))
+      .limit(10),
+
+    db
+      .select({ kind: pageViews.kind, views: count() })
+      .from(pageViews)
+      .where(base)
+      .groupBy(pageViews.kind)
+      .orderBy(desc(count())),
+  ]);
+
+  return {
+    days,
+    daily,
+    pages,
+    referrers,
+    kinds,
+    views: totals[0]?.views ?? 0,
+    visitors: totals[0]?.visitors ?? 0,
+    /** ورود مستقیم = بازدیدی که ارجاع‌دهندهٔ بیرونی نداشته */
+    direct: (totals[0]?.views ?? 0) - referrers.reduce((sum, r) => sum + r.views, 0),
+  };
 }
 
 export async function listActivityLogs(filters: { entity?: string; page?: number } = {}) {

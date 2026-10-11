@@ -1,0 +1,54 @@
+# =============================================================================
+#  سرویس systemd برای نیروکسن
+# =============================================================================
+#  نصب:
+#      sudo cp deploy/nirooxen.service /etc/systemd/system/
+#      sudo systemctl daemon-reload
+#      sudo systemctl enable --now nirooxen
+#
+#  لاگ:  journalctl -u nirooxen -f
+# =============================================================================
+[Unit]
+Description=Nirooxen — کاتالوگ تجهیزات صنعتی و آبرسانی
+Documentation=file:///var/www/nirooxen/README.md
+After=network-online.target postgresql.service
+Wants=network-online.target
+# اگر پایگاه داده بالا نیامده باشد، برنامه هنگام اجرا خطا می‌دهد نه هنگام بوت
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=nirooxen
+Group=nirooxen
+WorkingDirectory=/var/www/nirooxen
+
+# راز‌ها بیرون از مخزن می‌مانند. این فایل باید chmod 600 و مالکش root باشد.
+EnvironmentFile=/etc/nirooxen/nirooxen.env
+Environment=NODE_ENV=production
+
+# مستقیم node، بدون لایهٔ npm: یک پروسهٔ کمتر و سیگنال‌ها درست به next می‌رسند
+ExecStart=/usr/bin/node /var/www/nirooxen/node_modules/next/dist/bin/next start --port 3000
+
+Restart=always
+RestartSec=5
+# اگر پنج بار در دو دقیقه بیفتد، دیگر تلاش نکن — مشکل پیکربندی است نه گذرا
+StartLimitBurst=5
+StartLimitIntervalSec=120
+
+# ── سخت‌سازی ─────────────────────────────────────────────────────────────────
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+# next هنگام اجرا در .next/cache می‌نویسد و آپلودها در ریشهٔ مدیا
+ReadWritePaths=/var/www/nirooxen/.next /var/lib/nirooxen/media
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nirooxen
+
+[Install]
+WantedBy=multi-user.target

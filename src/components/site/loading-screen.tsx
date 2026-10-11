@@ -131,7 +131,12 @@ export function LoadingScreen() {
     if (seen || phase === "done") return;
     const previous = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
+    // اگر رویداد load هرگز نیاید (منبع هنگ‌کرده)، قفل اسکرول نباید برای همیشه بماند
+    const release = window.setTimeout(() => {
+      document.documentElement.style.overflow = previous;
+    }, 9000);
     return () => {
+      window.clearTimeout(release);
       document.documentElement.style.overflow = previous;
     };
   }, [seen, phase]);

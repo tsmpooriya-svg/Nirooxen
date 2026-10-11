@@ -78,7 +78,7 @@ export default function AboutPage() {
       <Section>
         <div className="shell grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
           <Reveal>
-            <div className="max-w-2xl space-y-5 text-[0.9375rem] leading-9 text-[var(--fg-secondary)]">
+            <div className="max-w-2xl space-y-5 text-sm leading-9 text-[var(--fg-secondary)]">
               <p>
                 کار ما با یک انبار کوچک قطعات یدکی پمپ شروع شد. آن روزها بیشتر مشتری‌هایمان سراغ ما
                 می‌آمدند چون جایی دیگر مکانیکال سیل مناسب پیدا نکرده بودند. همان تجربه، جهت‌گیری بعدی
@@ -99,7 +99,7 @@ export default function AboutPage() {
               <dl className="mt-10 grid grid-cols-2 gap-6 border-t border-[var(--border-hairline)] pt-8 sm:grid-cols-4">
                 {siteConfig.stats.map((stat) => (
                   <div key={stat.label} className="flex flex-col-reverse">
-                    <dt className="mt-2 text-xs leading-5 text-[var(--fg-muted)]">{stat.label}</dt>
+                    <dt className="mt-2 text-meta leading-6 text-[var(--fg-muted)]">{stat.label}</dt>
                     <dd className="font-display text-[1.75rem] font-extrabold text-[var(--brand)]">
                       <Counter value={stat.value} suffix={stat.suffix} />
                     </dd>
@@ -110,7 +110,11 @@ export default function AboutPage() {
           </Reveal>
 
           <Reveal variant="scale" delay={140}>
-            <div className="space-y-4">
+            <section aria-labelledby="values-heading" className="space-y-4">
+              {/* کارت‌ها h3 بودند و بالای سرشان هیچ h2ی نبود */}
+              <h2 id="values-heading" className="sr-only">
+                ارزش‌های ما
+              </h2>
               {values.map((value) => (
                 <div
                   key={value.title}
@@ -120,12 +124,12 @@ export default function AboutPage() {
                     <DomainIcon name={value.icon} className="size-5" />
                   </span>
                   <div>
-                    <h3 className="font-display text-[0.9375rem] font-bold">{value.title}</h3>
+                    <h3 className="font-display text-sm font-bold">{value.title}</h3>
                     <p className="mt-1.5 text-meta leading-7 text-[var(--fg-muted)]">{value.body}</p>
                   </div>
                 </div>
               ))}
-            </div>
+            </section>
           </Reveal>
         </div>
       </Section>
@@ -143,7 +147,7 @@ export default function AboutPage() {
             {faqs.map((faq, index) => (
               <Reveal key={faq.q} delay={index * 50}>
                 <details className="group rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-2)] transition-colors duration-300 hover:border-[var(--border-brand)] open:border-[var(--border-brand)]">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-[0.9375rem] font-medium marker:content-none">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-sm font-medium marker:content-none">
                     {faq.q}
                     <span className="grid size-7 shrink-0 place-items-center rounded-full border border-[var(--border-subtle)] text-[var(--brand)] transition-transform duration-400 [transition-timing-function:var(--ease-out-expo)] group-open:rotate-45">
                       <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
@@ -151,7 +155,7 @@ export default function AboutPage() {
                       </svg>
                     </span>
                   </summary>
-                  <div className="border-t border-[var(--border-hairline)] px-5 py-4 text-[0.875rem] leading-8 text-[var(--fg-muted)]">
+                  <div className="border-t border-[var(--border-hairline)] px-5 py-4 text-sm leading-8 text-[var(--fg-muted)]">
                     {faq.a}
                   </div>
                 </details>

@@ -6,12 +6,15 @@ import { MESSAGE_STATUS } from "@/lib/constants";
 import { buildQuery, formatDateTime, formatRelative, toFaDigits } from "@/lib/utils";
 import { listMessages } from "@/modules/admin/queries";
 import Link from "next/link";
+import { requirePageAccess } from "@/lib/auth";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export const dynamic = "force-dynamic";
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 export default async function AdminMessagesPage({ searchParams }: { searchParams: SearchParams }) {
+  await requirePageAccess("messages");
+
   const params = await searchParams;
   const status = first(params.status) as MessageStatus | undefined;
   const page = Math.max(1, Number(first(params.page) ?? 1) || 1);

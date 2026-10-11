@@ -6,6 +6,7 @@ import { useActionState, useTransition } from "react";
 import { Checkbox, Field, Input, Textarea } from "@/components/ui/field";
 import { ConfirmDialog, Modal } from "@/components/ui/modal";
 import { DialogTrigger, type TriggerConfig } from "@/components/admin/dialog-trigger";
+import { useReadOnly } from "./shell";
 import { useToast } from "@/components/ui/toast";
 import { deleteProject, saveProject, type ActionState } from "@/modules/admin/actions";
 
@@ -179,6 +180,7 @@ export function DeleteProjectButton({ id, title }: { id: string; title: string }
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
   const [pending, startTransition] = useTransition();
+  const readOnly = useReadOnly();
 
   function onConfirm() {
     startTransition(async () => {
@@ -192,6 +194,8 @@ export function DeleteProjectButton({ id, title }: { id: string; title: string }
     });
   }
 
+
+  if (readOnly) return null;
   return (
     <>
       <button

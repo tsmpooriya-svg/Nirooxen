@@ -93,7 +93,7 @@ export function Hero({
               <div className="mt-10 flex flex-col gap-3 xs:flex-row xs:flex-wrap xs:items-center">
                 <Link
                   href="/products"
-                  className="group inline-flex h-[3.25rem] items-center justify-center gap-2.5 rounded-md bg-[var(--brand)] px-7 text-[0.9375rem] font-medium text-[var(--fg-on-brand)] shadow-[var(--shadow-sm)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
+                  className="group inline-flex h-[3.25rem] items-center justify-center gap-2.5 rounded-md bg-[var(--brand)] px-7 text-sm font-medium text-[var(--fg-on-brand)] shadow-[var(--shadow-sm)] transition-all duration-300 hover:bg-[var(--brand-hover)] hover:shadow-[var(--shadow-brand)]"
                 >
                   مشاهده کاتالوگ محصولات
                   <svg
@@ -110,7 +110,7 @@ export function Hero({
 
                 <a
                   href={`tel:${settings.contact.mobileRaw}`}
-                  className="inline-flex h-[3.25rem] items-center justify-center gap-2.5 rounded-md border border-[var(--border-default)] px-6 text-[0.9375rem] font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
+                  className="inline-flex h-[3.25rem] items-center justify-center gap-2.5 rounded-md border border-[var(--border-default)] px-6 text-sm font-medium transition-all duration-300 hover:border-[var(--border-brand)] hover:bg-[var(--brand-soft)] hover:text-[var(--brand)]"
                 >
                   <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
                     <path d="M3 2.5h2.5l1 3-1.6 1a8 8 0 0 0 3.6 3.6l1-1.6 3 1V13a1 1 0 0 1-1.1 1A11 11 0 0 1 2 3.6 1 1 0 0 1 3 2.5Z" />
@@ -128,7 +128,7 @@ export function Hero({
                     // ترتیب DOM «عنوان → مقدار» است تا screen reader درست بخواند؛
                     // flex-col-reverse فقط ترتیب بصری را برعکس می‌کند.
                     <div key={stat.label} className="flex flex-col-reverse">
-                      <dt className="mt-2 text-xs leading-5 text-[var(--fg-muted)]">{stat.label}</dt>
+                      <dt className="mt-2 text-meta leading-6 text-[var(--fg-muted)]">{stat.label}</dt>
                       <dd className="font-display text-[1.75rem] font-extrabold leading-none text-[var(--brand)]">
                         <Counter value={stat.value} suffix={stat.suffix} />
                       </dd>
@@ -166,7 +166,7 @@ export function Hero({
                         <DomainIcon name={category.icon} className="size-[18px]" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[0.9375rem] font-medium text-[var(--fg-primary)] transition-colors group-hover:text-[var(--brand)]">
+                        <span className="block truncate text-sm font-medium text-[var(--fg-primary)] transition-colors group-hover:text-[var(--brand)]">
                           {category.name}
                         </span>
                         <span className="mt-1 block font-mono text-micro text-[var(--fg-subtle)]">

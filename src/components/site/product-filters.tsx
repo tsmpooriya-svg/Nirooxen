@@ -12,6 +12,10 @@ import type { CategoryNode, SpecFacet } from "@/modules/catalog/queries";
 
 type Brand = { id: string; name: string; slug: string; productCount: number };
 
+const SHEET_TITLE_ID = "product-filter-sheet-title";
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 /**
  * پنل فیلتر.
  *
@@ -38,6 +42,27 @@ export function ProductFilters({
   const pathname = usePathname();
   const params = useSearchParams();
 
+  /*
+    بازخورد «در حال اعمال».
+
+    فیلترها وضعیت را در URL نگه می‌دارند و هر تغییر یک ناوبری سمت سرور است.
+    تا امروز هیچ نشانه‌ای در کار نبود: کاربر تیک می‌زد و صفحه دست‌نخورده
+    می‌ماند تا وقتی پاسخ برسد. روی این ماشین ۳۱۰ میلی‌ثانیه طول می‌کشد، ولی با
+    شبیه‌سازی شبکهٔ کند (۳۰۰ms تأخیر، ۴۰۰kbps) بیش از ۱۵ ثانیه — و در تمام آن
+    مدت هیچ اتفاقی دیده نمی‌شد. کاربر یا دوباره کلیک می‌کند یا می‌رود.
+
+    useTransition همان حالت در حال انتظار را می‌دهد بی‌آنکه چیزی از معماری
+    URL-محور عوض شود.
+  */
+  const [pending, startTransition] = React.useTransition();
+
+  const go = React.useCallback(
+    (href: string) => {
+      startTransition(() => router.push(href, { scroll: false }));
+    },
+    [router],
+  );
+
   const activeCategory = params.get("category");
   const activeBrand = params.get("brand");
   const activeStock = params.get("stock");
@@ -61,7 +86,7 @@ export function ProductFilters({
     if (value === null || next.get(key) === value) next.delete(key);
     else next.set(key, value);
     next.delete("page");
-    router.push(`${pathname}?${next.toString()}`, { scroll: false });
+    go(`${pathname}?${next.toString()}`);
     onNavigate?.();
   }
 
@@ -80,7 +105,7 @@ export function ProductFilters({
     if (next.length === 0) search.delete(specParamName(key));
     else search.set(specParamName(key), next.join(","));
     search.delete("page");
-    router.push(`${pathname}?${search.toString()}`, { scroll: false });
+    go(`${pathname}?${search.toString()}`);
     onNavigate?.();
   }
 
@@ -92,7 +117,7 @@ export function ProductFilters({
       else search.set(name, value.trim());
     }
     search.delete("page");
-    router.push(`${pathname}?${search.toString()}`, { scroll: false });
+    go(`${pathname}?${search.toString()}`);
     onNavigate?.();
   }
 
@@ -102,15 +127,31 @@ export function ProductFilters({
   );
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div
+      className={cn(
+        "space-y-6 transition-opacity duration-200",
+        /*
+          نه اسکلت و نه چرخنده: خودِ پنل کم‌رنگ و بی‌اثر می‌شود. کاربر همین‌جا
+          کلیک کرده، پس بازخورد هم باید همین‌جا باشد — و فهرست فیلترها سر جایش
+          می‌ماند تا بشود دید چه چیزی انتخاب شده.
+        */
+        pending && "pointer-events-none opacity-60",
+        className,
+      )}
+      aria-busy={pending}
+    >
+      {/* تغییر نتیجه بیرون از دید کاربر است؛ صفحه‌خوان باید بشنودش */}
+      <span aria-live="polite" className="sr-only">
+        {pending ? "در حال اعمال فیلتر…" : ""}
+      </span>
       {hasFilters && (
         <button
           type="button"
           onClick={() => {
-            router.push(pathname, { scroll: false });
+            go(pathname);
             onNavigate?.();
           }}
-          className="flex w-full items-center justify-center gap-2 rounded-md border border-[var(--border-default)] py-2.5 text-xs font-medium text-[var(--fg-secondary)] transition-colors hover:border-[var(--danger)] hover:text-[var(--danger-text)]"
+          className="flex w-full items-center justify-center gap-2 rounded-md border border-[var(--border-default)] py-2.5 text-meta font-medium text-[var(--fg-secondary)] transition-colors hover:border-[var(--danger)] hover:text-[var(--danger-text)]"
         >
           <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
             <path d="m4 4 8 8M12 4l-8 8" strokeLinecap="round" />
@@ -123,7 +164,7 @@ export function ProductFilters({
       <FilterGroup title="دسته‌بندی">
         <ul className="space-y-0.5">
           {categories.map((category) => {
-            const isOpen = openGroups[category.id];
+            const isOpen = Boolean(openGroups[category.id]);
             const isActive = activeCategory === category.slug;
             return (
               <li key={category.id}>
@@ -131,6 +172,7 @@ export function ProductFilters({
                   <button
                     type="button"
                     onClick={() => setParam("category", category.slug)}
+                    aria-pressed={isActive}
                     className={cn(
                       "flex flex-1 items-center gap-2.5 rounded-sm px-2 py-2 text-start text-meta transition-colors",
                       isActive
@@ -143,9 +185,7 @@ export function ProductFilters({
                       className={cn("size-4 shrink-0", isActive ? "text-[var(--brand)]" : "text-[var(--fg-subtle)]")}
                     />
                     <span className="flex-1 truncate">{category.name}</span>
-                    <span className="font-mono text-micro text-[var(--fg-subtle)]">
-                      {toFaDigits(category.productCount)}
-                    </span>
+                    <FacetCount value={category.productCount} />
                   </button>
                   {category.children.length > 0 && (
                     <button
@@ -171,6 +211,7 @@ export function ProductFilters({
 
                 {category.children.length > 0 && (
                   <ul
+                    inert={!isOpen}
                     className={cn(
                       "grid overflow-hidden transition-all duration-400",
                       "[transition-timing-function:var(--ease-out-expo)]",
@@ -184,8 +225,9 @@ export function ProductFilters({
                             <button
                               type="button"
                               onClick={() => setParam("category", child.slug)}
+                              aria-pressed={activeCategory === child.slug}
                               className={cn(
-                                "w-full rounded-sm px-2 py-1.5 text-start text-xs transition-colors",
+                                "w-full rounded-sm px-2 py-1.5 text-start text-meta transition-colors",
                                 activeCategory === child.slug
                                   ? "font-medium text-[var(--brand)]"
                                   : "text-[var(--fg-muted)] hover:text-[var(--fg-primary)]",
@@ -213,6 +255,7 @@ export function ProductFilters({
               <button
                 type="button"
                 onClick={() => setParam("brand", brand.slug)}
+                aria-pressed={activeBrand === brand.slug}
                 className={cn(
                   "flex w-full items-center gap-2 rounded-sm px-2 py-2 text-start text-meta transition-colors",
                   activeBrand === brand.slug
@@ -236,9 +279,7 @@ export function ProductFilters({
                   )}
                 </span>
                 <span className="flex-1 truncate">{brand.name}</span>
-                <span className="font-mono text-micro text-[var(--fg-subtle)]">
-                  {toFaDigits(brand.productCount)}
-                </span>
+                <FacetCount value={brand.productCount} />
               </button>
             </li>
           ))}
@@ -253,6 +294,7 @@ export function ProductFilters({
               <button
                 type="button"
                 onClick={() => setParam("stock", key)}
+                aria-pressed={activeStock === key}
                 className={cn(
                   "flex w-full items-center gap-2.5 rounded-sm px-2 py-2 text-start text-meta transition-colors",
                   activeStock === key
@@ -311,12 +353,12 @@ export function ProductFilters({
       )}
 
       <div className="rounded-lg border border-[var(--border-brand)] bg-[var(--brand-soft)] p-4">
-        <p className="text-xs leading-7 text-[var(--fg-secondary)]">
+        <p className="text-meta leading-7 text-[var(--fg-secondary)]">
           محصول موردنظرتان در فهرست نیست؟ درخواست تأمین ثبت کنید؛ کارشناسان ما آن را پیدا می‌کنند.
         </p>
         <Link
           href="/contact"
-          className="mt-3 flex h-9 items-center justify-center rounded-md bg-[var(--brand)] text-xs font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
+          className="mt-3 flex h-9 items-center justify-center rounded-md bg-[var(--brand)] text-meta font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
         >
           درخواست تأمین کالا
         </Link>
@@ -380,10 +422,10 @@ function SpecRangeFilter({
             onChange={(e) => setMin(e.target.value)}
             placeholder={facet.min !== null ? String(round(facet.min)) : "از"}
             dir="ltr"
-            className="h-9 w-full rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-2.5 text-center font-mono text-xs outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
+            className="h-10 w-full rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-2.5 text-center font-mono text-meta outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
           />
         </label>
-        <span className="text-xs text-[var(--fg-subtle)]" aria-hidden>
+        <span className="text-meta text-[var(--fg-subtle)]" aria-hidden>
           تا
         </span>
         <label className="flex-1">
@@ -395,7 +437,7 @@ function SpecRangeFilter({
             onChange={(e) => setMax(e.target.value)}
             placeholder={facet.max !== null ? String(round(facet.max)) : "تا"}
             dir="ltr"
-            className="h-9 w-full rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-2.5 text-center font-mono text-xs outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
+            className="h-10 w-full rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-2.5 text-center font-mono text-meta outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
           />
         </label>
       </div>
@@ -406,7 +448,7 @@ function SpecRangeFilter({
         <button
           type="button"
           onClick={() => onApply(facet.key, min, max)}
-          className="mt-3 h-8 w-full rounded-md bg-[var(--brand)] text-xs font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
+          className="mt-3 h-8 w-full rounded-md bg-[var(--brand)] text-meta font-medium text-[var(--fg-on-brand)] transition-colors hover:bg-[var(--brand-hover)]"
         >
           اعمال
         </button>
@@ -447,15 +489,33 @@ function SpecOptionsFilter({
                   className="size-4 shrink-0 accent-[var(--brand)]"
                 />
                 <span className="min-w-0 flex-1 truncate">{option.label}</span>
-                <span className="shrink-0 font-mono text-micro text-[var(--fg-subtle)]">
-                  {toFaDigits(option.count)}
-                </span>
+                <FacetCount value={option.count} />
               </label>
             </li>
           );
         })}
       </ul>
     </FilterGroup>
+  );
+}
+
+/**
+ * شمارشِ کنار هر گزینهٔ فیلتر.
+ *
+ * جداکننده فقط برای صفحه‌خوان است؛ بدون آن نام دسترس‌پذیر «پنتاکس۲» خوانده
+ * می‌شود.
+ *
+ * رنگ از `--fg-muted` می‌آید نه `--fg-subtle`: ردیفِ فعال پس‌زمینهٔ
+ * `--brand-soft` می‌گیرد و روی آن، subtle در تم تیره ۴٫۳۱:۱ می‌داد و از ۴٫۵
+ * رد نمی‌شد (اندازه‌گیری axe روی `‎/products?category=pumps`). muted روی همان
+ * زمینه ۶٫۴۸:۱ است و هنوز از برچسب کم‌رنگ‌تر، پس سلسله‌مراتب دیداری می‌ماند.
+ */
+function FacetCount({ value }: { value: number }) {
+  return (
+    <span className="shrink-0 font-mono text-micro text-[var(--fg-muted)]">
+      <span className="sr-only"> — </span>
+      {toFaDigits(value)}
+    </span>
   );
 }
 
@@ -487,7 +547,11 @@ export function ProductToolbar({
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
+  const [sorting, startSorting] = React.useTransition();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const sheetRef = React.useRef<HTMLDivElement>(null);
+  const headingRef = React.useRef<HTMLHeadingElement>(null);
   const sort = params.get("sort") ?? "newest";
 
   // شیت modal است، پس صفحه پشتش نباید اسکرول شود
@@ -510,26 +574,72 @@ export function ProductToolbar({
     return () => window.removeEventListener("keydown", onKey);
   }, [mobileOpen]);
 
+  // عنوان شیت کانون را می‌گیرد تا صفحه‌خوان بداند کجاست؛ هنگام بستن، کانون به
+  // همان دکمه‌ای برمی‌گردد که شیت را باز کرده بود
+  React.useEffect(() => {
+    if (!mobileOpen) return;
+    const trigger = triggerRef.current;
+    headingRef.current?.focus();
+    return () => {
+      if (trigger?.isConnected) trigger.focus();
+    };
+  }, [mobileOpen]);
+
+  // نگه‌داشتن کانون داخل شیت تا وقتی باز است
+  React.useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const sheet = sheetRef.current;
+      if (!sheet) return;
+
+      const items = [...sheet.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
+        (element) => element.offsetParent !== null,
+      );
+      if (items.length === 0) return;
+
+      const index = items.indexOf(document.activeElement as HTMLElement);
+      if (event.shiftKey && index <= 0) {
+        event.preventDefault();
+        items[items.length - 1]!.focus();
+      } else if (!event.shiftKey && (index === -1 || index === items.length - 1)) {
+        event.preventDefault();
+        items[0]!.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [mobileOpen]);
+
   function onSortChange(value: string) {
     const next = new URLSearchParams(params.toString());
     if (value === "newest") next.delete("sort");
     else next.set("sort", value);
     next.delete("page");
-    router.push(`${pathname}?${next.toString()}`, { scroll: false });
+    /* همان دلیل پنل فیلتر: تغییر ترتیب هم یک ناوبری سمت سرور است */
+    startSorting(() => router.push(`${pathname}?${next.toString()}`, { scroll: false }));
   }
 
   return (
     <>
       <div className="mb-6 flex items-center justify-between gap-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elev-1)] p-3">
-        <p className="text-xs text-[var(--fg-muted)]">
+        <p
+          className={cn(
+            "text-meta text-[var(--fg-muted)] transition-opacity duration-200",
+            sorting && "opacity-50",
+          )}
+          aria-busy={sorting}
+        >
           <span className="font-mono text-[var(--fg-primary)]">{toFaDigits(total)}</span> کالا یافت شد
         </p>
 
         <div className="flex items-center gap-2">
           <button
+            ref={triggerRef}
             type="button"
             onClick={() => setMobileOpen(true)}
-            className="flex h-9 items-center gap-2 rounded-md border border-[var(--border-subtle)] px-3 text-xs text-[var(--fg-secondary)] transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)] lg:hidden"
+            aria-haspopup="dialog"
+            className="flex h-10 items-center gap-2 rounded-md border border-[var(--border-subtle)] px-3 text-meta text-[var(--fg-secondary)] transition-colors hover:border-[var(--border-brand)] hover:text-[var(--brand)] lg:hidden"
           >
             <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
               <path d="M2 4h12M4 8h8M6.5 12h3" strokeLinecap="round" />
@@ -541,8 +651,9 @@ export function ProductToolbar({
             <span className="sr-only">مرتب‌سازی</span>
             <select
               value={sort}
+              disabled={sorting}
               onChange={(e) => onSortChange(e.target.value)}
-              className="h-9 cursor-pointer rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-3 text-xs outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
+              className="h-10 cursor-pointer rounded-md border border-[var(--border-subtle)] bg-[var(--bg-inset)] px-3 text-meta outline-none transition-colors hover:border-[var(--border-brand)] focus:border-[var(--brand)]"
             >
               {SORT_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -562,7 +673,7 @@ export function ProductToolbar({
       */}
       <div
         className={cn("fixed inset-0 z-[70] lg:hidden", mobileOpen ? "pointer-events-auto" : "pointer-events-none")}
-        aria-hidden={!mobileOpen}
+        inert={!mobileOpen}
       >
         <div
           onClick={() => setMobileOpen(false)}
@@ -572,9 +683,10 @@ export function ProductToolbar({
           )}
         />
         <div
+          ref={sheetRef}
           role="dialog"
           aria-modal="true"
-          aria-label="فیلترها"
+          aria-labelledby={SHEET_TITLE_ID}
           className={cn(
             "absolute inset-x-0 bottom-0 flex max-h-[86dvh] flex-col rounded-t-2xl border-t border-[var(--border-subtle)]",
             "bg-[var(--bg-base)] shadow-[0_-16px_48px_-16px_rgb(0_0_0/0.45)] transition-transform duration-400",
@@ -588,7 +700,9 @@ export function ProductToolbar({
           </div>
 
           <div className="flex shrink-0 items-center justify-between px-5 pb-3 pt-2">
-            <h2 className="font-display text-base font-bold">فیلترها</h2>
+            <h2 id={SHEET_TITLE_ID} ref={headingRef} tabIndex={-1} className="font-display text-base font-bold outline-none">
+              فیلترها
+            </h2>
             <button
               type="button"
               onClick={() => setMobileOpen(false)}
