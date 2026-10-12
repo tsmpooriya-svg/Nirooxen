@@ -486,7 +486,7 @@ export async function saveProduct(
       }
       images.push({
         url: row.url,
-        alt: typeof row.alt === "string" ? row.alt.slice(0, 300) : undefined,
+        alt: typeof row.alt === "string" ? row.alt : undefined,
         storageKey: typeof row.storageKey === "string" ? row.storageKey : undefined,
         width: num(row.width),
         height: num(row.height),

@@ -95,12 +95,12 @@ export const loginSchema = z.object({
 /* ------------------------------- محصولات ---------------------------------- */
 
 export const productFormSchema = z.object({
-  name: z.string().trim().min(3, "نام محصول الزامی است").max(220),
-  slug: z.string().trim().max(250).optional(),
-  sku: z.string().trim().max(64).optional(),
-  model: z.string().trim().max(120).optional(),
-  shortDescription: z.string().trim().max(400).optional(),
-  description: z.string().trim().max(20000).optional(),
+  name: z.string().trim().min(3, "نام محصول الزامی است"),
+  slug: z.string().trim().optional(),
+  sku: z.string().trim().optional(),
+  model: z.string().trim().optional(),
+  shortDescription: z.string().trim().optional(),
+  description: z.string().trim().optional(),
   categoryId: z.string().uuid("انتخاب دسته‌بندی الزامی است"),
   brandId: z.string().uuid().optional().or(z.literal("").transform(() => undefined)),
   status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
@@ -117,11 +117,11 @@ export const productFormSchema = z.object({
      شرط قیمتی جدا از قیمت پایه نگه داشته می‌شود؛ افزودن درصد به price باعث
      می‌شد قیمت منتشرشده با آنچه منبع چاپ کرده فرق کند.
   */
-  priceConditionCode: z.string().trim().max(32).optional(),
-  priceConditionText: z.string().trim().max(200).optional(),
+  priceConditionCode: z.string().trim().optional(),
+  priceConditionText: z.string().trim().optional(),
   isPromotional: checkbox.default(false),
-  sourceRef: z.string().trim().max(64).optional(),
-  unit: z.string().trim().max(32).default("دستگاه"),
+  sourceRef: z.string().trim().optional(),
+  unit: z.string().trim().default("دستگاه"),
   stockStatus: z
     .enum(["IN_STOCK", "LOW_STOCK", "ORDER_ONLY", "OUT_OF_STOCK", "DISCONTINUED"])
     .default("ORDER_ONLY"),
@@ -131,9 +131,9 @@ export const productFormSchema = z.object({
   isFeatured: checkbox.default(false),
   isNew: checkbox.default(false),
   position: z.coerce.number().int().min(0).max(9999).default(0),
-  tags: z.array(z.string().trim().max(48)).max(20).default([]),
-  metaTitle: z.string().trim().max(190).optional(),
-  metaDescription: z.string().trim().max(320).optional(),
+  tags: z.array(z.string().trim()).default([]),
+  metaTitle: z.string().trim().optional(),
+  metaDescription: z.string().trim().optional(),
 });
 
 export type ProductFormInput = z.infer<typeof productFormSchema>;

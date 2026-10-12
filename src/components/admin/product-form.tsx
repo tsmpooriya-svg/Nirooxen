@@ -194,7 +194,7 @@ export function ProductForm({
             </Select>
           </Field>
 
-          <Field label="توضیح کوتاه" htmlFor="shortDescription" className="lg:col-span-2" hint="در کارت محصول و نتایج جستجو نمایش داده می‌شود (حداکثر ۴۰۰ کاراکتر).">
+          <Field label="توضیح کوتاه" htmlFor="shortDescription" className="lg:col-span-2" hint="در کارت محصول و نتایج جستجو نمایش داده می‌شود.">
             <Textarea id="shortDescription" name="shortDescription" rows={2} defaultValue={values.shortDescription} />
           </Field>
 
