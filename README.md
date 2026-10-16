@@ -176,6 +176,12 @@ sudo bash deploy/setup-ubuntu.sh
 اسکریپت idempotent است و به پایگاه دادهٔ موجود دست نمی‌زند؛ در پایان گام‌های
 بعدی را چاپ می‌کند.
 
+پس از merge کردن تغییرات TLS تولیدشده توسط Certbot با فایل‌های جدید مخزن، پیکربندی فعال را بدون تغییر وضعیت بررسی کنید:
+
+```bash
+sudo bash deploy/verify-production.sh
+```
+
 دو نکته که عمداً در آن هست:
 
 **PostgreSQL 17، نه ۱۶.** اوبونتو ۲۴ نسخهٔ ۱۶ دارد، ولی دامپ گرفته‌شده با ۱۷ را
@@ -427,10 +433,12 @@ sudo tar -xzf /var/backups/nirooxen/media-YYYYMMDD-HHMMSS.tar.gz -C /var/lib/
 #### عکس کامل، پیش از تغییر بزرگ
 
 ```bash
-sudo bash deploy/snapshot-nirooxen.sh
+# یک بار روی لپ‌تاپ: age-keygen -o nirooxen-snapshot.key
+# مقدار public key چاپ‌شده را روی سرور استفاده کنید؛ private key هرگز روی سرور قرار نگیرد.
+sudo SNAPSHOT_AGE_RECIPIENT='age1…' bash deploy/snapshot-nirooxen.sh
 ```
 
-**یک فایل** می‌سازد که همه‌چیز در آن است: پایگاه داده، فایل‌های آپلودشده،
+**یک فایل رمزنگاری‌شدهٔ `.tar.gz.age`** می‌سازد که همه‌چیز در آن است: پایگاه داده، فایل‌های آپلودشده،
 `nirooxen.env`، پیکربندی nginx و systemd، و یک `MANIFEST.txt` که تاریخ، کامیت
 کد، شمارش ردیف‌ها و **دستور بازگرداندن** را در خود دارد — تا اگر روزی فایل را
 جدا از این مخزن پیدا کردید، هنوز بدانید با آن چه کنید.
@@ -447,8 +455,9 @@ sudo bash deploy/snapshot-nirooxen.sh
 (در گیت است؛ شناسهٔ کامیت در MANIFEST ثبت می‌شود، چون داده بدون کدِ هم‌نسخه
 بازنمی‌گردد).
 
-فایل خروجی رمز پایگاه داده و کلیدهای API را دارد. دسترسی‌اش ۶۰۰ گذاشته می‌شود؛
-هر جا بردیدش، همان‌طور نگهش دارید.
+فایل plaintext فقط داخل پوشه موقت root ساخته، بررسی و در پایان پاک می‌شود. خروجی قابل انتقال با
+کلید عمومی `SNAPSHOT_AGE_RECIPIENT` رمز می‌شود؛ کلید خصوصی را آفلاین و جدا از سرور و بکاپ نگه دارید.
+برای بازکردن: `age --decrypt -i nirooxen-snapshot.key -o snapshot.tar.gz snapshot.tar.gz.age`.
 
 ### اعلان درخواست‌ها
 

@@ -94,6 +94,18 @@ if (!mediaRoot) {
   notes.push("MEDIA_STORAGE_ROOT مسیر مطلق است");
 }
 
+const databaseCaFile = process.env.DATABASE_SSL_CA_FILE?.trim();
+if (process.env.DATABASE_SSL === "true") {
+  notes.push("TLS پایگاه داده با بررسی گواهی فعال است");
+  if (databaseCaFile && !path.isAbsolute(databaseCaFile)) {
+    problems.push("DATABASE_SSL_CA_FILE باید مسیر مطلق فایل PEM باشد");
+  } else if (databaseCaFile) {
+    notes.push("DATABASE_SSL_CA_FILE مسیر مطلق است");
+  }
+} else if (databaseCaFile) {
+  problems.push("DATABASE_SSL_CA_FILE تنظیم شده ولی DATABASE_SSL=true نیست");
+}
+
 for (const note of notes) console.log(`✓ ${note}`);
 
 if (problems.length > 0) {

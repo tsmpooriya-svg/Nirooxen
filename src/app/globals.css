@@ -1198,10 +1198,10 @@ html[data-loader="seen"] .loader-root {
   سایت از زیر بیرون می‌آید — نه «لودر غیب شد، بعد سایت آمد».
 */
 .loader-root[data-exit="true"] {
-  animation: loader-out 520ms var(--ease-out-expo) forwards;
+  animation: loader-out 200ms var(--ease-out-expo) forwards;
 }
 .loader-root[data-exit="true"] .loader-stage {
-  animation: loader-stage-out 460ms var(--ease-out-expo) forwards;
+  animation: loader-stage-out 180ms var(--ease-out-expo) forwards;
 }
 @keyframes loader-out {
   from { opacity: 1; clip-path: inset(0 0 0 0); }

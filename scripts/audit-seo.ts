@@ -87,6 +87,10 @@ async function main() {
   let shortDesc = 0;
   let shortTitle = 0;
   let longTitle = 0;
+  let missingAuthoredSummary = 0;
+  let missingMetaTitle = 0;
+  let missingMetaDescription = 0;
+  let missingFullDescription = 0;
 
   for (const row of rows) {
     const title = productTitle({ name: row.name, model: row.model, metaTitle: row.meta_title });
@@ -95,6 +99,10 @@ async function main() {
     if (title.length > TITLE_LONG) longTitle += 1;
 
     const authored = row.meta_description ?? row.short_description ?? row.description;
+    if (!authored) missingAuthoredSummary += 1;
+    if (!row.meta_title) missingMetaTitle += 1;
+    if (!row.meta_description) missingMetaDescription += 1;
+    if (!row.description) missingFullDescription += 1;
     const summary = productSummary({
       product: {
         name: row.name,
@@ -142,6 +150,12 @@ async function main() {
       derivedFromData: derived,
       shorterThan: { [DESC_SHORT]: shortDesc },
     },
+    coverage: {
+      missingAuthoredSummary,
+      missingMetaTitle,
+      missingMetaDescription,
+      missingFullDescription,
+    },
   };
 
   if (JSON_OUT) {
@@ -162,6 +176,11 @@ async function main() {
     line("افتاده به توضیح عمومی سایت", boilerplate);
     line("ساخته‌شده از دادهٔ خود محصول", derived);
     line(`کوتاه‌تر از ${DESC_SHORT} نویسه`, shortDesc);
+    console.log("\n  پوشش محتوا");
+    line("بدون خلاصهٔ تألیفی", missingAuthoredSummary);
+    line("بدون meta title اختصاصی", missingMetaTitle);
+    line("بدون meta description اختصاصی", missingMetaDescription);
+    line("بدون توضیح کامل", missingFullDescription);
 
     if (dupTitles.length > 0) {
       console.log("\n  عنوان‌های تکراری");

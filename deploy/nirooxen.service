@@ -15,6 +15,9 @@ After=network-online.target postgresql.service
 Wants=network-online.target
 # اگر پایگاه داده بالا نیامده باشد، برنامه هنگام اجرا خطا می‌دهد نه هنگام بوت
 Requires=postgresql.service
+# اگر پنج بار در دو دقیقه بیفتد، دیگر تلاش نکن — مشکل پیکربندی است نه گذرا
+StartLimitBurst=5
+StartLimitIntervalSec=120
 
 [Service]
 Type=simple
@@ -31,9 +34,6 @@ ExecStart=/usr/bin/node /var/www/nirooxen/node_modules/next/dist/bin/next start 
 
 Restart=always
 RestartSec=5
-# اگر پنج بار در دو دقیقه بیفتد، دیگر تلاش نکن — مشکل پیکربندی است نه گذرا
-StartLimitBurst=5
-StartLimitIntervalSec=120
 
 # ── سخت‌سازی ─────────────────────────────────────────────────────────────────
 NoNewPrivileges=yes

@@ -6,6 +6,8 @@
  */
 import "server-only";
 
+import { readFileSync } from "node:fs";
+
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
@@ -24,12 +26,20 @@ function createPool() {
     );
   }
 
+  const ssl = process.env.DATABASE_SSL === "true";
+  const caFile = process.env.DATABASE_SSL_CA_FILE?.trim();
+
   return new Pool({
     connectionString,
     max: Number(process.env.DATABASE_POOL_MAX ?? 10),
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 10_000,
-    ssl: process.env.DATABASE_SSL === "true" ? { rejectUnauthorized: false } : undefined,
+    ssl: ssl
+      ? {
+          rejectUnauthorized: true,
+          ...(caFile ? { ca: readFileSync(caFile, "utf8") } : {}),
+        }
+      : undefined,
   });
 }
 

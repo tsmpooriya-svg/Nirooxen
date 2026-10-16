@@ -21,8 +21,8 @@ import { siteConfig } from "@/config/site";
  *         • document.fonts.ready
  *       هیچ درصدی جعل نمی‌شود؛ نوار پایین صفحه صرفاً تایم‌لاین انیمیشن است
  *       نه ادعایی درباره بایت‌های دانلودشده.
- *    ۳. یک کف زمانی (۱۰۰۰ms) رعایت می‌شود تا ترکیب وسط حرکت قطع نشود و
- *       بارگذاری از کش هم به‌صورت یک فلش زشت دیده نشود.
+ *    ۳. فقط یک کف کوتاه ۲۵۰ms برای جلوگیری از فلش رعایت می‌شود؛ در حالت
+ *       reduced-motion هیچ کف اجباری وجود ندارد.
  *    ۴. با رسیدن به آمادگی، `data-exit` گذاشته می‌شود و پس از پایان حرکت
  *       خروج، کامپوننت از درخت حذف می‌شود.
  *
@@ -35,9 +35,9 @@ import { siteConfig } from "@/config/site";
  * کف نمایش. برابر با لحظه‌ای که کل ترکیب در CSS کامل می‌شود، تا لایه وسط
  * حرکت قطع نشود و بارگذاری از کش هم به‌صورت یک فلش زشت دیده نشود.
  */
-const MIN_VISIBLE_MS = 1000;
+const MIN_VISIBLE_MS = 250;
 /** باید با مدت انیمیشن `loader-out` در globals.css یکی باشد */
-const EXIT_MS = 520;
+const EXIT_MS = 200;
 
 const SEEN_KEY = "nirooxen-loader-seen";
 
@@ -105,7 +105,9 @@ export function LoadingScreen() {
 
     ready.then(() => {
       if (cancelled) return;
-      const remaining = Math.max(0, MIN_VISIBLE_MS - (performance.now() - startedAt));
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const minimum = reduceMotion ? 0 : MIN_VISIBLE_MS;
+      const remaining = Math.max(0, minimum - (performance.now() - startedAt));
       exitTimer = window.setTimeout(() => {
         if (cancelled) return;
         setPhase("exiting");

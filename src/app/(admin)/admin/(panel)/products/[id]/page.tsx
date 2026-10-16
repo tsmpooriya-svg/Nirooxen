@@ -56,6 +56,7 @@ export default async function EditProductPage({ params }: { params: Params }) {
       storageKey: image.storageKey ?? undefined,
       width: image.width ?? undefined,
       height: image.height ?? undefined,
+      backdrop: image.backdrop ?? undefined,
     })),
     specs: specs.map((spec) => ({
       groupName: spec.groupName,

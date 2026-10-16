@@ -24,7 +24,7 @@ ok()  { printf "   \033[32m✓\033[0m %s\n" "$1"; }
 
 say "بسته‌های پایه"
 apt-get update -qq
-apt-get install -y -qq curl ca-certificates gnupg lsb-release ufw git unzip >/dev/null
+apt-get install -y -qq curl ca-certificates gnupg lsb-release ufw git unzip age >/dev/null
 ok "نصب شد"
 
 say "فضای swap"

@@ -1,5 +1,9 @@
 import sharp from "sharp";
 
+import type { Backdrop } from "./backdrop-value";
+
+export type { Backdrop } from "./backdrop-value";
+
 /**
  * =============================================================================
  *  تشخیص پس‌زمینهٔ عکس
@@ -24,8 +28,6 @@ import sharp from "sharp";
  * light — پس‌زمینهٔ روشن؛ با ترکیب multiply پنهان می‌شود
  * dark  — نه برداشته شده و نه روشن؛ تصویر همان‌طور می‌ماند
  */
-export type Backdrop = "cut" | "light" | "dark";
-
 /** زیر این اندازه، «حلقهٔ لبه» معنا ندارد */
 const MIN_SIDE = 16;
 /** فاصلهٔ نمونه‌برداری از لبه — کمی تو، تا حاشیهٔ فشرده‌سازی نیفتد داخل نمونه */
