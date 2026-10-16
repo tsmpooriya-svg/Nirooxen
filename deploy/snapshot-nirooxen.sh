@@ -12,8 +12,8 @@
 #    media/         فایل‌های آپلودشده از پنل
 #    config/        nirooxen.env و پیکربندی nginx و systemd
 #
-#  ⚠ فایل خروجی **رمز پایگاه داده و کلیدهای API** را در خود دارد. دسترسی‌اش
-#    ۶۰۰ گذاشته می‌شود؛ هر جا می‌بریدش، همان‌طور نگهش دارید.
+#  ⚠ فایل خروجی **رمز پایگاه داده و کلیدهای API** را در خود دارد. به همین دلیل
+#    خروجی فقط به‌صورت age رمزنگاری‌شده ساخته می‌شود و نسخهٔ plaintext از tmp بیرون نمی‌رود.
 #
 #  گواهی TLS عمداً داخلش نیست. کلید خصوصی در فایلی که روی لپ‌تاپ جابه‌جا
 #  می‌شود ریسک است، در حالی که certbot در چند ثانیه دوباره صادرش می‌کند.
@@ -23,6 +23,9 @@
 #  اجرا با root:  bash deploy/snapshot-nirooxen.sh
 # =============================================================================
 set -euo pipefail
+# تمام فایل‌های میانی از لحظهٔ ساخته‌شدن فقط برای root خواندنی باشند؛ mode فایل‌های
+# داخل tar نیز همین‌طور ثبت می‌شود و پس از restore ناخواسته عمومی نمی‌شوند.
+umask 077
 
 DB_NAME="${DB_NAME:-nirooxen}"
 OUT_DIR="${OUT_DIR:-/var/backups/nirooxen}"
@@ -31,20 +34,25 @@ ENV_FILE="${ENV_FILE:-/etc/nirooxen/nirooxen.env}"
 APP_DIR="${APP_DIR:-/var/www/nirooxen}"
 PG_USER="${PG_USER:-postgres}"
 MIN_TABLES="${MIN_TABLES:-10}"
+AGE_RECIPIENT="${SNAPSHOT_AGE_RECIPIENT:-}"
 
 stamp="$(date +%Y%m%d-%H%M%S)"
 work="$(mktemp -d)"
-out="$OUT_DIR/nirooxen-snapshot-$stamp.tar.gz"
+plain="$work/nirooxen-snapshot-$stamp.tar.gz"
+out="$OUT_DIR/nirooxen-snapshot-$stamp.tar.gz.age"
 
 cleanup() { rm -rf "$work"; }
 trap cleanup EXIT
 
 fail() {
-  rm -f "$out"
+  rm -f "$out" "$plain"
   echo "" >&2
   echo "✖ عکس‌برداری ناموفق — $1" >&2
   exit 1
 }
+
+[ -n "$AGE_RECIPIENT" ] || fail "SNAPSHOT_AGE_RECIPIENT تعریف نشده است؛ کلید عمومی age را وارد کنید"
+command -v age >/dev/null 2>&1 || fail "ابزار age نصب نیست (sudo apt install age)"
 
 install -d -m 700 "$OUT_DIR"
 mkdir -p "$work/snapshot/config"
@@ -93,6 +101,9 @@ for f in /etc/systemd/system/nirooxen.service /etc/systemd/system/nirooxen-backu
   [ -f "$f" ] && cp -a "$f" "config/$(basename "$f")"
 done
 
+chmod 600 db.dump
+[ ! -f config/nirooxen.env ] || chmod 600 config/nirooxen.env
+
 # ── شناسنامه ────────────────────────────────────────────────────────────────
 # کامیت لازم است: بازگرداندن داده روی کدی که با آن نمی‌خواند، کار نمی‌کند
 commit="(نامعلوم)"
@@ -131,6 +142,7 @@ config/        nirooxen.env و پیکربندی nginx و systemd
 بازگرداندن
 =================================================================
 ۱. باز کردن بسته
+   age --decrypt -i /path/to/identity.txt -o nirooxen-snapshot-$stamp.tar.gz nirooxen-snapshot-$stamp.tar.gz.age
    tar -xzf nirooxen-snapshot-$stamp.tar.gz
 
 ۲. کد را به همان کامیت برگردانید — داده بدون کدِ هم‌نسخه کار نمی‌کند
@@ -147,7 +159,7 @@ config/        nirooxen.env و پیکربندی nginx و systemd
    sudo chown -R nirooxen:nirooxen $MEDIA_DIR
 
 ۵. پیکربندی — فقط اگر لازم بود
-   sudo cp snapshot/config/nirooxen.env $ENV_FILE
+   sudo install -o root -g root -m 600 snapshot/config/nirooxen.env $ENV_FILE
 
 ۶. بالا آوردن
    cd $APP_DIR && npm ci && npm run build
@@ -160,27 +172,30 @@ EOF
 # ── بستن و سنجیدن ───────────────────────────────────────────────────────────
 echo "  بسته‌بندی…"
 cd "$work"
-tar -czf "$out" snapshot || fail "بسته‌بندی انجام نشد"
+tar -czf "$plain" snapshot || fail "بسته‌بندی انجام نشد"
 
 echo "  بررسی سلامت بسته…"
-tar -tzf "$out" > /dev/null 2>&1 || fail "بسته خوانده نمی‌شود"
+tar -tzf "$plain" > /dev/null 2>&1 || fail "بسته خوانده نمی‌شود"
 
 # بررسی واقعی: دامپ را از *داخل همین بسته* بیرون می‌کشیم و می‌خوانیم. بسته‌ای
 # که باز می‌شود ولی دامپ سالمی ندارد، پشتیبان نیست — و روز حادثه بدترین وقت
 # برای فهمیدن این است.
 check="$work/check"
 mkdir -p "$check"
-tar -xzf "$out" -C "$check" snapshot/db.dump || fail "دامپ از داخل بسته بیرون نیامد"
+tar -xzf "$plain" -C "$check" snapshot/db.dump || fail "دامپ از داخل بسته بیرون نیامد"
 pg_restore --list "$check/snapshot/db.dump" > /dev/null 2>&1 \
   || fail "دامپِ داخل بسته خوانده نمی‌شود"
 inner="$(pg_restore --list "$check/snapshot/db.dump" | grep -c 'TABLE DATA' || true)"
 [ "$inner" = "$tables" ] || fail "دامپِ داخل بسته $inner جدول دارد ولی باید $tables باشد"
 
+echo "  رمزنگاری با age…"
+age --recipient "$AGE_RECIPIENT" --output "$out" "$plain" || fail "رمزنگاری snapshot انجام نشد"
+[ -s "$out" ] || fail "فایل رمزنگاری‌شده خالی است"
 chmod 600 "$out"
 sha="$(sha256sum "$out" | cut -c1-16)"
 
 echo ""
-echo "  ✓ عکس کامل گرفته شد و از داخل بسته بررسی شد"
+echo "  ✓ عکس کامل گرفته شد، از داخل بسته بررسی و با age رمزنگاری شد"
 echo ""
 printf '     %s\n' "$out"
 printf '     %s · %s جدول · sha256 %s…\n' "$(du -h "$out" | cut -f1)" "$tables" "$sha"

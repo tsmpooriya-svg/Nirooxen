@@ -7,9 +7,12 @@ import { siteConfig } from "@/config/site";
 import { getSiteSettings } from "@/modules/settings/queries";
 import { pageMetadata } from "@/lib/seo";
 
+/** دفتر مرکزی و نقشه تا ثبت اطلاعات واقعی پنهان‌اند */
+const SHOW_OFFICE_AND_MAP = false;
+
 export const metadata: Metadata = pageMetadata({
   title: "تماس با ما",
-  description: `راه‌های ارتباط با ${siteConfig.legalName}: تلفن، ایمیل، آدرس دفتر مرکزی و فرم درخواست مشاوره فنی.`,
+  description: `راه‌های ارتباط با ${siteConfig.legalName}: تلفن، ایمیل و فرم درخواست مشاوره فنی.`,
   path: "/contact",
 });
 
@@ -119,6 +122,10 @@ export default async function ContactPage({
                 </ul>
               </ContactCard>
 
+              {/* دفتر مرکزی و نقشه فعلاً برای کاربران پنهان است؛ برای نمایش دوباره
+                  SHOW_OFFICE_AND_MAP را true کنید. */}
+              {SHOW_OFFICE_AND_MAP && (
+                <>
               <ContactCard
                 title="دفتر مرکزی"
                 icon={<path d="M10 2.5c3 3.3 5 6 5 8.2a5 5 0 0 1-10 0c0-2.2 2-4.9 5-8.2Z" />}
@@ -161,6 +168,8 @@ export default async function ContactPage({
                   )}
                 </div>
               </div>
+                </>
+              )}
             </div>
           </Reveal>
 

@@ -93,11 +93,6 @@ export function ProductCard({
           </span>
         )}
 
-        {/* درخشش نرم هنگام هاور */}
-        <span
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--bg-base)]/70 via-transparent to-transparent opacity-70 transition-opacity duration-[450ms] group-hover:opacity-45 group-has-[:focus-visible]:opacity-45"
-          aria-hidden
-        />
 
       </Link>
 

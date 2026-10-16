@@ -289,11 +289,11 @@ export const products = pgTable(
   "products",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    name: varchar("name", { length: 220 }).notNull(),
-    slug: varchar("slug", { length: 250 }).notNull(),
-    sku: varchar("sku", { length: 64 }),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    sku: text("sku"),
     /** مدل/نام لاتین برای جستجوی فنی */
-    model: varchar("model", { length: 120 }),
+    model: text("model"),
     shortDescription: text("short_description"),
     description: text("description"),
 
@@ -314,11 +314,11 @@ export const products = pgTable(
      * است: قیمت پایه هرگز نباید شرط را در خود حل کند. در tags هم نمی‌آید چون
      * tags عمومی است و در جست‌وجو و محصولات مرتبط مشارکت می‌کند.
      */
-    priceConditionCode: varchar("price_condition_code", { length: 32 }),
-    priceConditionText: varchar("price_condition_text", { length: 200 }),
+    priceConditionCode: text("price_condition_code"),
+    priceConditionText: text("price_condition_text"),
     /** فروش ویژه — بدون هیچ قیمت مقایسه‌ای ساختگی */
     isPromotional: boolean("is_promotional").notNull().default(false),
-    unit: varchar("unit", { length: 32 }).notNull().default("دستگاه"),
+    unit: text("unit").notNull().default("دستگاه"),
 
     stockStatus: stockStatusEnum("stock_status").notNull().default("ORDER_ONLY"),
     leadTimeDays: integer("lead_time_days"),
@@ -337,14 +337,14 @@ export const products = pgTable(
       .notNull()
       .default(sql`ARRAY[]::text[]`),
 
-    metaTitle: varchar("meta_title", { length: 190 }),
+    metaTitle: text("meta_title"),
     metaDescription: text("meta_description"),
 
     /*
      * ارجاع خنثای منبع داده — فقط کد داخلی. هرگز نباید نام فروشنده، کانال،
      * شماره تماس یا نشانی در آن بیاید و در هیچ مسیر عمومی خوانده نمی‌شود.
      */
-    sourceRef: varchar("source_ref", { length: 64 }),
+    sourceRef: text("source_ref"),
 
     publishedAt: timestamp("published_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -374,7 +374,7 @@ export const productImages = pgTable(
     storageKey: text("storage_key"),
     width: integer("width"),
     height: integer("height"),
-    alt: varchar("alt", { length: 220 }),
+    alt: text("alt"),
     position: integer("position").notNull().default(0),
     isPrimary: boolean("is_primary").notNull().default(false),
     /*

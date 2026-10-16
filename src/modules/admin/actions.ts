@@ -41,6 +41,7 @@ import {
 import { buildSpecRows } from "@/modules/catalog/spec-writer";
 import { logActivity } from "@/lib/activity";
 import { deleteAssetByPrefix } from "@/lib/media/assets";
+import { imageBackdrop } from "@/lib/media/backdrop-value";
 import { isOwnProductAssetPrefix } from "@/lib/storage/keys";
 import { AuthError, destroyAllSessions, hashPassword, requireWritePermission } from "@/lib/auth";
 import { ORDER_PRIORITY, ORDER_STATUS } from "@/lib/constants";
@@ -486,7 +487,7 @@ export async function saveProduct(
       }
       images.push({
         url: row.url,
-        alt: typeof row.alt === "string" ? row.alt.slice(0, 300) : undefined,
+        alt: typeof row.alt === "string" ? row.alt : undefined,
         storageKey: typeof row.storageKey === "string" ? row.storageKey : undefined,
         width: num(row.width),
         height: num(row.height),
@@ -604,7 +605,7 @@ export async function saveProduct(
             width: image.width ?? null,
             height: image.height ?? null,
             // فقط مقدار شناخته‌شده پذیرفته می‌شود؛ هر چیز دیگری یعنی نامعلوم
-            backdrop: image.backdrop === "light" || image.backdrop === "dark" ? image.backdrop : null,
+            backdrop: imageBackdrop(image.backdrop),
             alt: image.alt ?? input.name,
             position: index,
             isPrimary: index === 0,

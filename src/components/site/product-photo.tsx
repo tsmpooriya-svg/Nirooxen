@@ -33,21 +33,24 @@ export function isIllustration(url: string): boolean {
 /**
  * عکس چطور روی قاب بنشیند؟
  *
- *   plain    — مستطیل خودش را پر می‌کند؛ قاب دیده نمی‌شود
- *   multiply — پس‌زمینهٔ روشن با ترکیب پنهان می‌شود
- *   alpha    — پس‌زمینه هنگام آپلود برداشته شده؛ شفافیت خودش کار را کرده
+ *   plain    — طرح SVG؛ قاب را خودش دارد و مستطیل را پر می‌کند (cover)
+ *   multiply — عکس با پس‌زمینهٔ روشن؛ با ترکیب پنهان می‌شود (contain)
+ *   alpha    — پس‌زمینه هنگام آپلود برداشته شده؛ شفافیت خودش کار را کرده (contain)
+ *   contain  — عکسِ بررسی‌نشده یا با پس‌زمینهٔ تیره؛ کامل و بدون ترکیب دیده می‌شود
  *
- * هر چیزی جز دو مقدار شناخته‌شده «plain» است. تصویری که هنوز بررسی نشده باید
- * مثل امروز دیده شود، نه اینکه خوش‌بینانه ترکیب شود و روی پس‌زمینهٔ تیره یک
- * مستطیل سیاه بسازد.
+ * عکس واقعیِ محصول هرگز cover نمی‌شود. پیش‌تر هر چیزی جز «cut» و «light» همان
+ * «plain» بود و object-cover می‌گرفت؛ با قاب ۴:۳ هر عکسی که نسبتش فرق داشت
+ * بریده می‌شد و محصول زوم‌شده و ناقص دیده می‌شد. «contain» محصول را کامل نشان
+ * می‌دهد و مثل قبل ترکیب خوش‌بینانه‌ای هم انجام نمی‌دهد: تصویری که هنوز بررسی
+ * نشده روی پس‌زمینهٔ تیره یک مستطیل سیاه نمی‌سازد.
  */
-type Fit = "plain" | "multiply" | "alpha";
+type Fit = "plain" | "multiply" | "alpha" | "contain";
 
 function fitFor(url: string, backdrop?: string | null): Fit {
   if (isIllustration(url)) return "plain";
   if (backdrop === "cut") return "alpha";
   if (backdrop === "light") return "multiply";
-  return "plain";
+  return "contain";
 }
 
 export function ProductPhoto({

@@ -15,6 +15,7 @@
 #  زمان‌بندی:      deploy/nirooxen-backup.timer
 # =============================================================================
 set -euo pipefail
+umask 077
 
 DB_NAME="${DB_NAME:-nirooxen}"
 BACKUP_DIR="${BACKUP_DIR:-/var/backups/nirooxen}"
